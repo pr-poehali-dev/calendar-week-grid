@@ -890,11 +890,11 @@ const Index = () => {
                               onDragOver={(e) => handleEventDragOver(e, event)}
                               onDrop={(e) => handleEventDrop(e, event)}
                               onClick={(e) => handleEventClick(event, e, dateKey)}
-                              className={`text-sm p-1.5 rounded border-l-2 cursor-move leading-tight transition-all duration-300 ease-in-out ${
-                                isDragging ? 'opacity-40 scale-95' :
+                              className={`text-sm p-1.5 rounded border-l-2 cursor-move leading-tight transition-all duration-200 ${
+                                isDragging ? 'opacity-40' :
                                 isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' :
-                                isDraggedOver ? 'ring-2 ring-[#0EA5E9] scale-105 shadow-lg' :
-                                'opacity-100 hover:scale-102 hover:shadow-md'
+                                isDraggedOver ? 'ring-2 ring-[#0EA5E9] shadow-lg' :
+                                'opacity-100 hover:shadow-md'
                               }`}
                               style={{
                                 borderLeftColor: event.color,
