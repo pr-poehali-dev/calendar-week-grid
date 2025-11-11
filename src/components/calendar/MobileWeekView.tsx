@@ -186,7 +186,7 @@ const MobileWeekView = ({
                         }}
                       >
                         <div className="flex-1">
-                          <p className={`text-sm break-words uppercase ${isRepeating ? 'text-white/60' : 'text-white'}`}>
+                          <p className={`text-sm break-words uppercase ${isRepeating ? 'text-white/80' : 'text-white'}`}>
                             {truncateText(event.text, 10)}
                           </p>
                           {event.repeat !== 'none' && event.repeat && (

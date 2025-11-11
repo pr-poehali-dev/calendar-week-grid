@@ -185,7 +185,7 @@ const DesktopMonthView = ({
                             backgroundColor: `${event.color}20`
                           }}
                         >
-                          <span className={`break-words line-clamp-2 uppercase ${isRepeating ? 'text-white/60' : 'text-white'}`}>{event.text}</span>
+                          <span className={`break-words line-clamp-2 uppercase ${isRepeating ? 'text-white/80' : 'text-white'}`}>{event.text}</span>
                         </div>
                       );
                       })}
