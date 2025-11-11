@@ -30,6 +30,7 @@ const Index = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [newEventText, setNewEventText] = useState('');
   const [selectedColor, setSelectedColor] = useState(COLORS[0].value);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [draggedEvent, setDraggedEvent] = useState<Event | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
 
@@ -63,24 +64,44 @@ const Index = () => {
 
   const handleDayClick = (date: Date) => {
     setSelectedDate(formatDateKey(date));
+    setEditingEvent(null);
     setIsDialogOpen(true);
     setNewEventText('');
     setSelectedColor(COLORS[0].value);
   };
 
+  const handleEventClick = (event: Event, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingEvent(event);
+    setNewEventText(event.text);
+    setSelectedColor(event.color);
+    setSelectedDate(event.date);
+    setIsDialogOpen(true);
+  };
+
   const handleCreateEvent = () => {
     if (!newEventText.trim() || !selectedDate) return;
 
-    const newEvent: Event = {
-      id: Date.now().toString(),
-      text: newEventText,
-      color: selectedColor,
-      date: selectedDate,
-    };
+    if (editingEvent) {
+      setEvents(events.map(e => 
+        e.id === editingEvent.id 
+          ? { ...e, text: newEventText, color: selectedColor }
+          : e
+      ));
+      setIsDialogOpen(false);
+      toast.success('Событие изменено');
+    } else {
+      const newEvent: Event = {
+        id: Date.now().toString(),
+        text: newEventText,
+        color: selectedColor,
+        date: selectedDate,
+      };
 
-    setEvents([...events, newEvent]);
-    setIsDialogOpen(false);
-    toast.success('Событие добавлено');
+      setEvents([...events, newEvent]);
+      setIsDialogOpen(false);
+      toast.success('Событие добавлено');
+    }
   };
 
   const handleDeleteEvent = (eventId: string) => {
@@ -182,7 +203,8 @@ const Index = () => {
                             key={event.id}
                             draggable
                             onDragStart={() => handleDragStart(event)}
-                            className="p-2 rounded-lg cursor-move hover:shadow-md transition-all duration-200 border-l-4 flex items-start justify-between gap-2"
+                            onClick={(e) => handleEventClick(event, e)}
+                            className="p-2 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 border-l-4 flex items-start justify-between gap-2"
                             style={{ 
                               borderLeftColor: event.color,
                               backgroundColor: `${event.color}15`
@@ -216,7 +238,7 @@ const Index = () => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              Новое событие
+              {editingEvent ? 'Редактировать событие' : 'Новое событие'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
@@ -256,7 +278,7 @@ const Index = () => {
                 disabled={!newEventText.trim()}
                 className="flex-1"
               >
-                Создать
+                {editingEvent ? 'Сохранить' : 'Создать'}
               </Button>
               <Button
                 variant="outline"
