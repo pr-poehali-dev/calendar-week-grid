@@ -752,7 +752,7 @@ const Index = () => {
                             }}
                           >
                             <div className="flex-1">
-                              <p className="text-sm text-white break-words">
+                              <p className="text-sm text-white break-words uppercase">
                                 {truncateText(event.text, 10)}
                               </p>
                               {event.repeat !== 'none' && event.repeat && (
@@ -901,7 +901,7 @@ const Index = () => {
                                 backgroundColor: `${event.color}20`
                               }}
                             >
-                              <span className="text-white break-words line-clamp-2">{event.text}</span>
+                              <span className="text-white break-words line-clamp-2 uppercase">{event.text}</span>
                             </div>
                           );
                           })}
@@ -947,7 +947,7 @@ const Index = () => {
                   backgroundColor: `${event.color}15`
                 }}
               >
-                <p className="text-sm text-white break-words">{event.text}</p>
+                <p className="text-sm text-white break-words uppercase">{event.text}</p>
                 {event.repeat !== 'none' && event.repeat && (
                   <p className="text-xs text-white/60 mt-1">
                     {event.repeat === 'weekly' ? '↻ Каждую неделю' : '↻ Каждый месяц'}
