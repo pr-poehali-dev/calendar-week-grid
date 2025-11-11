@@ -15,6 +15,7 @@ interface Event {
   order?: number;
   userId?: string;
   excludedDates?: string[];
+  repeatUntil?: string;
 }
 
 const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -275,18 +276,22 @@ const Index = () => {
           toast.success('Это повторение удалено');
         }
       } else if (mode === 'future' && targetDate) {
+        const targetDateObj = new Date(targetDate);
+        targetDateObj.setDate(targetDateObj.getDate() - 1);
+        const repeatUntil = formatDateKey(targetDateObj);
+        
         const response = await fetch(API_URL, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...event,
-            repeat: 'none'
+            repeatUntil
           })
         });
         
         if (response.ok) {
           setEvents(events.map(e => 
-            e.id === eventId ? { ...e, repeat: 'none' } : e
+            e.id === eventId ? { ...e, repeatUntil } : e
           ));
           setIsDialogOpen(false);
           setDeleteDialogOpen(false);
@@ -450,6 +455,11 @@ const Index = () => {
       if (e.date === dateKey) return false;
       
       if (e.excludedDates && e.excludedDates.includes(dateKey)) return false;
+      
+      if (e.repeatUntil) {
+        const untilDate = new Date(e.repeatUntil);
+        if (date > untilDate) return false;
+      }
       
       const eventDate = new Date(e.date);
       

@@ -46,9 +46,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             user_id = query_params.get('userId')
             
             if user_id:
-                cur.execute('SELECT id, text, color, date, user_id, repeat, repeat_group_id, order_num, excluded_dates FROM t_p36597579_calendar_week_grid.events WHERE user_id = %s ORDER BY date, order_num, created_at', (user_id,))
+                cur.execute('SELECT id, text, color, date, user_id, repeat, repeat_group_id, order_num, excluded_dates, repeat_until FROM t_p36597579_calendar_week_grid.events WHERE user_id = %s ORDER BY date, order_num, created_at', (user_id,))
             else:
-                cur.execute('SELECT id, text, color, date, user_id, repeat, repeat_group_id, order_num, excluded_dates FROM t_p36597579_calendar_week_grid.events ORDER BY date, order_num, created_at')
+                cur.execute('SELECT id, text, color, date, user_id, repeat, repeat_group_id, order_num, excluded_dates, repeat_until FROM t_p36597579_calendar_week_grid.events ORDER BY date, order_num, created_at')
             
             rows = cur.fetchall()
             events = [
@@ -61,7 +61,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'repeat': row[5],
                     'repeat_group_id': row[6],
                     'order': row[7],
-                    'excludedDates': json.loads(row[8]) if row[8] else []
+                    'excludedDates': json.loads(row[8]) if row[8] else [],
+                    'repeatUntil': row[9]
                 }
                 for row in rows
             ]
@@ -84,6 +85,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             user_id = body_data.get('userId')
             repeat = body_data.get('repeat', 'none')
             excluded_dates = body_data.get('excludedDates', [])
+            repeat_until = body_data.get('repeatUntil')
             
             if not all([event_id, text, color, date, user_id]):
                 return {
@@ -97,8 +99,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                'INSERT INTO t_p36597579_calendar_week_grid.events (id, text, color, date, user_id, repeat, excluded_dates) VALUES (%s, %s, %s, %s, %s, %s, %s)',
-                (event_id, text, color, date, user_id, repeat, json.dumps(excluded_dates))
+                'INSERT INTO t_p36597579_calendar_week_grid.events (id, text, color, date, user_id, repeat, excluded_dates, repeat_until) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                (event_id, text, color, date, user_id, repeat, json.dumps(excluded_dates), repeat_until)
             )
             conn.commit()
             
@@ -122,6 +124,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             order = body_data.get('order')
             repeat = body_data.get('repeat', 'none')
             excluded_dates = body_data.get('excludedDates', [])
+            repeat_until = body_data.get('repeatUntil')
             
             if not event_id:
                 return {
@@ -136,13 +139,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if order is not None:
                 cur.execute(
-                    'UPDATE t_p36597579_calendar_week_grid.events SET text = %s, color = %s, date = %s, user_id = %s, order_num = %s, repeat = %s, excluded_dates = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
-                    (text, color, date, user_id, order, repeat, json.dumps(excluded_dates), event_id)
+                    'UPDATE t_p36597579_calendar_week_grid.events SET text = %s, color = %s, date = %s, user_id = %s, order_num = %s, repeat = %s, excluded_dates = %s, repeat_until = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
+                    (text, color, date, user_id, order, repeat, json.dumps(excluded_dates), repeat_until, event_id)
                 )
             else:
                 cur.execute(
-                    'UPDATE t_p36597579_calendar_week_grid.events SET text = %s, color = %s, date = %s, user_id = %s, repeat = %s, excluded_dates = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
-                    (text, color, date, user_id, repeat, json.dumps(excluded_dates), event_id)
+                    'UPDATE t_p36597579_calendar_week_grid.events SET text = %s, color = %s, date = %s, user_id = %s, repeat = %s, excluded_dates = %s, repeat_until = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
+                    (text, color, date, user_id, repeat, json.dumps(excluded_dates), repeat_until, event_id)
                 )
             conn.commit()
             

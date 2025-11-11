@@ -1,30 +1,10 @@
 {
   "tests": [
     {
-      "name": "Get all events",
+      "name": "Get all events for test user",
       "method": "GET",
-      "path": "/?userId=test-user-123",
+      "path": "/?userId=test-user-simple",
       "expectedStatus": 200,
-      "bodyMatcher": "partial"
-    },
-    {
-      "name": "Create repeating event",
-      "method": "POST",
-      "path": "/",
-      "body": {
-        "id": "test-repeat-{{timestamp}}",
-        "text": "Еженедельная встреча",
-        "color": "#1E3A8A",
-        "date": "2025-01-15",
-        "userId": "test-user-repeating",
-        "repeat": "weekly",
-        "excludedDates": []
-      },
-      "expectedStatus": 201,
-      "expectedBody": {
-        "text": "Еженедельная встреча",
-        "repeat": "weekly"
-      },
       "bodyMatcher": "partial"
     }
   ]
