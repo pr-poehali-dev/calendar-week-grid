@@ -164,7 +164,7 @@ const DesktopMonthView = ({
                         const isDragging = draggedEvent?.id === event.id;
                         const isMoving = movingEvent?.id === event.id;
                         const isDraggedOver = dragOverEvent === event.id;
-                        const isRepeating = event.repeat && event.repeat !== 'none' && event.date !== dateKey;
+                        const isRepeating = event.date !== dateKey;
                         return (
                         <div
                           key={event.id}
