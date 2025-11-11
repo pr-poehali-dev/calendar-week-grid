@@ -327,7 +327,7 @@ const Index = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="text-center py-3">
+        <div className="text-center py-1.5">
           <a 
             href="https://vk.com/fotoklubpro" 
             target="_blank" 
@@ -337,7 +337,7 @@ const Index = () => {
             Уроки фотографии
           </a>
         </div>
-        <div className="mb-1 flex items-center justify-between px-4 py-1">
+        <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
           <Button
             variant="ghost"
             size="icon"
