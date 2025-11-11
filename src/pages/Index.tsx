@@ -11,6 +11,7 @@ interface Event {
   text: string;
   color: string;
   date: string;
+  repeat?: string;
 }
 
 const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -41,6 +42,7 @@ const Index = () => {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [monthOffset, setMonthOffset] = useState(0);
+  const [viewAllDate, setViewAllDate] = useState<Date | null>(null);
 
   useEffect(() => {
     loadEvents();
@@ -125,7 +127,11 @@ const Index = () => {
     setIsDialogOpen(true);
     setNewEventText('');
     setSelectedColor(COLORS[0].value);
-    setRepeatType('none');
+  };
+
+  const handleViewAllClick = (date: Date, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setViewAllDate(date);
   };
 
   const handleEventClick = (event: Event, e: React.MouseEvent) => {
@@ -540,7 +546,12 @@ const Index = () => {
                             </div>
                           ))}
                           {dayEvents.length > 4 && (
-                            <div className="text-xs text-[#999] text-center">+{dayEvents.length - 4}</div>
+                            <div 
+                              onClick={(e) => handleViewAllClick(item.date, e)}
+                              className="text-xs text-[#999] text-center hover:text-[#0EA5E9] cursor-pointer transition-colors"
+                            >
+                              +{dayEvents.length - 4}
+                            </div>
                           )}
                         </div>
                       )}
@@ -552,6 +563,41 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* View All Events Dialog */}
+      <Dialog open={viewAllDate !== null} onOpenChange={() => setViewAllDate(null)}>
+        <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              События {viewAllDate && `${viewAllDate.getDate()} ${MONTHS[viewAllDate.getMonth()]} ${viewAllDate.getFullYear()}`}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 pt-4">
+            {viewAllDate && getEventsForDate(viewAllDate).map((event) => (
+              <div
+                key={event.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEventClick(event, e as any);
+                  setViewAllDate(null);
+                }}
+                className="p-3 rounded-lg cursor-pointer border-l-4 hover:opacity-80 transition-opacity"
+                style={{
+                  borderLeftColor: event.color,
+                  backgroundColor: `${event.color}15`
+                }}
+              >
+                <p className="text-sm text-white break-words">{event.text}</p>
+                {event.repeat !== 'none' && event.repeat && (
+                  <p className="text-xs text-white/60 mt-1">
+                    {event.repeat === 'weekly' ? '↻ Каждую неделю' : '↻ Каждый месяц'}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md">
