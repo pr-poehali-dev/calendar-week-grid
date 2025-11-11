@@ -460,8 +460,8 @@ const Index = () => {
         </div>
 
         {/* Desktop Month View */}
-        <div className="hidden md:block px-8 max-w-[1600px] mx-auto">
-          <div className="mb-6 flex items-center justify-between">
+        <div className="hidden md:flex md:flex-col px-8 mx-auto h-[calc(100vh-120px)]">
+          <div className="mb-4 flex items-center justify-between flex-shrink-0">
             <Button
               variant="ghost"
               size="icon"
@@ -485,15 +485,15 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-7 gap-3 mb-3">
+          <div className="grid grid-cols-7 gap-3 mb-2 flex-shrink-0">
             {DAYS_SHORT.map(day => (
-              <div key={day} className="text-center text-lg font-semibold text-[#999] py-3">
+              <div key={day} className="text-center text-base font-semibold text-[#999] py-2">
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-3">
+          <div className="grid grid-cols-7 gap-3 flex-1 content-start">
             {monthCalendar.dates.map((item, index) => {
               const dayEvents = getEventsForDate(item.date);
               const isTodayDate = isToday(item.date);
@@ -503,7 +503,7 @@ const Index = () => {
               return (
                 <Card
                   key={index}
-                  className={`aspect-square p-2 cursor-pointer transition-all duration-200 border rounded-lg ${
+                  className={`h-full p-3 cursor-pointer transition-all duration-200 border rounded-lg ${
                     isDragOver ? 'border-[#1E3A8A] bg-[#1E3A8A]/10' :
                     isTodayDate ? 'border-[#1E3A8A] bg-[#4A4A4A]' :
                     item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A]' : 'border-[#2A2A2A] bg-[#333333]'
