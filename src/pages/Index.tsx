@@ -20,7 +20,6 @@ const COLORS = [
   { value: '#1E3A8A', label: 'Тёмно-синий' },
   { value: '#0EA5E9', label: 'Синий' },
   { value: '#F97316', label: 'Оранжевый' },
-  { value: '#D946EF', label: 'Розовый' },
   { value: '#10B981', label: 'Зелёный' },
   { value: '#EF4444', label: 'Красный' },
 ];
@@ -309,7 +308,7 @@ const Index = () => {
             rel="noopener noreferrer"
             className="text-white text-xl font-bold hover:text-[#0EA5E9] transition-colors"
           >
-            Уроки фотографии
+            Календарь фотографа
           </a>
         </div>
         <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
