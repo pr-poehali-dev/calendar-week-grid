@@ -34,6 +34,7 @@ const Index = () => {
   const [draggedEvent, setDraggedEvent] = useState<Event | null>(null);
   const [dragOverDate, setDragOverDate] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
+  const [movingEvent, setMovingEvent] = useState<Event | null>(null);
 
   const getWeekDates = (offset: number) => {
     const today = new Date();
@@ -107,7 +108,27 @@ const Index = () => {
 
   const handleDeleteEvent = (eventId: string) => {
     setEvents(events.filter(e => e.id !== eventId));
+    setIsDialogOpen(false);
     toast.success('Событие удалено');
+  };
+
+  const handleMoveEvent = (event: Event, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setMovingEvent(event);
+    toast.info('Выберите новую дату для события');
+  };
+
+  const handleDateSelect = (date: Date) => {
+    if (movingEvent) {
+      const newDate = formatDateKey(date);
+      setEvents(events.map(e => 
+        e.id === movingEvent.id ? { ...e, date: newDate } : e
+      ));
+      setMovingEvent(null);
+      toast.success('Событие перенесено');
+    } else {
+      handleDayClick(date);
+    }
   };
 
   const handleDragStart = (event: Event) => {
@@ -194,7 +215,7 @@ const Index = () => {
                   isTodayDate ? 'border-[#8B5CF6] bg-[#4A4A4A] hover:shadow-lg' : 
                   'border-[#3A3A3A] bg-[#4A4A4A] hover:shadow-lg'
                 }`}
-                onClick={() => handleDayClick(date)}
+                onClick={() => handleDateSelect(date)}
                 onDragOver={(e) => handleDragOver(e, date)}
                 onDragLeave={handleDragLeave}
                 onDrop={() => handleDrop(date)}
@@ -216,6 +237,7 @@ const Index = () => {
                       <div className="space-y-2">
                         {dayEvents.map((event) => {
                           const isDragging = draggedEvent?.id === event.id;
+                          const isMoving = movingEvent?.id === event.id;
                           return (
                           <div
                             key={event.id}
@@ -224,7 +246,9 @@ const Index = () => {
                             onDragEnd={handleDragEnd}
                             onClick={(e) => handleEventClick(event, e)}
                             className={`p-2 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 border-l-4 flex items-start justify-between gap-2 ${
-                              isDragging ? 'opacity-40 scale-95' : 'opacity-100'
+                              isDragging ? 'opacity-40 scale-95' : 
+                              isMoving ? 'ring-2 ring-[#8B5CF6] animate-pulse' : 
+                              'opacity-100'
                             }`}
                             style={{ 
                               borderLeftColor: event.color,
@@ -235,13 +259,11 @@ const Index = () => {
                               {truncateText(event.text, 10)}
                             </p>
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteEvent(event.id);
-                              }}
-                              className="flex-shrink-0 text-[#999] hover:text-red-500 transition-colors"
+                              onClick={(e) => handleMoveEvent(event, e)}
+                              className="flex-shrink-0 text-[#8B5CF6] hover:text-[#7C3AED] transition-colors"
+                              title="Перенести событие"
                             >
-                              <Icon name="Trash2" className="w-4 h-4" />
+                              <Icon name="MoveRight" className="w-4 h-4" />
                             </button>
                           </div>
                         );
@@ -259,8 +281,17 @@ const Index = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {editingEvent ? 'Редактировать событие' : 'Новое событие'}
+            <DialogTitle className="flex items-center justify-between">
+              <span>{editingEvent ? 'Редактировать событие' : 'Новое событие'}</span>
+              {editingEvent && (
+                <button
+                  onClick={() => handleDeleteEvent(editingEvent.id)}
+                  className="text-red-400 hover:text-red-300 transition-colors p-2 hover:bg-red-400/10 rounded"
+                  title="Удалить событие"
+                >
+                  <Icon name="Trash2" className="w-5 h-5" />
+                </button>
+              )}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
