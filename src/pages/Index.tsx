@@ -151,20 +151,20 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F6F7] p-4 md:p-8">
+    <div className="min-h-screen bg-[#2A2A2A] p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6 flex items-center justify-between">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setWeekOffset(weekOffset - 1)}
-            className="hover:bg-white"
+            className="hover:bg-[#3A3A3A] text-white"
           >
             <Icon name="ChevronLeft" className="w-6 h-6" />
           </Button>
           
           <div className="text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-[#222]">
+            <h1 className="text-2xl md:text-3xl font-bold text-white">
               {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
             </h1>
           </div>
@@ -173,7 +173,7 @@ const Index = () => {
             variant="ghost"
             size="icon"
             onClick={() => setWeekOffset(weekOffset + 1)}
-            className="hover:bg-white"
+            className="hover:bg-[#3A3A3A] text-white"
           >
             <Icon name="ChevronRight" className="w-6 h-6" />
           </Button>
@@ -190,9 +190,9 @@ const Index = () => {
               <Card 
                 key={index}
                 className={`p-4 min-h-[100px] cursor-pointer transition-all duration-200 border-2 ${
-                  isDragOver ? 'border-[#8B5CF6] border-dashed bg-[#8B5CF6]/5 shadow-xl scale-[1.02]' :
-                  isTodayDate ? 'border-[#8B5CF6] bg-white hover:shadow-lg' : 
-                  'border-[#E5E5E5] bg-white hover:shadow-lg'
+                  isDragOver ? 'border-[#8B5CF6] border-dashed bg-[#8B5CF6]/10 shadow-xl scale-[1.02]' :
+                  isTodayDate ? 'border-[#8B5CF6] bg-[#E5E5E5] hover:shadow-lg' : 
+                  'border-[#3A3A3A] bg-[#E5E5E5] hover:shadow-lg'
                 }`}
                 onClick={() => handleDayClick(date)}
                 onDragOver={(e) => handleDragOver(e, date)}
@@ -200,7 +200,7 @@ const Index = () => {
                 onDrop={() => handleDrop(date)}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`flex-shrink-0 text-center min-w-[60px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#222]'}`}>
+                  <div className={`flex-shrink-0 text-center min-w-[60px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#333]'}`}>
                     <div className="text-sm font-medium">{DAYS_SHORT[index]}</div>
                     <div className={`text-2xl font-bold ${isTodayDate ? 'bg-[#8B5CF6] text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mt-1' : ''}`}>
                       {date.getDate()}
@@ -209,7 +209,7 @@ const Index = () => {
 
                   <div className="flex-1 min-h-[60px]">
                     {dayEvents.length === 0 ? (
-                      <div className="flex items-center justify-center h-full text-[#999]">
+                      <div className="flex items-center justify-center h-full text-[#666]">
                         <Icon name="Plus" className="w-5 h-5" />
                       </div>
                     ) : (
