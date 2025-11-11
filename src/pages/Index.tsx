@@ -58,6 +58,8 @@ const Index = () => {
   const [deleteTargetDate, setDeleteTargetDate] = useState<string | null>(null);
   const [forceDesktopView, setForceDesktopView] = useState(false);
   const [fillDay, setFillDay] = useState(false);
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [quickAddDate, setQuickAddDate] = useState<string>('');
 
   useEffect(() => {
     if (userId) {
@@ -155,6 +157,19 @@ const Index = () => {
     setSelectedColor(COLORS[0].value);
     setSelectedRepeat('none');
     setFillDay(false);
+  };
+
+  const handleQuickAdd = () => {
+    const today = new Date();
+    setQuickAddDate(formatDateKey(today));
+    setIsQuickAddOpen(true);
+  };
+
+  const handleQuickAddConfirm = () => {
+    if (!quickAddDate) return;
+    const date = new Date(quickAddDate);
+    setIsQuickAddOpen(false);
+    handleDayClick(date);
   };
 
   const handleViewAllClick = (date: Date, e: React.MouseEvent) => {
@@ -795,6 +810,15 @@ const Index = () => {
             );
           })}
           </div>
+
+          {/* Floating Add Button for Mobile */}
+          <Button
+            onClick={handleQuickAdd}
+            className="fixed bottom-6 left-6 w-14 h-14 rounded-full shadow-lg bg-[#1E3A8A] hover:bg-[#0EA5E9] z-50"
+            size="icon"
+          >
+            <Icon name="Plus" className="w-6 h-6" />
+          </Button>
         </div>
 
         {/* Desktop Month View */}
@@ -1150,6 +1174,42 @@ const Index = () => {
             >
               Отмена
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Add Date Picker Dialog */}
+      <Dialog open={isQuickAddOpen} onOpenChange={setIsQuickAddOpen}>
+        <DialogContent className="sm:max-w-md bg-[#4A4A4A] border-[#3A3A3A]">
+          <DialogHeader>
+            <DialogTitle className="text-white text-center">
+              Выберите дату
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <Input
+              type="date"
+              value={quickAddDate}
+              onChange={(e) => setQuickAddDate(e.target.value)}
+              className="w-full text-white bg-[#3A3A3A] border-[#555]"
+              autoFocus
+            />
+            <div className="flex gap-2">
+              <Button
+                onClick={handleQuickAddConfirm}
+                disabled={!quickAddDate}
+                className="flex-1 bg-[#1E3A8A] hover:bg-[#0EA5E9]"
+              >
+                Продолжить
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsQuickAddOpen(false)}
+                className="flex-1"
+              >
+                Отмена
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
