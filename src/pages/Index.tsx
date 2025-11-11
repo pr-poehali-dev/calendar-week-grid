@@ -328,17 +328,17 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#2A2A2A]">
       <div 
-        className="max-w-4xl mx-auto px-0"
+        className="max-w-4xl md:max-w-full mx-auto px-0"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="text-center py-1.5">
+        <div className="text-center py-1.5 md:py-4">
           <a 
             href="https://vk.com/fotoklubpro" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-white text-xl font-bold hover:text-[#0EA5E9] transition-colors"
+            className="text-white text-xl md:text-3xl font-bold hover:text-[#0EA5E9] transition-colors"
           >
             Календарь фотографа
           </a>
@@ -460,8 +460,8 @@ const Index = () => {
         </div>
 
         {/* Desktop Month View */}
-        <div className="hidden md:block px-4">
-          <div className="mb-4 flex items-center justify-between">
+        <div className="hidden md:block px-8 max-w-[1600px] mx-auto">
+          <div className="mb-6 flex items-center justify-between">
             <Button
               variant="ghost"
               size="icon"
@@ -471,7 +471,7 @@ const Index = () => {
               <Icon name="ChevronLeft" className="w-5 h-5" />
             </Button>
             
-            <h1 className="text-lg font-bold text-white">
+            <h1 className="text-2xl font-bold text-white">
               {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
             </h1>
 
@@ -485,15 +485,15 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-7 gap-2 mb-2">
+          <div className="grid grid-cols-7 gap-3 mb-3">
             {DAYS_SHORT.map(day => (
-              <div key={day} className="text-center text-sm font-semibold text-[#999] py-2">
+              <div key={day} className="text-center text-lg font-semibold text-[#999] py-3">
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-3">
             {monthCalendar.dates.map((item, index) => {
               const dayEvents = getEventsForDate(item.date);
               const isTodayDate = isToday(item.date);
