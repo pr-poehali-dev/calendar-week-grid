@@ -365,6 +365,58 @@ const Index = () => {
     return words.slice(0, wordLimit).join(' ') + '...';
   };
 
+  const exportEventsToFile = () => {
+    const sortedEvents = [...events].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA.getTime() - dateB.getTime();
+    });
+
+    let content = 'КАЛЕНДАРЬ ФОТОГРАФА\n';
+    content += '='.repeat(50) + '\n\n';
+
+    const groupedByDate: { [key: string]: Event[] } = {};
+    sortedEvents.forEach(event => {
+      if (!groupedByDate[event.date]) {
+        groupedByDate[event.date] = [];
+      }
+      groupedByDate[event.date].push(event);
+    });
+
+    Object.keys(groupedByDate).sort().forEach(dateKey => {
+      const date = new Date(dateKey);
+      const dayOfWeek = DAYS_SHORT[date.getDay() === 0 ? 6 : date.getDay() - 1];
+      content += `${dayOfWeek}, ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}\n`;
+      content += '-'.repeat(50) + '\n';
+      
+      const dayEvents = groupedByDate[dateKey].sort((a, b) => (a.order || 0) - (b.order || 0));
+      dayEvents.forEach((event, index) => {
+        content += `${index + 1}. ${event.text}\n`;
+        if (event.repeat && event.repeat !== 'none') {
+          const repeatLabel = event.repeat === 'weekly' ? 'Каждую неделю' : 'Каждый месяц';
+          content += `   (↻ ${repeatLabel})\n`;
+        }
+      });
+      content += '\n';
+    });
+
+    content += '\n' + '='.repeat(50) + '\n';
+    content += `Всего событий: ${events.length}\n`;
+    content += `Дата экспорта: ${new Date().toLocaleDateString('ru-RU')} ${new Date().toLocaleTimeString('ru-RU')}\n`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `календарь_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success('Календарь сохранён');
+  };
+
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
@@ -410,16 +462,14 @@ const Index = () => {
               <Icon name="ChevronLeft" className="w-4 h-4" />
             </Button>
             
-            <a 
-              href="https://vk.com/fotoklubpro" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-center flex-1"
+            <div
+              onClick={exportEventsToFile}
+              className="text-center flex-1 cursor-pointer"
             >
               <h1 className="text-xs font-bold text-white hover:text-[#0EA5E9] transition-colors">
                 {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
               </h1>
-            </a>
+            </div>
 
             <Button
               variant="ghost"
@@ -531,16 +581,14 @@ const Index = () => {
               <Icon name="ChevronLeft" className="w-5 h-5" />
             </Button>
             
-            <a 
-              href="https://vk.com/fotoklubpro" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex-1 text-center"
+            <div
+              onClick={exportEventsToFile}
+              className="flex-1 text-center cursor-pointer"
             >
               <h1 className="text-3xl font-bold text-white hover:text-[#0EA5E9] transition-colors">
                 {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
               </h1>
-            </a>
+            </div>
 
             <Button
               variant="ghost"
