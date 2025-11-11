@@ -303,7 +303,7 @@ const Index = () => {
             const isDragOver = dragOverDate === dateKey;
             
             const isLighterDay = index === 0 || index === 2 || index === 4;
-            const baseColor = isLighterDay ? 'bg-[#5A5A5A]' : 'bg-[#4A4A4A]';
+            const baseColor = isLighterDay ? 'bg-[#525252]' : 'bg-[#4A4A4A]';
             
             return (
               <Card 
