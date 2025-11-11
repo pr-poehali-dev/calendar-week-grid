@@ -326,14 +326,14 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#2A2A2A]">
+    <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
       <div 
-        className="max-w-4xl md:max-w-full mx-auto px-0"
+        className="max-w-4xl md:max-w-full md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="text-center py-1.5 md:py-4">
+        <div className="text-center py-1.5 md:py-3 md:flex-shrink-0">
           <a 
             href="https://vk.com/fotoklubpro" 
             target="_blank" 
@@ -460,7 +460,7 @@ const Index = () => {
         </div>
 
         {/* Desktop Month View */}
-        <div className="hidden md:flex md:flex-col px-8 mx-auto h-[calc(100vh-120px)]">
+        <div className="hidden md:flex md:flex-col md:flex-1 px-8 mx-auto md:overflow-hidden">
           <div className="mb-4 flex items-center justify-between flex-shrink-0">
             <Button
               variant="ghost"
