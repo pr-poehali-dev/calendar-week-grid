@@ -191,8 +191,8 @@ const Index = () => {
                 key={index}
                 className={`p-4 min-h-[100px] cursor-pointer transition-all duration-200 border-2 ${
                   isDragOver ? 'border-[#8B5CF6] border-dashed bg-[#8B5CF6]/10 shadow-xl scale-[1.02]' :
-                  isTodayDate ? 'border-[#8B5CF6] bg-[#E5E5E5] hover:shadow-lg' : 
-                  'border-[#3A3A3A] bg-[#E5E5E5] hover:shadow-lg'
+                  isTodayDate ? 'border-[#8B5CF6] bg-[#4A4A4A] hover:shadow-lg' : 
+                  'border-[#3A3A3A] bg-[#4A4A4A] hover:shadow-lg'
                 }`}
                 onClick={() => handleDayClick(date)}
                 onDragOver={(e) => handleDragOver(e, date)}
@@ -200,7 +200,7 @@ const Index = () => {
                 onDrop={() => handleDrop(date)}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`flex-shrink-0 text-center min-w-[60px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#333]'}`}>
+                  <div className={`flex-shrink-0 text-center min-w-[60px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#E5E5E5]'}`}>
                     <div className="text-sm font-medium">{DAYS_SHORT[index]}</div>
                     <div className={`text-2xl font-bold ${isTodayDate ? 'bg-[#8B5CF6] text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mt-1' : ''}`}>
                       {date.getDate()}
@@ -209,7 +209,7 @@ const Index = () => {
 
                   <div className="flex-1 min-h-[60px]">
                     {dayEvents.length === 0 ? (
-                      <div className="flex items-center justify-center h-full text-[#666]">
+                      <div className="flex items-center justify-center h-full text-[#999]">
                         <Icon name="Plus" className="w-5 h-5" />
                       </div>
                     ) : (
