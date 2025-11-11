@@ -420,15 +420,18 @@ const Index = () => {
     
     const repeatingEvents = events.filter(e => {
       if (!e.repeat || e.repeat === 'none') return false;
+      if (e.date === dateKey) return false;
       
       const eventDate = new Date(e.date);
       
       if (e.repeat === 'weekly') {
-        return eventDate.getDay() === date.getDay() && eventDate <= date;
+        return eventDate.getDay() === date.getDay() && eventDate < date;
       }
       
       if (e.repeat === 'monthly') {
-        return eventDate.getDate() === date.getDate() && eventDate <= date;
+        return eventDate.getDate() === date.getDate() && 
+               (eventDate.getFullYear() < date.getFullYear() || 
+                (eventDate.getFullYear() === date.getFullYear() && eventDate.getMonth() < date.getMonth()));
       }
       
       return false;
