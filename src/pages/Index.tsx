@@ -522,25 +522,25 @@ const Index = () => {
                     </div>
                     <div className="flex-1 overflow-hidden">
                       {dayEvents.length > 0 && (
-                        <div className="space-y-2">
-                          {dayEvents.slice(0, 2).map((event) => (
+                        <div className="space-y-1">
+                          {dayEvents.slice(0, 4).map((event) => (
                             <div
                               key={event.id}
                               draggable
                               onDragStart={() => handleDragStart(event)}
                               onDragEnd={handleDragEnd}
                               onClick={(e) => handleEventClick(event, e)}
-                              className="text-sm p-2 rounded border-l-2 truncate"
+                              className="text-xs p-1 rounded border-l-2 truncate leading-tight"
                               style={{
                                 borderLeftColor: event.color,
                                 backgroundColor: `${event.color}20`
                               }}
                             >
-                              <span className="text-white">{truncateText(event.text, 4)}</span>
+                              <span className="text-white">{truncateText(event.text, 3)}</span>
                             </div>
                           ))}
-                          {dayEvents.length > 2 && (
-                            <div className="text-sm text-[#999] text-center mt-1">+{dayEvents.length - 2}</div>
+                          {dayEvents.length > 4 && (
+                            <div className="text-xs text-[#999] text-center">+{dayEvents.length - 4}</div>
                           )}
                         </div>
                       )}
