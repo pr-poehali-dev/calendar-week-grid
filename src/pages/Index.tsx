@@ -834,7 +834,7 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-7 gap-1 pb-6" style={{ gridAutoRows: 'minmax(200px, auto)' }}>
+          <div className="grid grid-cols-7 gap-0.5 pb-6" style={{ gridAutoRows: 'minmax(200px, auto)' }}>
             {monthCalendar.dates.map((item, index) => {
               const dayEvents = getEventsForDate(item.date);
               const isTodayDate = isToday(item.date);
@@ -843,6 +843,7 @@ const Index = () => {
               const dayOfWeekRaw = item.date.getDay();
               const dayOfWeek = dayOfWeekRaw === 0 ? 6 : dayOfWeekRaw - 1;
               const dayName = DAYS_SHORT[dayOfWeek];
+              const isSunday = dayOfWeekRaw === 0;
               
               return (
                 <Card
@@ -850,6 +851,7 @@ const Index = () => {
                   className={`h-full p-4 cursor-pointer transition-all duration-200 border rounded-lg ${
                     isDragOver ? 'border-[#1E3A8A] bg-[#1E3A8A]/10' :
                     isTodayDate ? 'border-[#1E3A8A] bg-[#4A4A4A]' :
+                    isSunday && item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A] ring-1 ring-red-900/30' :
                     item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A]' : 'border-[#2A2A2A] bg-[#333333]'
                   }`}
                   onClick={() => handleDateSelect(item.date)}
@@ -866,6 +868,7 @@ const Index = () => {
                         {item.date.getDate()}
                       </div>
                       <div className={`text-sm font-medium ${
+                        isSunday && item.isCurrentMonth ? 'text-red-400' :
                         item.isCurrentMonth ? 'text-[#999]' : 'text-[#555]'
                       }`}>
                         {dayName}
