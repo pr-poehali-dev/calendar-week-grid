@@ -58,8 +58,6 @@ const Index = () => {
   const [deleteTargetDate, setDeleteTargetDate] = useState<string | null>(null);
   const [forceDesktopView, setForceDesktopView] = useState(false);
   const [fillDay, setFillDay] = useState(false);
-  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
-  const [quickAddMonthOffset, setQuickAddMonthOffset] = useState(0);
   const [historyDate, setHistoryDate] = useState<Date | null>(null);
   const [historyData, setHistoryData] = useState<{holidays: string[], events: string[]} | null>(null);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -160,20 +158,6 @@ const Index = () => {
     setSelectedColor(COLORS[0].value);
     setSelectedRepeat('none');
     setFillDay(false);
-  };
-
-  const handleQuickAdd = () => {
-    setQuickAddMonthOffset(0);
-    setIsQuickAddOpen(true);
-  };
-
-  const handleQuickAddDateSelect = (date: Date) => {
-    setIsQuickAddOpen(false);
-    handleDayClick(date);
-  };
-
-  const getQuickAddCalendar = () => {
-    return getMonthCalendar(quickAddMonthOffset);
   };
 
   const handleDayNameClick = async (date: Date, e: React.MouseEvent) => {
