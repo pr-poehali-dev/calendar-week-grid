@@ -12,6 +12,7 @@ interface Event {
   color: string;
   date: string;
   repeat?: string;
+  order?: number;
 }
 
 const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -43,6 +44,7 @@ const Index = () => {
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [monthOffset, setMonthOffset] = useState(0);
   const [viewAllDate, setViewAllDate] = useState<Date | null>(null);
+  const [dragOverEvent, setDragOverEvent] = useState<string | null>(null);
 
   useEffect(() => {
     loadEvents();
@@ -256,6 +258,7 @@ const Index = () => {
 
   const handleDragEnd = () => {
     setDragOverDate(null);
+    setDragOverEvent(null);
   };
 
   const handleDragOver = (e: React.DragEvent, date: Date) => {
@@ -296,9 +299,64 @@ const Index = () => {
     }
   };
 
+  const handleEventDragOver = (e: React.DragEvent, targetEvent: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (draggedEvent && draggedEvent.id !== targetEvent.id) {
+      setDragOverEvent(targetEvent.id);
+    }
+  };
+
+  const handleEventDrop = async (e: React.DragEvent, targetEvent: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!draggedEvent || draggedEvent.id === targetEvent.id || draggedEvent.date !== targetEvent.date) {
+      setDragOverEvent(null);
+      return;
+    }
+
+    const sameDate = draggedEvent.date === targetEvent.date;
+    if (sameDate) {
+      const dayEvents = events.filter(e => e.date === targetEvent.date).sort((a, b) => (a.order || 0) - (b.order || 0));
+      const draggedIndex = dayEvents.findIndex(e => e.id === draggedEvent.id);
+      const targetIndex = dayEvents.findIndex(e => e.id === targetEvent.id);
+      
+      const reorderedEvents = [...dayEvents];
+      const [removed] = reorderedEvents.splice(draggedIndex, 1);
+      reorderedEvents.splice(targetIndex, 0, removed);
+      
+      const updatedEvents = reorderedEvents.map((event, index) => ({
+        ...event,
+        order: index
+      }));
+      
+      try {
+        await Promise.all(updatedEvents.map(event => 
+          fetch(API_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(event)
+          })
+        ));
+        
+        const otherEvents = events.filter(e => e.date !== targetEvent.date);
+        setEvents([...otherEvents, ...updatedEvents]);
+        toast.success('Порядок изменён');
+      } catch (error) {
+        toast.error('Ошибка изменения порядка');
+      }
+    }
+    
+    setDraggedEvent(null);
+    setDragOverEvent(null);
+  };
+
   const getEventsForDate = (date: Date) => {
     const dateKey = formatDateKey(date);
-    return events.filter(e => e.date === dateKey);
+    return events
+      .filter(e => e.date === dateKey)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
   };
 
   const truncateText = (text: string, wordLimit: number = 10) => {
@@ -536,16 +594,20 @@ const Index = () => {
                           {dayEvents.slice(0, 4).map((event) => {
                             const isDragging = draggedEvent?.id === event.id;
                             const isMoving = movingEvent?.id === event.id;
+                            const isDraggedOver = dragOverEvent === event.id;
                             return (
                             <div
                               key={event.id}
                               draggable
                               onDragStart={() => handleDragStart(event)}
                               onDragEnd={handleDragEnd}
+                              onDragOver={(e) => handleEventDragOver(e, event)}
+                              onDrop={(e) => handleEventDrop(e, event)}
                               onClick={(e) => handleEventClick(event, e)}
-                              className={`text-sm p-1.5 rounded border-l-2 cursor-move leading-tight ${
+                              className={`text-sm p-1.5 rounded border-l-2 cursor-move leading-tight transition-all ${
                                 isDragging ? 'opacity-40' :
                                 isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' :
+                                isDraggedOver ? 'ring-2 ring-[#0EA5E9] scale-105' :
                                 'opacity-100'
                               }`}
                               style={{
