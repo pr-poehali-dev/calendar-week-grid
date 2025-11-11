@@ -339,16 +339,7 @@ const Index = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="text-center py-1.5 md:py-3 md:flex-shrink-0">
-          <a 
-            href="https://vk.com/fotoklubpro" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-white text-xl md:text-3xl font-bold hover:text-[#0EA5E9] transition-colors"
-          >
-            Календарь фотографа
-          </a>
-        </div>
+
         {/* Mobile Week View */}
         <div className="md:hidden">
           <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
@@ -361,11 +352,16 @@ const Index = () => {
               <Icon name="ChevronLeft" className="w-4 h-4" />
             </Button>
             
-            <div className="text-center">
-              <h1 className="text-xs font-bold text-white">
+            <a 
+              href="https://vk.com/fotoklubpro" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-center flex-1"
+            >
+              <h1 className="text-xs font-bold text-white hover:text-[#0EA5E9] transition-colors">
                 {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
               </h1>
-            </div>
+            </a>
 
             <Button
               variant="ghost"
@@ -477,9 +473,16 @@ const Index = () => {
               <Icon name="ChevronLeft" className="w-5 h-5" />
             </Button>
             
-            <h1 className="text-3xl font-bold text-white">
-              {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
-            </h1>
+            <a 
+              href="https://vk.com/fotoklubpro" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex-1 text-center"
+            >
+              <h1 className="text-3xl font-bold text-white hover:text-[#0EA5E9] transition-colors">
+                {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
+              </h1>
+            </a>
 
             <Button
               variant="ghost"
