@@ -811,7 +811,7 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-7 gap-2 pb-6" style={{ gridAutoRows: 'minmax(150px, auto)' }}>
+          <div className="grid grid-cols-7 gap-1 pb-6" style={{ gridAutoRows: 'minmax(200px, auto)' }}>
             {monthCalendar.dates.map((item, index) => {
               const dayEvents = getEventsForDate(item.date);
               const isTodayDate = isToday(item.date);
