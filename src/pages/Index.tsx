@@ -430,7 +430,6 @@ const Index = () => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
-              <span>{editingEvent ? 'Редактировать событие' : 'Новое событие'}</span>
               {editingEvent && (
                 <button
                   onClick={() => handleDeleteEvent(editingEvent.id)}
@@ -440,6 +439,8 @@ const Index = () => {
                   <Icon name="Trash2" className="w-5 h-5" />
                 </button>
               )}
+              <span className="flex-1 text-center">{editingEvent ? 'Редактировать событие' : 'Новое событие'}</span>
+              <div className="w-9"></div>
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
