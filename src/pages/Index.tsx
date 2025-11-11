@@ -17,11 +17,12 @@ const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
                 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const COLORS = [
-  { value: '#8B5CF6', label: 'Фиолетовый' },
+  { value: '#1E3A8A', label: 'Тёмно-синий' },
   { value: '#0EA5E9', label: 'Синий' },
   { value: '#F97316', label: 'Оранжевый' },
   { value: '#D946EF', label: 'Розовый' },
   { value: '#10B981', label: 'Зелёный' },
+  { value: '#EF4444', label: 'Красный' },
 ];
 
 const API_URL = 'https://functions.poehali.dev/992d8e44-58a4-4f61-badd-a38834435786';
