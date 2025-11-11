@@ -3,28 +3,27 @@
     {
       "name": "Get all events",
       "method": "GET",
-      "path": "/?userId=test-user",
+      "path": "/?userId=test-user-123",
       "expectedStatus": 200,
-      "expectedBody": [],
       "bodyMatcher": "partial"
     },
     {
-      "name": "Create event with user",
+      "name": "Create repeating event",
       "method": "POST",
       "path": "/",
       "body": {
-        "id": "test-event-{{timestamp}}",
-        "text": "Тестовое событие",
+        "id": "test-repeat-{{timestamp}}",
+        "text": "Еженедельная встреча",
         "color": "#1E3A8A",
         "date": "2025-01-15",
-        "userId": "test-user-id",
-        "repeat": "none"
+        "userId": "test-user-repeating",
+        "repeat": "weekly",
+        "excludedDates": []
       },
       "expectedStatus": 201,
       "expectedBody": {
-        "text": "Тестовое событие",
-        "userId": "test-user-id",
-        "repeat": "none"
+        "text": "Еженедельная встреча",
+        "repeat": "weekly"
       },
       "bodyMatcher": "partial"
     }

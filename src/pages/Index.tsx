@@ -14,6 +14,7 @@ interface Event {
   repeat?: string;
   order?: number;
   userId?: string;
+  excludedDates?: string[];
 }
 
 const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -52,6 +53,7 @@ const Index = () => {
   const [selectedRepeat, setSelectedRepeat] = useState<'none' | 'weekly' | 'monthly'>('none');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
+  const [deleteTargetDate, setDeleteTargetDate] = useState<string | null>(null);
 
   useEffect(() => {
     if (userId) {
@@ -155,12 +157,12 @@ const Index = () => {
     setViewAllDate(date);
   };
 
-  const handleEventClick = (event: Event, e: React.MouseEvent) => {
+  const handleEventClick = (event: Event, e: React.MouseEvent, currentDate?: string) => {
     e.stopPropagation();
     setEditingEvent(event);
     setNewEventText(event.text);
     setSelectedColor(event.color);
-    setSelectedDate(event.date);
+    setSelectedDate(currentDate || event.date);
     setSelectedRepeat((event.repeat as 'none' | 'weekly' | 'monthly') || 'none');
     setIsDialogOpen(true);
   };
@@ -199,7 +201,8 @@ const Index = () => {
           color: selectedColor,
           date: selectedDate,
           userId,
-          repeat: selectedRepeat
+          repeat: selectedRepeat,
+          excludedDates: []
         };
 
         const response = await fetch(API_URL, {
@@ -219,42 +222,25 @@ const Index = () => {
     }
   };
 
-  const handleDeleteEvent = async (eventId: string) => {
+  const handleDeleteEvent = async (eventId: string, targetDate?: string) => {
     const event = events.find(e => e.id === eventId);
     
     if (event && event.repeat && event.repeat !== 'none') {
       setEventToDelete(event);
+      setDeleteTargetDate(targetDate || event.date);
       setDeleteDialogOpen(true);
       return;
     }
     
-    await deleteEvent(eventId, false);
+    await deleteEvent(eventId, 'all', targetDate);
   };
 
-  const deleteEvent = async (eventId: string, keepRepeating: boolean) => {
+  const deleteEvent = async (eventId: string, mode: 'all' | 'one' | 'future', targetDate?: string) => {
     try {
-      if (keepRepeating) {
-        const event = events.find(e => e.id === eventId);
-        if (event) {
-          const response = await fetch(API_URL, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ...event,
-              repeat: 'none'
-            })
-          });
-          
-          if (response.ok) {
-            setEvents(events.map(e => 
-              e.id === eventId ? { ...e, repeat: 'none' } : e
-            ));
-            setIsDialogOpen(false);
-            setDeleteDialogOpen(false);
-            toast.success('Повторение отключено');
-          }
-        }
-      } else {
+      const event = events.find(e => e.id === eventId);
+      if (!event) return;
+
+      if (mode === 'all') {
         const response = await fetch(`${API_URL}?id=${eventId}`, {
           method: 'DELETE'
         });
@@ -263,7 +249,48 @@ const Index = () => {
           setEvents(events.filter(e => e.id !== eventId));
           setIsDialogOpen(false);
           setDeleteDialogOpen(false);
-          toast.success('Событие удалено');
+          toast.success('Все повторения удалены');
+        }
+      } else if (mode === 'one' && targetDate) {
+        const excludedDates = event.excludedDates || [];
+        if (!excludedDates.includes(targetDate)) {
+          excludedDates.push(targetDate);
+        }
+        
+        const response = await fetch(API_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...event,
+            excludedDates
+          })
+        });
+        
+        if (response.ok) {
+          setEvents(events.map(e => 
+            e.id === eventId ? { ...e, excludedDates } : e
+          ));
+          setIsDialogOpen(false);
+          setDeleteDialogOpen(false);
+          toast.success('Это повторение удалено');
+        }
+      } else if (mode === 'future' && targetDate) {
+        const response = await fetch(API_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...event,
+            repeat: 'none'
+          })
+        });
+        
+        if (response.ok) {
+          setEvents(events.map(e => 
+            e.id === eventId ? { ...e, repeat: 'none' } : e
+          ));
+          setIsDialogOpen(false);
+          setDeleteDialogOpen(false);
+          toast.success('Будущие повторения удалены');
         }
       }
     } catch (error) {
@@ -421,6 +448,8 @@ const Index = () => {
     const repeatingEvents = events.filter(e => {
       if (!e.repeat || e.repeat === 'none') return false;
       if (e.date === dateKey) return false;
+      
+      if (e.excludedDates && e.excludedDates.includes(dateKey)) return false;
       
       const eventDate = new Date(e.date);
       
@@ -689,7 +718,7 @@ const Index = () => {
                             draggable
                             onDragStart={() => handleDragStart(event)}
                             onDragEnd={handleDragEnd}
-                            onClick={(e) => handleEventClick(event, e)}
+                            onClick={(e) => handleEventClick(event, e, dateKey)}
                             className={`p-2 rounded-lg cursor-pointer border-l-4 flex items-start justify-between gap-2 ${
                               isDragging ? 'opacity-40' : 
                               isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' : 
@@ -824,7 +853,7 @@ const Index = () => {
                               onDragEnd={handleDragEnd}
                               onDragOver={(e) => handleEventDragOver(e, event)}
                               onDrop={(e) => handleEventDrop(e, event)}
-                              onClick={(e) => handleEventClick(event, e)}
+                              onClick={(e) => handleEventClick(event, e, dateKey)}
                               className={`text-sm p-1.5 rounded border-l-2 cursor-move leading-tight transition-all duration-300 ease-in-out ${
                                 isDragging ? 'opacity-40 scale-95' :
                                 isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' :
@@ -873,7 +902,7 @@ const Index = () => {
                 key={event.id}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleEventClick(event, e as any);
+                  handleEventClick(event, e as any, formatDateKey(viewAllDate));
                   setViewAllDate(null);
                 }}
                 className="p-3 rounded-lg cursor-pointer border-l-4 hover:opacity-80 transition-opacity"
@@ -917,7 +946,7 @@ const Index = () => {
             <DialogTitle className="flex items-center justify-between">
               {editingEvent && (
                 <button
-                  onClick={() => handleDeleteEvent(editingEvent.id)}
+                  onClick={() => handleDeleteEvent(editingEvent.id, selectedDate || undefined)}
                   className="text-red-400 hover:text-red-300 transition-colors p-2 hover:bg-red-400/10 rounded"
                   title="Удалить событие"
                 >
@@ -1023,20 +1052,28 @@ const Index = () => {
               Это событие повторяется. Что вы хотите сделать?
             </p>
             <Button
-              onClick={() => eventToDelete && deleteEvent(eventToDelete.id, false)}
+              onClick={() => eventToDelete && deleteEvent(eventToDelete.id, 'one', deleteTargetDate || undefined)}
+              variant="outline"
+              className="w-full"
+            >
+              <Icon name="X" className="w-4 h-4 mr-2" />
+              Удалить только это
+            </Button>
+            <Button
+              onClick={() => eventToDelete && deleteEvent(eventToDelete.id, 'future', deleteTargetDate || undefined)}
+              variant="outline"
+              className="w-full"
+            >
+              <Icon name="CalendarX" className="w-4 h-4 mr-2" />
+              Удалить это и будущие
+            </Button>
+            <Button
+              onClick={() => eventToDelete && deleteEvent(eventToDelete.id, 'all', deleteTargetDate || undefined)}
               variant="destructive"
               className="w-full"
             >
               <Icon name="Trash2" className="w-4 h-4 mr-2" />
               Удалить все повторения
-            </Button>
-            <Button
-              onClick={() => eventToDelete && deleteEvent(eventToDelete.id, true)}
-              variant="outline"
-              className="w-full"
-            >
-              <Icon name="CalendarX" className="w-4 h-4 mr-2" />
-              Отключить повторение
             </Button>
             <Button
               onClick={() => {
