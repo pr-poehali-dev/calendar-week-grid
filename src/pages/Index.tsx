@@ -17,7 +17,7 @@ const Index = () => {
   const [dragOverDate, setDragOverDate] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
   const [movingEvent, setMovingEvent] = useState<Event | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); 
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [monthOffset, setMonthOffset] = useState(0);
