@@ -167,6 +167,7 @@ const MobileWeekView = ({
                     {dayEvents.map((event) => {
                       const isDragging = draggedEvent?.id === event.id;
                       const isMoving = movingEvent?.id === event.id;
+                      const isGreen = event.color === '#10B981';
                       return (
                       <div
                         key={event.id}
@@ -177,6 +178,7 @@ const MobileWeekView = ({
                         className={`p-2 rounded-lg cursor-pointer border-l-4 flex items-start justify-between gap-2 ${
                           isDragging ? 'opacity-40' : 
                           isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' : 
+                          isGreen ? 'opacity-50' :
                           'opacity-100'
                         }`}
                         style={{ 

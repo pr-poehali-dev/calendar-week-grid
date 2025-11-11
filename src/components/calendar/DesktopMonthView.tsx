@@ -164,6 +164,7 @@ const DesktopMonthView = ({
                         const isDragging = draggedEvent?.id === event.id;
                         const isMoving = movingEvent?.id === event.id;
                         const isDraggedOver = dragOverEvent === event.id;
+                        const isGreen = event.color === '#10B981';
                         return (
                         <div
                           key={event.id}
@@ -177,6 +178,7 @@ const DesktopMonthView = ({
                             isDragging ? 'opacity-50' :
                             isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' :
                             isDraggedOver ? 'ring-2 ring-[#0EA5E9] shadow-lg' :
+                            isGreen ? 'opacity-50' :
                             'hover:shadow-md'
                           }`}
                           style={{
