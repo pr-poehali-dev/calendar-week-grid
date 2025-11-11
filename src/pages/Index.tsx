@@ -360,10 +360,10 @@ const Index = () => {
                 onDragLeave={handleDragLeave}
                 onDrop={() => handleDrop(date)}
               >
-                <div className="flex items-start gap-4">
-                  <div className={`flex-shrink-0 text-center min-w-[40px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#E5E5E5]'}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`flex-shrink-0 text-left min-w-[35px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#E5E5E5]'}`}>
                     <div className="text-xs font-medium">{DAYS_SHORT[index]}</div>
-                    <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#8B5CF6] text-white rounded-full w-7 h-7 flex items-center justify-center mx-auto mt-1' : ''}`}>
+                    <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#8B5CF6] text-white rounded-full w-7 h-7 flex items-center justify-center mt-1' : ''}`}>
                       {date.getDate()}
                     </div>
                   </div>
