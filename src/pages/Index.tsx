@@ -28,6 +28,8 @@ const COLORS = [
 ];
 
 const API_URL = 'https://functions.poehali.dev/992d8e44-58a4-4f61-badd-a38834435786';
+const VK_APP_ID = '52686627';
+const REDIRECT_URI = window.location.origin;
 
 const Index = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -48,15 +50,30 @@ const Index = () => {
   const [dragOverEvent, setDragOverEvent] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(localStorage.getItem('calendar_user_id'));
   const [isAuthOpen, setIsAuthOpen] = useState(!localStorage.getItem('calendar_user_id'));
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
     if (userId) {
       loadEvents();
     }
   }, [userId]);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get('access_token');
+      const vkUserId = params.get('user_id');
+      
+      if (accessToken && vkUserId) {
+        localStorage.setItem('calendar_user_id', vkUserId);
+        localStorage.setItem('vk_access_token', accessToken);
+        setUserId(vkUserId);
+        setIsAuthOpen(false);
+        window.history.replaceState(null, '', window.location.pathname);
+        toast.success('Вы вошли через VK');
+      }
+    }
+  }, []);
 
   const loadEvents = async () => {
     if (!userId) return;
@@ -466,35 +483,14 @@ const Index = () => {
     }
   };
 
-  const handleAuth = async () => {
-    if (!username.trim() || !password.trim()) {
-      toast.error('Заполните все поля');
-      return;
-    }
-
-    const userIdHash = btoa(`${username}:${password}`);
-
-    if (isRegistering) {
-      localStorage.setItem('calendar_user_id', userIdHash);
-      localStorage.setItem('calendar_username', username);
-      setUserId(userIdHash);
-      setIsAuthOpen(false);
-      toast.success(`Добро пожаловать, ${username}!`);
-    } else {
-      const storedUserId = localStorage.getItem('calendar_user_id');
-      if (storedUserId === userIdHash) {
-        setUserId(userIdHash);
-        setIsAuthOpen(false);
-        toast.success('Вы вошли в систему');
-      } else {
-        toast.error('Неверное имя пользователя или пароль');
-      }
-    }
+  const handleVKLogin = () => {
+    const vkAuthUrl = `https://oauth.vk.com/authorize?client_id=${VK_APP_ID}&display=page&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=&response_type=token&v=5.131`;
+    window.location.href = vkAuthUrl;
   };
 
   const handleLogout = () => {
     localStorage.removeItem('calendar_user_id');
-    localStorage.removeItem('calendar_username');
+    localStorage.removeItem('vk_access_token');
     setUserId(null);
     setIsAuthOpen(true);
     setEvents([]);
@@ -505,43 +501,20 @@ const Index = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#2A2A2A]">
         <Card className="w-full max-w-md p-8 bg-[#4A4A4A] border-[#3A3A3A]">
-          <div className="text-center mb-6">
+          <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">Календарь фотографа</h1>
-            <p className="text-[#999]">{isRegistering ? 'Создайте аккаунт' : 'Войдите в систему'}</p>
+            <p className="text-[#999]">Войдите через ВКонтакте</p>
           </div>
           
-          <div className="space-y-4">
-            <Input
-              placeholder="Имя пользователя"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAuth()}
-              className="bg-[#2A2A2A] border-[#3A3A3A] text-white"
-              autoFocus
-            />
-            <Input
-              type="password"
-              placeholder="Пароль"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAuth()}
-              className="bg-[#2A2A2A] border-[#3A3A3A] text-white"
-            />
-            
-            <Button 
-              onClick={handleAuth}
-              className="w-full bg-[#1E3A8A] hover:bg-[#0EA5E9]"
-            >
-              {isRegistering ? 'Зарегистрироваться' : 'Войти'}
-            </Button>
-            
-            <button
-              onClick={() => setIsRegistering(!isRegistering)}
-              className="w-full text-[#0EA5E9] hover:text-[#1E3A8A] text-sm transition-colors"
-            >
-              {isRegistering ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
-            </button>
-          </div>
+          <Button 
+            onClick={handleVKLogin}
+            className="w-full bg-[#0077FF] hover:bg-[#0066DD] text-white py-6 text-lg font-semibold"
+          >
+            <svg className="w-6 h-6 mr-3" viewBox="0 0 48 48" fill="currentColor">
+              <path d="M25.26 32.3h2.16s.66-.07.99-.44c.31-.34.3-.98.3-.98s-.04-2.99 1.35-3.43c1.36-.44 3.11 2.89 4.97 4.17 1.4 1 2.47.78 2.47.78l4.96-.07s2.59-.16.86-2.2c-.04-.07-.32-.68-1.65-1.92-1.39-1.3-1.2-1.09.47-3.33 1.02-1.37 1.42-2.2 1.3-2.56-.13-.33-.95-.25-.95-.25l-5.58.04s-.41-.06-.72.13c-.3.18-.49.61-.49.61s-.88 2.35-2.05 4.35c-2.47 4.21-3.46 4.43-3.86 4.17-.94-.61-.7-2.45-.7-3.76 0-4.08.62-5.78-.12-6.22-.24-.14-.42-.24-1.04-.25-.8-.02-1.47 0-1.85.19-.26.13-.45.41-.33.43.15.02.48.09.66.34.23.32.22.94.22.94s.13 4.8-.3 5.4c-.3.41-.7.16-1.57-1.9-.45-.63-.89-1.8-1.18-2.69 0 0-.1-.24-.28-.36-.21-.15-.51-.2-.51-.2l-5.3.03s-.8.02-.09.68c.65.6 1.37 2.09 2.1 3.5.53.78 1.54 2.44 3.21 4.23 2.17 2.35 3.71 3.05 7.13 3.05z"/>
+            </svg>
+            Войти через ВКонтакте
+          </Button>
         </Card>
       </div>
     );
