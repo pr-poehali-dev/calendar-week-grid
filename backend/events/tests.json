@@ -13,17 +13,18 @@
       "method": "POST",
       "path": "/",
       "body": {
-        "id": "test-event-123",
+        "id": "test-event-{{timestamp}}",
         "text": "Тестовое событие",
         "color": "#1E3A8A",
         "date": "2025-01-15",
-        "userId": "test-user-id"
+        "userId": "test-user-id",
+        "repeat": "none"
       },
       "expectedStatus": 201,
       "expectedBody": {
-        "id": "test-event-123",
         "text": "Тестовое событие",
-        "userId": "test-user-id"
+        "userId": "test-user-id",
+        "repeat": "none"
       },
       "bodyMatcher": "partial"
     }

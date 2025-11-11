@@ -49,6 +49,7 @@ const Index = () => {
   const [userId, setUserId] = useState<string | null>(localStorage.getItem('calendar_user_id'));
   const [isAuthOpen, setIsAuthOpen] = useState(!localStorage.getItem('calendar_user_id'));
   const [vkIdInput, setVkIdInput] = useState('');
+  const [selectedRepeat, setSelectedRepeat] = useState<'none' | 'weekly' | 'monthly'>('none');
 
   useEffect(() => {
     if (userId) {
@@ -144,6 +145,7 @@ const Index = () => {
     setIsDialogOpen(true);
     setNewEventText('');
     setSelectedColor(COLORS[0].value);
+    setSelectedRepeat('none');
   };
 
   const handleViewAllClick = (date: Date, e: React.MouseEvent) => {
@@ -157,6 +159,7 @@ const Index = () => {
     setNewEventText(event.text);
     setSelectedColor(event.color);
     setSelectedDate(event.date);
+    setSelectedRepeat((event.repeat as 'none' | 'weekly' | 'monthly') || 'none');
     setIsDialogOpen(true);
   };
 
@@ -173,14 +176,15 @@ const Index = () => {
             text: newEventText,
             color: selectedColor,
             date: selectedDate,
-            userId
+            userId,
+            repeat: selectedRepeat
           })
         });
         
         if (response.ok) {
           setEvents(events.map(e => 
             e.id === editingEvent.id 
-              ? { ...e, text: newEventText, color: selectedColor, date: selectedDate }
+              ? { ...e, text: newEventText, color: selectedColor, date: selectedDate, repeat: selectedRepeat }
               : e
           ));
           setIsDialogOpen(false);
@@ -192,7 +196,8 @@ const Index = () => {
           text: newEventText,
           color: selectedColor,
           date: selectedDate,
-          userId
+          userId,
+          repeat: selectedRepeat
         };
 
         const response = await fetch(API_URL, {
@@ -373,8 +378,30 @@ const Index = () => {
 
   const getEventsForDate = (date: Date) => {
     const dateKey = formatDateKey(date);
-    return events
-      .filter(e => e.date === dateKey)
+    const baseEvents = events.filter(e => e.date === dateKey);
+    
+    const repeatingEvents = events.filter(e => {
+      if (!e.repeat || e.repeat === 'none') return false;
+      
+      const eventDate = new Date(e.date);
+      
+      if (e.repeat === 'weekly') {
+        return eventDate.getDay() === date.getDay() && eventDate <= date;
+      }
+      
+      if (e.repeat === 'monthly') {
+        return eventDate.getDate() === date.getDate() && eventDate <= date;
+      }
+      
+      return false;
+    });
+    
+    const uniqueEvents = new Map();
+    [...baseEvents, ...repeatingEvents].forEach(e => {
+      uniqueEvents.set(e.id, e);
+    });
+    
+    return Array.from(uniqueEvents.values())
       .sort((a, b) => (a.order || 0) - (b.order || 0));
   };
 
@@ -888,6 +915,38 @@ const Index = () => {
                     title={color.label}
                   />
                 ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-sm text-[#666] mb-2">Повторять событие:</p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={selectedRepeat === 'none' ? 'default' : 'outline'}
+                  onClick={() => setSelectedRepeat('none')}
+                  className="flex-1"
+                >
+                  Не повторять
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedRepeat === 'weekly' ? 'default' : 'outline'}
+                  onClick={() => setSelectedRepeat('weekly')}
+                  className="flex-1"
+                >
+                  <Icon name="Calendar" className="w-4 h-4 mr-1" />
+                  Еженедельно
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedRepeat === 'monthly' ? 'default' : 'outline'}
+                  onClick={() => setSelectedRepeat('monthly')}
+                  className="flex-1"
+                >
+                  <Icon name="CalendarDays" className="w-4 h-4 mr-1" />
+                  Ежемесячно
+                </Button>
               </div>
             </div>
 

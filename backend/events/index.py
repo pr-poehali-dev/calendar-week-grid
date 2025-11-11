@@ -81,6 +81,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             color = body_data.get('color')
             date = body_data.get('date')
             user_id = body_data.get('userId')
+            repeat = body_data.get('repeat', 'none')
             
             if not all([event_id, text, color, date, user_id]):
                 return {
@@ -94,8 +95,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             cur.execute(
-                'INSERT INTO t_p36597579_calendar_week_grid.events (id, text, color, date, user_id) VALUES (%s, %s, %s, %s, %s)',
-                (event_id, text, color, date, user_id)
+                'INSERT INTO t_p36597579_calendar_week_grid.events (id, text, color, date, user_id, repeat) VALUES (%s, %s, %s, %s, %s, %s)',
+                (event_id, text, color, date, user_id, repeat)
             )
             conn.commit()
             
@@ -105,7 +106,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'id': event_id, 'text': text, 'color': color, 'date': date, 'userId': user_id}),
+                'body': json.dumps({'id': event_id, 'text': text, 'color': color, 'date': date, 'userId': user_id, 'repeat': repeat}),
                 'isBase64Encoded': False
             }
         
@@ -117,6 +118,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             date = body_data.get('date')
             user_id = body_data.get('userId')
             order = body_data.get('order')
+            repeat = body_data.get('repeat', 'none')
             
             if not event_id:
                 return {
@@ -131,13 +133,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if order is not None:
                 cur.execute(
-                    'UPDATE t_p36597579_calendar_week_grid.events SET text = %s, color = %s, date = %s, user_id = %s, order_num = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
-                    (text, color, date, user_id, order, event_id)
+                    'UPDATE t_p36597579_calendar_week_grid.events SET text = %s, color = %s, date = %s, user_id = %s, order_num = %s, repeat = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
+                    (text, color, date, user_id, order, repeat, event_id)
                 )
             else:
                 cur.execute(
-                    'UPDATE t_p36597579_calendar_week_grid.events SET text = %s, color = %s, date = %s, user_id = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
-                    (text, color, date, user_id, event_id)
+                    'UPDATE t_p36597579_calendar_week_grid.events SET text = %s, color = %s, date = %s, user_id = %s, repeat = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
+                    (text, color, date, user_id, repeat, event_id)
                 )
             conn.commit()
             
@@ -147,7 +149,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'id': event_id, 'text': text, 'color': color, 'date': date, 'userId': user_id}),
+                'body': json.dumps({'id': event_id, 'text': text, 'color': color, 'date': date, 'userId': user_id, 'repeat': repeat}),
                 'isBase64Encoded': False
             }
         
