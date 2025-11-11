@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import AuthScreen from '@/components/calendar/AuthScreen';
 import MobileWeekView from '@/components/calendar/MobileWeekView';
@@ -103,8 +103,8 @@ const Index = () => {
     return { dates, year, month };
   };
 
-  const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
-  const monthCalendar = useMemo(() => getMonthCalendar(monthOffset), [monthOffset]);
+  const weekDates = getWeekDates(weekOffset);
+  const monthCalendar = getMonthCalendar(monthOffset);
   const firstDate = weekDates[0];
   const lastDate = weekDates[weekDates.length - 1];
 
@@ -444,67 +444,43 @@ const Index = () => {
     setDragOverEvent(null);
   };
 
-  const eventsByDate = useMemo(() => {
-    const cache = new Map<string, Event[]>();
-    
-    const eventsByDateKey = new Map<string, Event[]>();
-    events.forEach(e => {
-      if (!eventsByDateKey.has(e.date)) {
-        eventsByDateKey.set(e.date, []);
-      }
-      eventsByDateKey.get(e.date)!.push(e);
-    });
-    
-    const repeatingEventsList = events.filter(e => e.repeat && e.repeat !== 'none');
-    
-    const getEventsForDateKey = (dateKey: string, date: Date) => {
-      if (cache.has(dateKey)) return cache.get(dateKey)!;
-      
-      const baseEvents = eventsByDateKey.get(dateKey) || [];
-      
-      const repeatingEvents = repeatingEventsList.filter(e => {
-        if (e.date === dateKey) return false;
-        
-        if (e.excludedDates && e.excludedDates.includes(dateKey)) return false;
-        
-        if (e.repeatUntil) {
-          const untilDate = new Date(e.repeatUntil);
-          if (date > untilDate) return false;
-        }
-        
-        const eventDate = new Date(e.date);
-        
-        if (e.repeat === 'weekly') {
-          return eventDate.getDay() === date.getDay() && eventDate < date;
-        }
-        
-        if (e.repeat === 'monthly') {
-          return eventDate.getDate() === date.getDate() && 
-                 (eventDate.getFullYear() < date.getFullYear() || 
-                  (eventDate.getFullYear() === date.getFullYear() && eventDate.getMonth() < date.getMonth()));
-        }
-        
-        return false;
-      });
-      
-      const uniqueEvents = new Map();
-      [...baseEvents, ...repeatingEvents].forEach(e => {
-        uniqueEvents.set(e.id, e);
-      });
-      
-      const result = Array.from(uniqueEvents.values())
-        .sort((a, b) => (a.order || 0) - (b.order || 0));
-      
-      cache.set(dateKey, result);
-      return result;
-    };
-    
-    return getEventsForDateKey;
-  }, [events]);
-
   const getEventsForDate = (date: Date) => {
     const dateKey = formatDateKey(date);
-    return eventsByDate(dateKey, date);
+    const baseEvents = events.filter(e => e.date === dateKey);
+    
+    const repeatingEvents = events.filter(e => {
+      if (!e.repeat || e.repeat === 'none') return false;
+      if (e.date === dateKey) return false;
+      
+      if (e.excludedDates && e.excludedDates.includes(dateKey)) return false;
+      
+      if (e.repeatUntil) {
+        const untilDate = new Date(e.repeatUntil);
+        if (date > untilDate) return false;
+      }
+      
+      const eventDate = new Date(e.date);
+      
+      if (e.repeat === 'weekly') {
+        return eventDate.getDay() === date.getDay() && eventDate < date;
+      }
+      
+      if (e.repeat === 'monthly') {
+        return eventDate.getDate() === date.getDate() && 
+               (eventDate.getFullYear() < date.getFullYear() || 
+                (eventDate.getFullYear() === date.getFullYear() && eventDate.getMonth() < date.getMonth()));
+      }
+      
+      return false;
+    });
+    
+    const uniqueEvents = new Map();
+    [...baseEvents, ...repeatingEvents].forEach(e => {
+      uniqueEvents.set(e.id, e);
+    });
+    
+    return Array.from(uniqueEvents.values())
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
   };
 
   const getDayFillColor = (date: Date) => {
