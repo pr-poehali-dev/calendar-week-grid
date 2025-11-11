@@ -328,7 +328,7 @@ const Index = () => {
   return (
     <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
       <div 
-        className="max-w-4xl md:max-w-full md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden"
+        className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -460,7 +460,7 @@ const Index = () => {
         </div>
 
         {/* Desktop Month View */}
-        <div className="hidden md:flex md:flex-col md:flex-1 px-4 mx-auto md:overflow-hidden w-full">
+        <div className="hidden md:flex md:flex-col md:flex-1 px-6 md:overflow-hidden w-full">
           <div className="mb-3 flex items-center justify-between flex-shrink-0">
             <Button
               variant="ghost"
