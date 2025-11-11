@@ -115,7 +115,12 @@ const Index = () => {
   const handleMoveEvent = (event: Event, e: React.MouseEvent) => {
     e.stopPropagation();
     setMovingEvent(event);
-    toast.info('Выберите новую дату для события');
+    toast.info('Выберите новую дату для события', {
+      action: {
+        label: 'Отмена',
+        onClick: () => setMovingEvent(null)
+      }
+    });
   };
 
   const handleDateSelect = (date: Date) => {
