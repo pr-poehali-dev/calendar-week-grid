@@ -460,8 +460,8 @@ const Index = () => {
         </div>
 
         {/* Desktop Month View */}
-        <div className="hidden md:flex md:flex-col md:flex-1 px-8 mx-auto md:overflow-hidden">
-          <div className="mb-4 flex items-center justify-between flex-shrink-0">
+        <div className="hidden md:flex md:flex-col md:flex-1 px-4 mx-auto md:overflow-hidden w-full">
+          <div className="mb-3 flex items-center justify-between flex-shrink-0">
             <Button
               variant="ghost"
               size="icon"
@@ -471,7 +471,7 @@ const Index = () => {
               <Icon name="ChevronLeft" className="w-5 h-5" />
             </Button>
             
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-white">
               {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
             </h1>
 
@@ -485,15 +485,15 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-7 gap-3 mb-2 flex-shrink-0">
+          <div className="grid grid-cols-7 gap-2 mb-2 flex-shrink-0">
             {DAYS_SHORT.map(day => (
-              <div key={day} className="text-center text-base font-semibold text-[#999] py-2">
+              <div key={day} className="text-center text-lg font-semibold text-[#999] py-2">
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-3 flex-1 content-start">
+          <div className="grid grid-cols-7 auto-rows-fr gap-2 flex-1">
             {monthCalendar.dates.map((item, index) => {
               const dayEvents = getEventsForDate(item.date);
               const isTodayDate = isToday(item.date);
@@ -503,7 +503,7 @@ const Index = () => {
               return (
                 <Card
                   key={index}
-                  className={`h-full p-3 cursor-pointer transition-all duration-200 border rounded-lg ${
+                  className={`h-full p-4 cursor-pointer transition-all duration-200 border rounded-lg ${
                     isDragOver ? 'border-[#1E3A8A] bg-[#1E3A8A]/10' :
                     isTodayDate ? 'border-[#1E3A8A] bg-[#4A4A4A]' :
                     item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A]' : 'border-[#2A2A2A] bg-[#333333]'
@@ -514,15 +514,15 @@ const Index = () => {
                   onDrop={() => handleDrop(item.date)}
                 >
                   <div className="flex flex-col h-full">
-                    <div className={`text-sm font-semibold mb-1 ${
-                      isTodayDate ? 'text-white bg-[#1E3A8A] rounded-full w-6 h-6 flex items-center justify-center' :
+                    <div className={`text-base font-semibold mb-2 ${
+                      isTodayDate ? 'text-white bg-[#1E3A8A] rounded-full w-8 h-8 flex items-center justify-center' :
                       item.isCurrentMonth ? 'text-[#E5E5E5]' : 'text-[#666]'
                     }`}>
                       {item.date.getDate()}
                     </div>
                     <div className="flex-1 overflow-hidden">
                       {dayEvents.length > 0 && (
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           {dayEvents.slice(0, 2).map((event) => (
                             <div
                               key={event.id}
@@ -530,17 +530,17 @@ const Index = () => {
                               onDragStart={() => handleDragStart(event)}
                               onDragEnd={handleDragEnd}
                               onClick={(e) => handleEventClick(event, e)}
-                              className="text-xs p-1 rounded border-l-2 truncate"
+                              className="text-sm p-2 rounded border-l-2 truncate"
                               style={{
                                 borderLeftColor: event.color,
                                 backgroundColor: `${event.color}20`
                               }}
                             >
-                              <span className="text-white">{truncateText(event.text, 2)}</span>
+                              <span className="text-white">{truncateText(event.text, 4)}</span>
                             </div>
                           ))}
                           {dayEvents.length > 2 && (
-                            <div className="text-xs text-[#999] text-center">+{dayEvents.length - 2}</div>
+                            <div className="text-sm text-[#999] text-center mt-1">+{dayEvents.length - 2}</div>
                           )}
                         </div>
                       )}
