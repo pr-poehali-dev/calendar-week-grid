@@ -530,22 +530,30 @@ const Index = () => {
                     <div className="flex-1 overflow-hidden">
                       {dayEvents.length > 0 && (
                         <div className="space-y-1">
-                          {dayEvents.slice(0, 4).map((event) => (
+                          {dayEvents.slice(0, 4).map((event) => {
+                            const isDragging = draggedEvent?.id === event.id;
+                            const isMoving = movingEvent?.id === event.id;
+                            return (
                             <div
                               key={event.id}
                               draggable
                               onDragStart={() => handleDragStart(event)}
                               onDragEnd={handleDragEnd}
                               onClick={(e) => handleEventClick(event, e)}
-                              className="text-xs p-1 rounded border-l-2 truncate leading-tight"
+                              className={`text-sm p-1.5 rounded border-l-2 cursor-move leading-tight ${
+                                isDragging ? 'opacity-40' :
+                                isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' :
+                                'opacity-100'
+                              }`}
                               style={{
                                 borderLeftColor: event.color,
                                 backgroundColor: `${event.color}20`
                               }}
                             >
-                              <span className="text-white">{truncateText(event.text, 3)}</span>
+                              <span className="text-white break-words line-clamp-2">{event.text}</span>
                             </div>
-                          ))}
+                          );
+                          })}
                           {dayEvents.length > 4 && (
                             <div 
                               onClick={(e) => handleViewAllClick(item.date, e)}
