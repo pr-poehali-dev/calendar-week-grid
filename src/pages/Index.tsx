@@ -50,6 +50,8 @@ const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(!localStorage.getItem('calendar_user_id'));
   const [vkIdInput, setVkIdInput] = useState('');
   const [selectedRepeat, setSelectedRepeat] = useState<'none' | 'weekly' | 'monthly'>('none');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
 
   useEffect(() => {
     if (userId) {
@@ -218,15 +220,51 @@ const Index = () => {
   };
 
   const handleDeleteEvent = async (eventId: string) => {
+    const event = events.find(e => e.id === eventId);
+    
+    if (event && event.repeat && event.repeat !== 'none') {
+      setEventToDelete(event);
+      setDeleteDialogOpen(true);
+      return;
+    }
+    
+    await deleteEvent(eventId, false);
+  };
+
+  const deleteEvent = async (eventId: string, keepRepeating: boolean) => {
     try {
-      const response = await fetch(`${API_URL}?id=${eventId}`, {
-        method: 'DELETE'
-      });
-      
-      if (response.ok) {
-        setEvents(events.filter(e => e.id !== eventId));
-        setIsDialogOpen(false);
-        toast.success('Событие удалено');
+      if (keepRepeating) {
+        const event = events.find(e => e.id === eventId);
+        if (event) {
+          const response = await fetch(API_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...event,
+              repeat: 'none'
+            })
+          });
+          
+          if (response.ok) {
+            setEvents(events.map(e => 
+              e.id === eventId ? { ...e, repeat: 'none' } : e
+            ));
+            setIsDialogOpen(false);
+            setDeleteDialogOpen(false);
+            toast.success('Повторение отключено');
+          }
+        }
+      } else {
+        const response = await fetch(`${API_URL}?id=${eventId}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          setEvents(events.filter(e => e.id !== eventId));
+          setIsDialogOpen(false);
+          setDeleteDialogOpen(false);
+          toast.success('Событие удалено');
+        }
       }
     } catch (error) {
       toast.error('Ошибка удаления');
@@ -965,6 +1003,48 @@ const Index = () => {
                 Отмена
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Repeating Event Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-[#4A4A4A] border-[#3A3A3A]">
+          <DialogHeader>
+            <DialogTitle className="text-white text-center">
+              Удалить повторяющееся событие?
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-4">
+            <p className="text-sm text-[#999] text-center mb-4">
+              Это событие повторяется. Что вы хотите сделать?
+            </p>
+            <Button
+              onClick={() => eventToDelete && deleteEvent(eventToDelete.id, false)}
+              variant="destructive"
+              className="w-full"
+            >
+              <Icon name="Trash2" className="w-4 h-4 mr-2" />
+              Удалить все повторения
+            </Button>
+            <Button
+              onClick={() => eventToDelete && deleteEvent(eventToDelete.id, true)}
+              variant="outline"
+              className="w-full"
+            >
+              <Icon name="CalendarX" className="w-4 h-4 mr-2" />
+              Отключить повторение
+            </Button>
+            <Button
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setEventToDelete(null);
+              }}
+              variant="ghost"
+              className="w-full"
+            >
+              Отмена
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
