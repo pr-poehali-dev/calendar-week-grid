@@ -41,8 +41,6 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<'week' | 'month'>('week');
-  const [monthOffset, setMonthOffset] = useState(0);
 
   useEffect(() => {
     loadEvents();
@@ -77,24 +75,9 @@ const Index = () => {
     return dates;
   };
 
-  const getMonthDates = (offset: number) => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + offset;
-    
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    
-    const dates = [];
-    for (let i = 1; i <= lastDay.getDate(); i++) {
-      dates.push(new Date(year, month, i));
-    }
-    return dates;
-  };
-
-  const displayDates = viewMode === 'week' ? getWeekDates(weekOffset) : getMonthDates(monthOffset);
-  const firstDate = displayDates[0];
-  const lastDate = displayDates[displayDates.length - 1];
+  const weekDates = getWeekDates(weekOffset);
+  const firstDate = weekDates[0];
+  const lastDate = weekDates[weekDates.length - 1];
 
   const formatDateKey = (date: Date) => {
     return date.toISOString().split('T')[0];
@@ -304,18 +287,10 @@ const Index = () => {
     const isRightSwipe = distance < -50;
     
     if (isLeftSwipe) {
-      if (viewMode === 'week') {
-        setWeekOffset(weekOffset + 1);
-      } else {
-        setMonthOffset(monthOffset + 1);
-      }
+      setWeekOffset(weekOffset + 1);
     }
     if (isRightSwipe) {
-      if (viewMode === 'week') {
-        setWeekOffset(weekOffset - 1);
-      } else {
-        setMonthOffset(monthOffset - 1);
-      }
+      setWeekOffset(weekOffset - 1);
     }
   };
 
@@ -341,19 +316,13 @@ const Index = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {
-              if (viewMode === 'week') {
-                setWeekOffset(weekOffset - 1);
-              } else {
-                setMonthOffset(monthOffset - 1);
-              }
-            }}
+            onClick={() => setWeekOffset(weekOffset - 1)}
             className="hover:bg-[#3A3A3A] text-white h-8 w-8"
           >
             <Icon name="ChevronLeft" className="w-4 h-4" />
           </Button>
           
-          <div className="text-center flex-1">
+          <div className="text-center">
             <h1 className="text-xs md:text-sm font-bold text-white">
               {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
             </h1>
@@ -361,23 +330,8 @@ const Index = () => {
 
           <Button
             variant="ghost"
-            size="sm"
-            onClick={() => setViewMode(viewMode === 'week' ? 'month' : 'week')}
-            className="hover:bg-[#3A3A3A] text-white h-8 px-2 text-xs mr-2"
-          >
-            {viewMode === 'week' ? 'Месяц' : 'Неделя'}
-          </Button>
-
-          <Button
-            variant="ghost"
             size="icon"
-            onClick={() => {
-              if (viewMode === 'week') {
-                setWeekOffset(weekOffset + 1);
-              } else {
-                setMonthOffset(monthOffset + 1);
-              }
-            }}
+            onClick={() => setWeekOffset(weekOffset + 1)}
             className="hover:bg-[#3A3A3A] text-white h-8 w-8"
           >
             <Icon name="ChevronRight" className="w-4 h-4" />
@@ -385,7 +339,7 @@ const Index = () => {
         </div>
 
         <div className="space-y-0">
-          {displayDates.map((date, index) => {
+          {weekDates.map((date, index) => {
             const dayEvents = getEventsForDate(date);
             const isTodayDate = isToday(date);
             const dateKey = formatDateKey(date);
