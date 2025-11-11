@@ -102,8 +102,9 @@ const Index = () => {
 
   const getMonthCalendar = (offset: number) => {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + offset;
+    const targetDate = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+    const year = targetDate.getFullYear();
+    const month = targetDate.getMonth();
     
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
