@@ -267,9 +267,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#2A2A2A] p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6 flex items-center justify-between">
+    <div className="min-h-screen bg-[#2A2A2A]">
+      <div className="max-w-4xl mx-auto px-0">
+        <div className="mb-6 flex items-center justify-between px-4 py-4">
           <Button
             variant="ghost"
             size="icon"
@@ -295,7 +295,7 @@ const Index = () => {
           </Button>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-0">
           {weekDates.map((date, index) => {
             const dayEvents = getEventsForDate(date);
             const isTodayDate = isToday(date);
@@ -305,10 +305,10 @@ const Index = () => {
             return (
               <Card 
                 key={index}
-                className={`p-4 min-h-[100px] cursor-pointer transition-all duration-200 border-2 ${
-                  isDragOver ? 'border-[#8B5CF6] border-dashed bg-[#8B5CF6]/10 shadow-xl scale-[1.02]' :
-                  isTodayDate ? 'border-[#8B5CF6] bg-[#4A4A4A] hover:shadow-lg' : 
-                  'border-[#3A3A3A] bg-[#4A4A4A] hover:shadow-lg'
+                className={`p-4 min-h-[100px] cursor-pointer transition-all duration-200 border-0 border-b border-[#3A3A3A] rounded-none ${
+                  isDragOver ? 'border-l-4 border-l-[#8B5CF6] bg-[#8B5CF6]/10' :
+                  isTodayDate ? 'border-l-4 border-l-[#8B5CF6] bg-[#4A4A4A]' : 
+                  'bg-[#4A4A4A]'
                 }`}
                 onClick={() => handleDateSelect(date)}
                 onDragOver={(e) => handleDragOver(e, date)}
@@ -340,8 +340,8 @@ const Index = () => {
                             onDragStart={() => handleDragStart(event)}
                             onDragEnd={handleDragEnd}
                             onClick={(e) => handleEventClick(event, e)}
-                            className={`p-2 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 border-l-4 flex items-start justify-between gap-2 ${
-                              isDragging ? 'opacity-40 scale-95' : 
+                            className={`p-2 rounded-lg cursor-pointer border-l-4 flex items-start justify-between gap-2 ${
+                              isDragging ? 'opacity-40' : 
                               isMoving ? 'ring-2 ring-[#8B5CF6] animate-pulse' : 
                               'opacity-100'
                             }`}
