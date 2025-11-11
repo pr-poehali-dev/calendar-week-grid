@@ -164,7 +164,6 @@ const DesktopMonthView = ({
                         const isDragging = draggedEvent?.id === event.id;
                         const isMoving = movingEvent?.id === event.id;
                         const isDraggedOver = dragOverEvent === event.id;
-                        const isRepeating = event.date !== dateKey;
                         return (
                         <div
                           key={event.id}
@@ -185,7 +184,7 @@ const DesktopMonthView = ({
                             backgroundColor: `${event.color}20`
                           }}
                         >
-                          <span className={`break-words line-clamp-2 uppercase ${isRepeating ? 'text-white/80' : 'text-white'}`}>{event.text}</span>
+                          <span className="text-white break-words line-clamp-2 uppercase">{event.text}</span>
                         </div>
                       );
                       })}

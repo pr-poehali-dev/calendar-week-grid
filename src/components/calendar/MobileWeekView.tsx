@@ -167,7 +167,6 @@ const MobileWeekView = ({
                     {dayEvents.map((event) => {
                       const isDragging = draggedEvent?.id === event.id;
                       const isMoving = movingEvent?.id === event.id;
-                      const isRepeating = event.date !== dateKey;
                       return (
                       <div
                         key={event.id}
@@ -186,7 +185,7 @@ const MobileWeekView = ({
                         }}
                       >
                         <div className="flex-1">
-                          <p className={`text-sm break-words uppercase ${isRepeating ? 'text-white/80' : 'text-white'}`}>
+                          <p className="text-sm text-white break-words uppercase">
                             {truncateText(event.text, 10)}
                           </p>
                           {event.repeat !== 'none' && event.repeat && (
