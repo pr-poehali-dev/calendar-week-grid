@@ -55,6 +55,7 @@ const Index = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
   const [deleteTargetDate, setDeleteTargetDate] = useState<string | null>(null);
+  const [forceDesktopView, setForceDesktopView] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -640,7 +641,7 @@ const Index = () => {
       >
 
         {/* Mobile Week View */}
-        <div className="md:hidden">
+        <div className={forceDesktopView ? 'hidden' : 'md:hidden'}>
           <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
             <div className="flex items-center gap-1">
               <Button
@@ -671,14 +672,25 @@ const Index = () => {
               </h1>
             </div>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setWeekOffset(weekOffset + 1)}
-              className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-            >
-              <Icon name="ChevronRight" className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setForceDesktopView(true)}
+                className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+                title="ПК версия"
+              >
+                <Icon name="Monitor" className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setWeekOffset(weekOffset + 1)}
+                className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+              >
+                <Icon name="ChevronRight" className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-0">
@@ -770,7 +782,7 @@ const Index = () => {
         </div>
 
         {/* Desktop Month View */}
-        <div className="hidden md:flex md:flex-col md:flex-1 px-6 w-full md:overflow-y-auto">
+        <div className={forceDesktopView ? 'flex flex-col flex-1 px-6 w-full overflow-y-auto' : 'hidden md:flex md:flex-col md:flex-1 px-6 w-full md:overflow-y-auto'}>
           <div className="mb-3 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
               <Button
@@ -781,6 +793,17 @@ const Index = () => {
               >
                 <Icon name="ChevronLeft" className="w-5 h-5" />
               </Button>
+              {forceDesktopView && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setForceDesktopView(false)}
+                  className="hover:bg-[#3A3A3A] text-white h-10 w-10 md:hidden"
+                  title="Мобильная версия"
+                >
+                  <Icon name="Smartphone" className="w-5 h-5" />
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="icon"
