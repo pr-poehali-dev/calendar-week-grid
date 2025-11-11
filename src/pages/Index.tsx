@@ -60,6 +60,9 @@ const Index = () => {
   const [fillDay, setFillDay] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [quickAddMonthOffset, setQuickAddMonthOffset] = useState(0);
+  const [historyDate, setHistoryDate] = useState<Date | null>(null);
+  const [historyData, setHistoryData] = useState<{holidays: string[], events: string[]} | null>(null);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -171,6 +174,30 @@ const Index = () => {
 
   const getQuickAddCalendar = () => {
     return getMonthCalendar(quickAddMonthOffset);
+  };
+
+  const handleDayNameClick = async (date: Date, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setHistoryDate(date);
+    setIsLoadingHistory(true);
+    setHistoryData(null);
+    
+    try {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const response = await fetch(`https://functions.poehali.dev/a368076e-e616-476f-8b1d-1db0454b6f47?day=${day}&month=${month}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        setHistoryData(data);
+      } else {
+        toast.error('Не удалось загрузить данные');
+      }
+    } catch (error) {
+      toast.error('Ошибка загрузки данных');
+    } finally {
+      setIsLoadingHistory(false);
+    }
   };
 
   const handleViewAllClick = (date: Date, e: React.MouseEvent) => {
@@ -750,7 +777,13 @@ const Index = () => {
               >
                 <div className="flex items-start gap-2">
                   <div className={`flex-shrink-0 text-left min-w-[35px] ${isTodayDate ? 'text-[#1E3A8A]' : 'text-[#E5E5E5]'}`}>
-                    <div className="text-xs font-medium">{DAYS_SHORT[index]}</div>
+                    <div 
+                      className="text-xs font-medium cursor-pointer hover:text-[#0EA5E9] transition-colors"
+                      onClick={(e) => handleDayNameClick(date, e)}
+                      title="Этот день в истории"
+                    >
+                      {DAYS_SHORT[index]}
+                    </div>
                     <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#1E3A8A] text-white rounded-full w-7 h-7 flex items-center justify-center mt-1' : ''}`}>
                       {date.getDate()}
                     </div>
@@ -910,10 +943,14 @@ const Index = () => {
                       }`}>
                         {item.date.getDate()}
                       </div>
-                      <div className={`text-sm font-medium ${
-                        isSunday && item.isCurrentMonth ? 'text-red-400' :
-                        item.isCurrentMonth ? 'text-[#999]' : 'text-[#555]'
-                      }`}>
+                      <div 
+                        className={`text-sm font-medium cursor-pointer hover:text-[#0EA5E9] transition-colors ${
+                          isSunday && item.isCurrentMonth ? 'text-red-400' :
+                          item.isCurrentMonth ? 'text-[#999]' : 'text-[#555]'
+                        }`}
+                        onClick={(e) => handleDayNameClick(item.date, e)}
+                        title="Этот день в истории"
+                      >
                         {dayName}
                       </div>
                     </div>
@@ -1176,6 +1213,65 @@ const Index = () => {
               Отмена
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* History Dialog */}
+      <Dialog open={historyDate !== null} onOpenChange={() => setHistoryDate(null)}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto bg-[#4A4A4A] border-[#3A3A3A]">
+          <DialogHeader>
+            <DialogTitle className="text-center text-white flex items-center justify-center gap-2">
+              <Icon name="Calendar" className="w-5 h-5" />
+              {historyDate && `${historyDate.getDate()} ${MONTHS[historyDate.getMonth()]}`}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {isLoadingHistory ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+            </div>
+          ) : historyData ? (
+            <div className="space-y-6 pt-4">
+              {historyData.holidays.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <Icon name="PartyPopper" className="w-5 h-5 text-[#0EA5E9]" />
+                    Праздники
+                  </h3>
+                  <ul className="space-y-2">
+                    {historyData.holidays.map((holiday, i) => (
+                      <li key={i} className="text-[#E5E5E5] pl-6 relative before:content-['•'] before:absolute before:left-2 before:text-[#0EA5E9]">
+                        {holiday}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {historyData.events.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <Icon name="Scroll" className="w-5 h-5 text-[#10B981]" />
+                    Исторические события
+                  </h3>
+                  <ul className="space-y-2">
+                    {historyData.events.map((event, i) => (
+                      <li key={i} className="text-[#E5E5E5] pl-6 relative before:content-['•'] before:absolute before:left-2 before:text-[#10B981]">
+                        {event}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {historyData.holidays.length === 0 && historyData.events.length === 0 && (
+                <div className="text-center py-8 text-[#999]">
+                  <Icon name="Info" className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                  <p>Нет данных об этом дне</p>
+                </div>
+              )}
+            </div>
+          ) : null}
         </DialogContent>
       </Dialog>
 

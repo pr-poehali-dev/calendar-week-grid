@@ -1,0 +1,26 @@
+{
+  "tests": [
+    {
+      "name": "Get history for New Year",
+      "method": "GET",
+      "path": "/?day=1&month=1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "holidays": ["string"],
+        "events": ["string"]
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get history for Victory Day",
+      "method": "GET",
+      "path": "/?day=9&month=5",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "holidays": ["string"],
+        "events": ["string"]
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
