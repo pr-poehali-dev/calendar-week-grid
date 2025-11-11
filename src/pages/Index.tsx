@@ -351,8 +351,8 @@ const Index = () => {
               <Card 
                 key={index}
                 className={`p-2 min-h-[100px] cursor-pointer transition-all duration-200 border-0 border-b border-[#3A3A3A] rounded-none ${
-                  isDragOver ? 'border-l-4 border-l-[#8B5CF6] bg-[#8B5CF6]/10' :
-                  isTodayDate ? `border-l-4 border-l-[#8B5CF6] ${baseColor}` : 
+                  isDragOver ? 'border-l-4 border-l-[#1E3A8A] bg-[#1E3A8A]/10' :
+                  isTodayDate ? `border-l-4 border-l-[#1E3A8A] ${baseColor}` : 
                   baseColor
                 }`}
                 onClick={() => handleDateSelect(date)}
@@ -361,9 +361,9 @@ const Index = () => {
                 onDrop={() => handleDrop(date)}
               >
                 <div className="flex items-start gap-2">
-                  <div className={`flex-shrink-0 text-left min-w-[35px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#E5E5E5]'}`}>
+                  <div className={`flex-shrink-0 text-left min-w-[35px] ${isTodayDate ? 'text-[#1E3A8A]' : 'text-[#E5E5E5]'}`}>
                     <div className="text-xs font-medium">{DAYS_SHORT[index]}</div>
-                    <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#8B5CF6] text-white rounded-full w-7 h-7 flex items-center justify-center mt-1' : ''}`}>
+                    <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#1E3A8A] text-white rounded-full w-7 h-7 flex items-center justify-center mt-1' : ''}`}>
                       {date.getDate()}
                     </div>
                   </div>
@@ -387,7 +387,7 @@ const Index = () => {
                             onClick={(e) => handleEventClick(event, e)}
                             className={`p-2 rounded-lg cursor-pointer border-l-4 flex items-start justify-between gap-2 ${
                               isDragging ? 'opacity-40' : 
-                              isMoving ? 'ring-2 ring-[#8B5CF6] animate-pulse' : 
+                              isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' : 
                               'opacity-100'
                             }`}
                             style={{ 
@@ -407,7 +407,7 @@ const Index = () => {
                             </div>
                             <button
                               onClick={(e) => handleMoveEvent(event, e)}
-                              className="flex-shrink-0 text-[#8B5CF6] hover:text-[#7C3AED] transition-colors"
+                              className="flex-shrink-0 text-[#1E3A8A] hover:text-[#0EA5E9] transition-colors"
                               title="Перенести событие"
                             >
                               <Icon name="MoveRight" className="w-4 h-4" />
