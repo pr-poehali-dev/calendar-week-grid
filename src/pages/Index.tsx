@@ -13,6 +13,7 @@ interface Event {
   date: string;
   repeat?: string;
   order?: number;
+  userId?: string;
 }
 
 const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -45,17 +46,26 @@ const Index = () => {
   const [monthOffset, setMonthOffset] = useState(0);
   const [viewAllDate, setViewAllDate] = useState<Date | null>(null);
   const [dragOverEvent, setDragOverEvent] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(localStorage.getItem('calendar_user_id'));
+  const [isAuthOpen, setIsAuthOpen] = useState(!localStorage.getItem('calendar_user_id'));
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
-    loadEvents();
-  }, []);
+    if (userId) {
+      loadEvents();
+    }
+  }, [userId]);
 
   const loadEvents = async () => {
+    if (!userId) return;
+    
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(`${API_URL}?userId=${userId}`);
       if (response.ok) {
         const data = await response.json();
-        setEvents(data);
+        setEvents(data.filter((e: Event) => e.userId === userId));
       }
     } catch (error) {
       toast.error('Ошибка загрузки событий');
@@ -151,7 +161,7 @@ const Index = () => {
   };
 
   const handleCreateEvent = async () => {
-    if (!newEventText.trim() || !selectedDate) return;
+    if (!newEventText.trim() || !selectedDate || !userId) return;
 
     try {
       if (editingEvent) {
@@ -162,7 +172,8 @@ const Index = () => {
             id: editingEvent.id,
             text: newEventText,
             color: selectedColor,
-            date: selectedDate
+            date: selectedDate,
+            userId
           })
         });
         
@@ -181,6 +192,7 @@ const Index = () => {
           text: newEventText,
           color: selectedColor,
           date: selectedDate,
+          userId
         };
 
         const response = await fetch(API_URL, {
@@ -238,7 +250,8 @@ const Index = () => {
             id: movingEvent.id,
             text: movingEvent.text,
             color: movingEvent.color,
-            date: newDate
+            date: newDate,
+            userId
           })
         });
         
@@ -287,7 +300,8 @@ const Index = () => {
           id: draggedEvent.id,
           text: draggedEvent.text,
           color: draggedEvent.color,
-          date: newDate
+          date: newDate,
+          userId
         })
       });
       
@@ -452,6 +466,87 @@ const Index = () => {
     }
   };
 
+  const handleAuth = async () => {
+    if (!username.trim() || !password.trim()) {
+      toast.error('Заполните все поля');
+      return;
+    }
+
+    const userIdHash = btoa(`${username}:${password}`);
+
+    if (isRegistering) {
+      localStorage.setItem('calendar_user_id', userIdHash);
+      localStorage.setItem('calendar_username', username);
+      setUserId(userIdHash);
+      setIsAuthOpen(false);
+      toast.success(`Добро пожаловать, ${username}!`);
+    } else {
+      const storedUserId = localStorage.getItem('calendar_user_id');
+      if (storedUserId === userIdHash) {
+        setUserId(userIdHash);
+        setIsAuthOpen(false);
+        toast.success('Вы вошли в систему');
+      } else {
+        toast.error('Неверное имя пользователя или пароль');
+      }
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('calendar_user_id');
+    localStorage.removeItem('calendar_username');
+    setUserId(null);
+    setIsAuthOpen(true);
+    setEvents([]);
+    toast.success('Вы вышли из системы');
+  };
+
+  if (!userId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#2A2A2A]">
+        <Card className="w-full max-w-md p-8 bg-[#4A4A4A] border-[#3A3A3A]">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-white mb-2">Календарь фотографа</h1>
+            <p className="text-[#999]">{isRegistering ? 'Создайте аккаунт' : 'Войдите в систему'}</p>
+          </div>
+          
+          <div className="space-y-4">
+            <Input
+              placeholder="Имя пользователя"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAuth()}
+              className="bg-[#2A2A2A] border-[#3A3A3A] text-white"
+              autoFocus
+            />
+            <Input
+              type="password"
+              placeholder="Пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAuth()}
+              className="bg-[#2A2A2A] border-[#3A3A3A] text-white"
+            />
+            
+            <Button 
+              onClick={handleAuth}
+              className="w-full bg-[#1E3A8A] hover:bg-[#0EA5E9]"
+            >
+              {isRegistering ? 'Зарегистрироваться' : 'Войти'}
+            </Button>
+            
+            <button
+              onClick={() => setIsRegistering(!isRegistering)}
+              className="w-full text-[#0EA5E9] hover:text-[#1E3A8A] text-sm transition-colors"
+            >
+              {isRegistering ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
+            </button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
       <div 
@@ -464,14 +559,25 @@ const Index = () => {
         {/* Mobile Week View */}
         <div className="md:hidden">
           <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setWeekOffset(weekOffset - 1)}
-              className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-            >
-              <Icon name="ChevronLeft" className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setWeekOffset(weekOffset - 1)}
+                className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+              >
+                <Icon name="ChevronLeft" className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLogout}
+                className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+                title="Выйти"
+              >
+                <Icon name="LogOut" className="w-4 h-4" />
+              </Button>
+            </div>
             
             <div
               onClick={exportEventsToFile}
@@ -583,14 +689,25 @@ const Index = () => {
         {/* Desktop Month View */}
         <div className="hidden md:flex md:flex-col md:flex-1 px-6 w-full md:overflow-y-auto">
           <div className="mb-3 flex items-center justify-between flex-shrink-0">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMonthOffset(monthOffset - 1)}
-              className="hover:bg-[#3A3A3A] text-white h-10 w-10"
-            >
-              <Icon name="ChevronLeft" className="w-5 h-5" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMonthOffset(monthOffset - 1)}
+                className="hover:bg-[#3A3A3A] text-white h-10 w-10"
+              >
+                <Icon name="ChevronLeft" className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLogout}
+                className="hover:bg-[#3A3A3A] text-red-400 hover:text-red-300 h-10 w-10"
+                title="Выйти"
+              >
+                <Icon name="LogOut" className="w-5 h-5" />
+              </Button>
+            </div>
             
             <div
               onClick={exportEventsToFile}

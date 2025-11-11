@@ -3,25 +3,27 @@
     {
       "name": "Get all events",
       "method": "GET",
-      "path": "/",
+      "path": "/?userId=test-user",
       "expectedStatus": 200,
       "expectedBody": [],
       "bodyMatcher": "partial"
     },
     {
-      "name": "Create event",
+      "name": "Create event with user",
       "method": "POST",
       "path": "/",
       "body": {
-        "id": "test-123",
+        "id": "test-event-123",
         "text": "Тестовое событие",
-        "color": "#8B5CF6",
-        "date": "2025-01-15"
+        "color": "#1E3A8A",
+        "date": "2025-01-15",
+        "userId": "test-user-id"
       },
       "expectedStatus": 201,
       "expectedBody": {
-        "id": "test-123",
-        "text": "Тестовое событие"
+        "id": "test-event-123",
+        "text": "Тестовое событие",
+        "userId": "test-user-id"
       },
       "bodyMatcher": "partial"
     }
