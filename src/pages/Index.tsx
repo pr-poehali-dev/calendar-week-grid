@@ -40,6 +40,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [monthOffset, setMonthOffset] = useState(0);
 
   useEffect(() => {
     loadEvents();
@@ -74,7 +75,38 @@ const Index = () => {
     return dates;
   };
 
+  const getMonthCalendar = (offset: number) => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + offset;
+    
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    
+    let dayOfWeek = firstDayOfMonth.getDay();
+    dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    
+    const dates = [];
+    
+    for (let i = 0; i < dayOfWeek; i++) {
+      const prevDate = new Date(year, month, -dayOfWeek + i + 1);
+      dates.push({ date: prevDate, isCurrentMonth: false });
+    }
+    
+    for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
+      dates.push({ date: new Date(year, month, i), isCurrentMonth: true });
+    }
+    
+    const remainingDays = 35 - dates.length;
+    for (let i = 1; i <= remainingDays; i++) {
+      dates.push({ date: new Date(year, month + 1, i), isCurrentMonth: false });
+    }
+    
+    return { dates, year, month };
+  };
+
   const weekDates = getWeekDates(weekOffset);
+  const monthCalendar = getMonthCalendar(monthOffset);
   const firstDate = weekDates[0];
   const lastDate = weekDates[weekDates.length - 1];
 
@@ -311,33 +343,35 @@ const Index = () => {
             Календарь фотографа
           </a>
         </div>
-        <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setWeekOffset(weekOffset - 1)}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-          >
-            <Icon name="ChevronLeft" className="w-4 h-4" />
-          </Button>
-          
-          <div className="text-center">
-            <h1 className="text-xs md:text-sm font-bold text-white">
-              {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
-            </h1>
+        {/* Mobile Week View */}
+        <div className="md:hidden">
+          <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setWeekOffset(weekOffset - 1)}
+              className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+            >
+              <Icon name="ChevronLeft" className="w-4 h-4" />
+            </Button>
+            
+            <div className="text-center">
+              <h1 className="text-xs font-bold text-white">
+                {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
+              </h1>
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setWeekOffset(weekOffset + 1)}
+              className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+            >
+              <Icon name="ChevronRight" className="w-4 h-4" />
+            </Button>
           </div>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setWeekOffset(weekOffset + 1)}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-          >
-            <Icon name="ChevronRight" className="w-4 h-4" />
-          </Button>
-        </div>
-
-        <div className="space-y-0">
+          <div className="space-y-0">
           {weekDates.map((date, index) => {
             const dayEvents = getEventsForDate(date);
             const isTodayDate = isToday(date);
@@ -422,6 +456,100 @@ const Index = () => {
               </Card>
             );
           })}
+          </div>
+        </div>
+
+        {/* Desktop Month View */}
+        <div className="hidden md:block px-4">
+          <div className="mb-4 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMonthOffset(monthOffset - 1)}
+              className="hover:bg-[#3A3A3A] text-white h-10 w-10"
+            >
+              <Icon name="ChevronLeft" className="w-5 h-5" />
+            </Button>
+            
+            <h1 className="text-lg font-bold text-white">
+              {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
+            </h1>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMonthOffset(monthOffset + 1)}
+              className="hover:bg-[#3A3A3A] text-white h-10 w-10"
+            >
+              <Icon name="ChevronRight" className="w-5 h-5" />
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-7 gap-2 mb-2">
+            {DAYS_SHORT.map(day => (
+              <div key={day} className="text-center text-sm font-semibold text-[#999] py-2">
+                {day}
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 gap-2">
+            {monthCalendar.dates.map((item, index) => {
+              const dayEvents = getEventsForDate(item.date);
+              const isTodayDate = isToday(item.date);
+              const dateKey = formatDateKey(item.date);
+              const isDragOver = dragOverDate === dateKey;
+              
+              return (
+                <Card
+                  key={index}
+                  className={`aspect-square p-2 cursor-pointer transition-all duration-200 border rounded-lg ${
+                    isDragOver ? 'border-[#1E3A8A] bg-[#1E3A8A]/10' :
+                    isTodayDate ? 'border-[#1E3A8A] bg-[#4A4A4A]' :
+                    item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A]' : 'border-[#2A2A2A] bg-[#333333]'
+                  }`}
+                  onClick={() => handleDateSelect(item.date)}
+                  onDragOver={(e) => handleDragOver(e, item.date)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={() => handleDrop(item.date)}
+                >
+                  <div className="flex flex-col h-full">
+                    <div className={`text-sm font-semibold mb-1 ${
+                      isTodayDate ? 'text-white bg-[#1E3A8A] rounded-full w-6 h-6 flex items-center justify-center' :
+                      item.isCurrentMonth ? 'text-[#E5E5E5]' : 'text-[#666]'
+                    }`}>
+                      {item.date.getDate()}
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      {dayEvents.length > 0 && (
+                        <div className="space-y-1">
+                          {dayEvents.slice(0, 2).map((event) => (
+                            <div
+                              key={event.id}
+                              draggable
+                              onDragStart={() => handleDragStart(event)}
+                              onDragEnd={handleDragEnd}
+                              onClick={(e) => handleEventClick(event, e)}
+                              className="text-xs p-1 rounded border-l-2 truncate"
+                              style={{
+                                borderLeftColor: event.color,
+                                backgroundColor: `${event.color}20`
+                              }}
+                            >
+                              <span className="text-white">{truncateText(event.text, 2)}</span>
+                            </div>
+                          ))}
+                          {dayEvents.length > 2 && (
+                            <div className="text-xs text-[#999] text-center">+{dayEvents.length - 2}</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       </div>
 
