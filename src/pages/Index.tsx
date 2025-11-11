@@ -566,9 +566,9 @@ const Index = () => {
 
       {/* View All Events Dialog */}
       <Dialog open={viewAllDate !== null} onOpenChange={() => setViewAllDate(null)}>
-        <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto bg-[#4A4A4A] border-[#3A3A3A]">
           <DialogHeader>
-            <DialogTitle className="text-center">
+            <DialogTitle className="text-center text-white">
               События {viewAllDate && `${viewAllDate.getDate()} ${MONTHS[viewAllDate.getMonth()]} ${viewAllDate.getFullYear()}`}
             </DialogTitle>
           </DialogHeader>
@@ -595,6 +595,23 @@ const Index = () => {
                 )}
               </div>
             ))}
+            
+            <Button
+              onClick={() => {
+                if (viewAllDate) {
+                  setSelectedDate(formatDateKey(viewAllDate));
+                  setEditingEvent(null);
+                  setIsDialogOpen(true);
+                  setNewEventText('');
+                  setSelectedColor(COLORS[0].value);
+                  setViewAllDate(null);
+                }
+              }}
+              className="w-full mt-4 bg-[#1E3A8A] hover:bg-[#0EA5E9]"
+            >
+              <Icon name="Plus" className="w-4 h-4 mr-2" />
+              Добавить событие
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
