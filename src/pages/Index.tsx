@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import AuthScreen from '@/components/calendar/AuthScreen';
 import MobileWeekView from '@/components/calendar/MobileWeekView';
@@ -444,50 +444,74 @@ const Index = () => {
     setDragOverEvent(null);
   };
 
+  const eventsByDate = useMemo(() => {
+    const cache = new Map<string, Event[]>();
+    
+    const getEventsForDateKey = (dateKey: string, date: Date) => {
+      if (cache.has(dateKey)) return cache.get(dateKey)!;
+      
+      const baseEvents = events.filter(e => e.date === dateKey);
+      
+      const repeatingEvents = events.filter(e => {
+        if (!e.repeat || e.repeat === 'none') return false;
+        if (e.date === dateKey) return false;
+        
+        if (e.excludedDates && e.excludedDates.includes(dateKey)) return false;
+        
+        if (e.repeatUntil) {
+          const untilDate = new Date(e.repeatUntil);
+          if (date > untilDate) return false;
+        }
+        
+        const eventDate = new Date(e.date);
+        
+        if (e.repeat === 'weekly') {
+          return eventDate.getDay() === date.getDay() && eventDate < date;
+        }
+        
+        if (e.repeat === 'monthly') {
+          return eventDate.getDate() === date.getDate() && 
+                 (eventDate.getFullYear() < date.getFullYear() || 
+                  (eventDate.getFullYear() === date.getFullYear() && eventDate.getMonth() < date.getMonth()));
+        }
+        
+        return false;
+      });
+      
+      const uniqueEvents = new Map();
+      [...baseEvents, ...repeatingEvents].forEach(e => {
+        uniqueEvents.set(e.id, e);
+      });
+      
+      const result = Array.from(uniqueEvents.values())
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
+      
+      cache.set(dateKey, result);
+      return result;
+    };
+    
+    return getEventsForDateKey;
+  }, [events]);
+
   const getEventsForDate = (date: Date) => {
     const dateKey = formatDateKey(date);
-    const baseEvents = events.filter(e => e.date === dateKey);
-    
-    const repeatingEvents = events.filter(e => {
-      if (!e.repeat || e.repeat === 'none') return false;
-      if (e.date === dateKey) return false;
-      
-      if (e.excludedDates && e.excludedDates.includes(dateKey)) return false;
-      
-      if (e.repeatUntil) {
-        const untilDate = new Date(e.repeatUntil);
-        if (date > untilDate) return false;
-      }
-      
-      const eventDate = new Date(e.date);
-      
-      if (e.repeat === 'weekly') {
-        return eventDate.getDay() === date.getDay() && eventDate < date;
-      }
-      
-      if (e.repeat === 'monthly') {
-        return eventDate.getDate() === date.getDate() && 
-               (eventDate.getFullYear() < date.getFullYear() || 
-                (eventDate.getFullYear() === date.getFullYear() && eventDate.getMonth() < date.getMonth()));
-      }
-      
-      return false;
-    });
-    
-    const uniqueEvents = new Map();
-    [...baseEvents, ...repeatingEvents].forEach(e => {
-      uniqueEvents.set(e.id, e);
-    });
-    
-    return Array.from(uniqueEvents.values())
-      .sort((a, b) => (a.order || 0) - (b.order || 0));
+    return eventsByDate(dateKey, date);
   };
 
-  const getDayFillColor = (date: Date) => {
-    const dayEvents = getEventsForDate(date);
-    const fillEvent = dayEvents.find(e => e.fillDay);
-    return fillEvent?.color || null;
-  };
+  const getDayFillColor = useMemo(() => {
+    const cache = new Map<string, string | null>();
+    return (date: Date) => {
+      const dateKey = formatDateKey(date);
+      if (cache.has(dateKey)) return cache.get(dateKey)!;
+      
+      const dayEvents = getEventsForDate(date);
+      const fillEvent = dayEvents.find(e => e.fillDay);
+      const result = fillEvent?.color || null;
+      
+      cache.set(dateKey, result);
+      return result;
+    };
+  }, [events]);
 
   const truncateText = (text: string, wordLimit: number = 10) => {
     const words = text.split(' ');
