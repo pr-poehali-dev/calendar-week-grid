@@ -187,13 +187,17 @@ const Index = () => {
       const month = date.getMonth() + 1;
       const response = await fetch(`https://functions.poehali.dev/a368076e-e616-476f-8b1d-1db0454b6f47?day=${day}&month=${month}`);
       
+      console.log('Fetching history for day', day, 'month', month);
       if (response.ok) {
         const data = await response.json();
+        console.log('History data received:', data);
         setHistoryData(data);
       } else {
+        console.error('Response not OK:', response.status);
         toast.error('Не удалось загрузить данные');
       }
     } catch (error) {
+      console.error('Error loading history:', error);
       toast.error('Ошибка загрузки данных');
     } finally {
       setIsLoadingHistory(false);
