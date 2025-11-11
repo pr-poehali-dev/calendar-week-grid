@@ -366,6 +366,11 @@ const Index = () => {
   };
 
   const exportEventsToFile = () => {
+    if (events.length === 0) {
+      toast.error('Нет событий для экспорта');
+      return;
+    }
+
     const sortedEvents = [...events].sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
@@ -402,6 +407,7 @@ const Index = () => {
 
     content += '\n' + '='.repeat(50) + '\n';
     content += `Всего событий: ${events.length}\n`;
+    content += `Дней с событиями: ${Object.keys(groupedByDate).length}\n`;
     content += `Дата экспорта: ${new Date().toLocaleDateString('ru-RU')} ${new Date().toLocaleTimeString('ru-RU')}\n`;
 
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
