@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
 import AuthScreen from '@/components/calendar/AuthScreen';
 import MobileWeekView from '@/components/calendar/MobileWeekView';
@@ -119,24 +119,24 @@ const Index = () => {
     return { dates, year, month };
   };
 
-  const weekDates = getWeekDates(weekOffset);
-  const monthCalendar = getMonthCalendar(monthOffset);
+  const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
+  const monthCalendar = useMemo(() => getMonthCalendar(monthOffset), [monthOffset]);
   const firstDate = weekDates[0];
   const lastDate = weekDates[weekDates.length - 1];
 
-  const formatDateKey = (date: Date) => {
+  const formatDateKey = useCallback((date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  };
+  }, []);
 
-  const isToday = (date: Date) => {
+  const isToday = useCallback((date: Date) => {
     const today = new Date();
     return date.getDate() === today.getDate() &&
            date.getMonth() === today.getMonth() &&
            date.getFullYear() === today.getFullYear();
-  };
+  }, []);
 
   const handleDayClick = (date: Date) => {
     setSelectedDate(formatDateKey(date));
@@ -474,7 +474,7 @@ const Index = () => {
     setDragOverEvent(null);
   };
 
-  const getEventsForDate = (date: Date) => {
+  const getEventsForDate = useCallback((date: Date) => {
     const dateKey = formatDateKey(date);
     const baseEvents = events.filter(e => e.date === dateKey);
     
@@ -511,19 +511,19 @@ const Index = () => {
     
     return Array.from(uniqueEvents.values())
       .sort((a, b) => (a.order || 0) - (b.order || 0));
-  };
+  }, [events, formatDateKey]);
 
-  const getDayFillColor = (date: Date) => {
+  const getDayFillColor = useCallback((date: Date) => {
     const dayEvents = getEventsForDate(date);
     const fillEvent = dayEvents.find(e => e.fillDay);
     return fillEvent?.color || null;
-  };
+  }, [getEventsForDate]);
 
-  const truncateText = (text: string, wordLimit: number = 10) => {
+  const truncateText = useCallback((text: string, wordLimit: number = 10) => {
     const words = text.split(' ');
     if (words.length <= wordLimit) return text;
     return words.slice(0, wordLimit).join(' ') + '...';
-  };
+  }, []);
 
   const exportEventsToFile = () => {
     if (events.length === 0) {
