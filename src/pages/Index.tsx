@@ -491,20 +491,14 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-7 gap-2 mb-2 flex-shrink-0">
-            {DAYS_SHORT.map(day => (
-              <div key={day} className="text-center text-lg font-semibold text-[#999] py-2">
-                {day}
-              </div>
-            ))}
-          </div>
-
           <div className="grid grid-cols-7 auto-rows-fr gap-2 flex-1">
             {monthCalendar.dates.map((item, index) => {
               const dayEvents = getEventsForDate(item.date);
               const isTodayDate = isToday(item.date);
               const dateKey = formatDateKey(item.date);
               const isDragOver = dragOverDate === dateKey;
+              const dayOfWeek = item.date.getDay();
+              const dayName = DAYS_SHORT[dayOfWeek === 0 ? 6 : dayOfWeek - 1];
               
               return (
                 <Card
@@ -520,11 +514,18 @@ const Index = () => {
                   onDrop={() => handleDrop(item.date)}
                 >
                   <div className="flex flex-col h-full">
-                    <div className={`text-base font-semibold mb-2 ${
-                      isTodayDate ? 'text-white bg-[#1E3A8A] rounded-full w-8 h-8 flex items-center justify-center' :
-                      item.isCurrentMonth ? 'text-[#E5E5E5]' : 'text-[#666]'
-                    }`}>
-                      {item.date.getDate()}
+                    <div className="flex items-center justify-between mb-2">
+                      <div className={`text-base font-semibold ${
+                        isTodayDate ? 'text-white bg-[#1E3A8A] rounded-full w-8 h-8 flex items-center justify-center' :
+                        item.isCurrentMonth ? 'text-[#E5E5E5]' : 'text-[#666]'
+                      }`}>
+                        {item.date.getDate()}
+                      </div>
+                      <div className={`text-sm font-medium ${
+                        item.isCurrentMonth ? 'text-[#999]' : 'text-[#555]'
+                      }`}>
+                        {dayName}
+                      </div>
                     </div>
                     <div className="flex-1 overflow-hidden">
                       {dayEvents.length > 0 && (
