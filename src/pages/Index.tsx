@@ -860,7 +860,7 @@ const Index = () => {
                   onDrop={() => handleDrop(item.date)}
                 >
                   <div className="flex flex-col h-full">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 mb-2">
                       <div className={`text-base font-semibold ${
                         isTodayDate ? 'text-white bg-[#1E3A8A] rounded-full w-8 h-8 flex items-center justify-center' :
                         item.isCurrentMonth ? 'text-[#E5E5E5]' : 'text-[#666]'
