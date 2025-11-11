@@ -301,7 +301,7 @@ const Index = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="mb-6 flex items-center justify-between px-4 py-4">
+        <div className="mb-3 flex items-center justify-between px-4 py-2">
           <Button
             variant="ghost"
             size="icon"
