@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,8 @@ const COLORS = [
   { value: '#10B981', label: 'Зелёный' },
 ];
 
+const API_URL = 'https://functions.poehali.dev/992d8e44-58a4-4f61-badd-a38834435786';
+
 const Index = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -35,6 +37,25 @@ const Index = () => {
   const [dragOverDate, setDragOverDate] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
   const [movingEvent, setMovingEvent] = useState<Event | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const loadEvents = async () => {
+    try {
+      const response = await fetch(API_URL);
+      if (response.ok) {
+        const data = await response.json();
+        setEvents(data);
+      }
+    } catch (error) {
+      toast.error('Ошибка загрузки событий');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getWeekDates = (offset: number) => {
     const today = new Date();
@@ -81,35 +102,70 @@ const Index = () => {
     setIsDialogOpen(true);
   };
 
-  const handleCreateEvent = () => {
+  const handleCreateEvent = async () => {
     if (!newEventText.trim() || !selectedDate) return;
 
-    if (editingEvent) {
-      setEvents(events.map(e => 
-        e.id === editingEvent.id 
-          ? { ...e, text: newEventText, color: selectedColor }
-          : e
-      ));
-      setIsDialogOpen(false);
-      toast.success('Событие изменено');
-    } else {
-      const newEvent: Event = {
-        id: Date.now().toString(),
-        text: newEventText,
-        color: selectedColor,
-        date: selectedDate,
-      };
+    try {
+      if (editingEvent) {
+        const response = await fetch(API_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: editingEvent.id,
+            text: newEventText,
+            color: selectedColor,
+            date: selectedDate
+          })
+        });
+        
+        if (response.ok) {
+          setEvents(events.map(e => 
+            e.id === editingEvent.id 
+              ? { ...e, text: newEventText, color: selectedColor, date: selectedDate }
+              : e
+          ));
+          setIsDialogOpen(false);
+          toast.success('Событие изменено');
+        }
+      } else {
+        const newEvent: Event = {
+          id: Date.now().toString(),
+          text: newEventText,
+          color: selectedColor,
+          date: selectedDate,
+        };
 
-      setEvents([...events, newEvent]);
-      setIsDialogOpen(false);
-      toast.success('Событие добавлено');
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newEvent)
+        });
+        
+        if (response.ok) {
+          setEvents([...events, newEvent]);
+          setIsDialogOpen(false);
+          toast.success('Событие добавлено');
+        }
+      }
+    } catch (error) {
+      toast.error('Ошибка сохранения');
     }
   };
 
-  const handleDeleteEvent = (eventId: string) => {
-    setEvents(events.filter(e => e.id !== eventId));
-    setIsDialogOpen(false);
-    toast.success('Событие удалено');
+  const handleDeleteEvent = async (eventId: string) => {
+    try {
+      const response = await fetch(`${API_URL}?id=${eventId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        setEvents(events.filter(e => e.id !== eventId));
+        setIsDialogOpen(false);
+        toast.success('Событие удалено');
+      }
+    } catch (error) {
+      toast.error('Ошибка удаления');
+    }
   };
 
   const handleMoveEvent = (event: Event, e: React.MouseEvent) => {
@@ -123,14 +179,31 @@ const Index = () => {
     });
   };
 
-  const handleDateSelect = (date: Date) => {
+  const handleDateSelect = async (date: Date) => {
     if (movingEvent) {
       const newDate = formatDateKey(date);
-      setEvents(events.map(e => 
-        e.id === movingEvent.id ? { ...e, date: newDate } : e
-      ));
-      setMovingEvent(null);
-      toast.success('Событие перенесено');
+      try {
+        const response = await fetch(API_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: movingEvent.id,
+            text: movingEvent.text,
+            color: movingEvent.color,
+            date: newDate
+          })
+        });
+        
+        if (response.ok) {
+          setEvents(events.map(e => 
+            e.id === movingEvent.id ? { ...e, date: newDate } : e
+          ));
+          setMovingEvent(null);
+          toast.success('Событие перенесено');
+        }
+      } catch (error) {
+        toast.error('Ошибка переноса');
+      }
     } else {
       handleDayClick(date);
     }
@@ -153,16 +226,33 @@ const Index = () => {
     setDragOverDate(null);
   };
 
-  const handleDrop = (date: Date) => {
+  const handleDrop = async (date: Date) => {
     if (!draggedEvent) return;
 
     const newDate = formatDateKey(date);
-    setEvents(events.map(e => 
-      e.id === draggedEvent.id ? { ...e, date: newDate } : e
-    ));
-    setDraggedEvent(null);
-    setDragOverDate(null);
-    toast.success('Событие перемещено');
+    try {
+      const response = await fetch(API_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: draggedEvent.id,
+          text: draggedEvent.text,
+          color: draggedEvent.color,
+          date: newDate
+        })
+      });
+      
+      if (response.ok) {
+        setEvents(events.map(e => 
+          e.id === draggedEvent.id ? { ...e, date: newDate } : e
+        ));
+        setDraggedEvent(null);
+        setDragOverDate(null);
+        toast.success('Событие перемещено');
+      }
+    } catch (error) {
+      toast.error('Ошибка перемещения');
+    }
   };
 
   const getEventsForDate = (date: Date) => {
@@ -190,7 +280,7 @@ const Index = () => {
           </Button>
           
           <div className="text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-white">
+            <h1 className="text-lg md:text-xl font-bold text-white">
               {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
             </h1>
           </div>
@@ -226,9 +316,9 @@ const Index = () => {
                 onDrop={() => handleDrop(date)}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`flex-shrink-0 text-center min-w-[60px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#E5E5E5]'}`}>
-                    <div className="text-sm font-medium">{DAYS_SHORT[index]}</div>
-                    <div className={`text-2xl font-bold ${isTodayDate ? 'bg-[#8B5CF6] text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mt-1' : ''}`}>
+                  <div className={`flex-shrink-0 text-center min-w-[40px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#E5E5E5]'}`}>
+                    <div className="text-xs font-medium">{DAYS_SHORT[index]}</div>
+                    <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#8B5CF6] text-white rounded-full w-7 h-7 flex items-center justify-center mx-auto mt-1' : ''}`}>
                       {date.getDate()}
                     </div>
                   </div>

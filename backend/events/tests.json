@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Get all events",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Create event",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "id": "test-123",
+        "text": "Тестовое событие",
+        "color": "#8B5CF6",
+        "date": "2025-01-15"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "test-123",
+        "text": "Тестовое событие"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS events (
+    id TEXT PRIMARY KEY,
+    text TEXT NOT NULL,
+    color TEXT NOT NULL,
+    date TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_events_date ON events(date);
