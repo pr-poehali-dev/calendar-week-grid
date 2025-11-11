@@ -16,6 +16,7 @@ interface Event {
   userId?: string;
   excludedDates?: string[];
   repeatUntil?: string;
+  fillDay?: boolean;
 }
 
 const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -56,6 +57,7 @@ const Index = () => {
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
   const [deleteTargetDate, setDeleteTargetDate] = useState<string | null>(null);
   const [forceDesktopView, setForceDesktopView] = useState(false);
+  const [fillDay, setFillDay] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -152,6 +154,7 @@ const Index = () => {
     setNewEventText('');
     setSelectedColor(COLORS[0].value);
     setSelectedRepeat('none');
+    setFillDay(false);
   };
 
   const handleViewAllClick = (date: Date, e: React.MouseEvent) => {
@@ -166,6 +169,7 @@ const Index = () => {
     setSelectedColor(event.color);
     setSelectedDate(currentDate || event.date);
     setSelectedRepeat((event.repeat as 'none' | 'weekly' | 'monthly') || 'none');
+    setFillDay(event.fillDay || false);
     setIsDialogOpen(true);
   };
 
@@ -183,14 +187,15 @@ const Index = () => {
             color: selectedColor,
             date: selectedDate,
             userId,
-            repeat: selectedRepeat
+            repeat: selectedRepeat,
+            fillDay
           })
         });
         
         if (response.ok) {
           setEvents(events.map(e => 
             e.id === editingEvent.id 
-              ? { ...e, text: newEventText, color: selectedColor, date: selectedDate, repeat: selectedRepeat }
+              ? { ...e, text: newEventText, color: selectedColor, date: selectedDate, repeat: selectedRepeat, fillDay }
               : e
           ));
           setIsDialogOpen(false);
@@ -204,7 +209,8 @@ const Index = () => {
           date: selectedDate,
           userId,
           repeat: selectedRepeat,
-          excludedDates: []
+          excludedDates: [],
+          fillDay
         };
 
         const response = await fetch(API_URL, {
@@ -327,7 +333,8 @@ const Index = () => {
             text: movingEvent.text,
             color: movingEvent.color,
             date: newDate,
-            userId
+            userId,
+            fillDay: movingEvent.fillDay
           })
         });
         
@@ -377,7 +384,8 @@ const Index = () => {
           text: draggedEvent.text,
           color: draggedEvent.color,
           date: newDate,
-          userId
+          userId,
+          fillDay: draggedEvent.fillDay
         })
       });
       
@@ -484,6 +492,12 @@ const Index = () => {
     
     return Array.from(uniqueEvents.values())
       .sort((a, b) => (a.order || 0) - (b.order || 0));
+  };
+
+  const getDayFillColor = (date: Date) => {
+    const dayEvents = getEventsForDate(date);
+    const fillEvent = dayEvents.find(e => e.fillDay);
+    return fillEvent?.color || null;
   };
 
   const truncateText = (text: string, wordLimit: number = 10) => {
@@ -699,6 +713,7 @@ const Index = () => {
             const isTodayDate = isToday(date);
             const dateKey = formatDateKey(date);
             const isDragOver = dragOverDate === dateKey;
+            const fillColor = getDayFillColor(date);
             
             const isLighterDay = index === 0 || index === 2 || index === 4;
             const baseColor = isLighterDay ? 'bg-[#525252]' : 'bg-[#4A4A4A]';
@@ -711,6 +726,7 @@ const Index = () => {
                   isTodayDate ? `border-l-4 border-l-[#1E3A8A] ${baseColor}` : 
                   baseColor
                 }`}
+                style={fillColor ? { backgroundColor: `${fillColor}40` } : {}}
                 onClick={() => handleDateSelect(date)}
                 onDragOver={(e) => handleDragOver(e, date)}
                 onDragLeave={handleDragLeave}
@@ -844,6 +860,7 @@ const Index = () => {
               const dayOfWeek = dayOfWeekRaw === 0 ? 6 : dayOfWeekRaw - 1;
               const dayName = DAYS_SHORT[dayOfWeek];
               const isSunday = dayOfWeekRaw === 0;
+              const fillColor = getDayFillColor(item.date);
               
               return (
                 <Card
@@ -854,6 +871,7 @@ const Index = () => {
                     isSunday && item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A] ring-1 ring-red-900/30' :
                     item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A]' : 'border-[#2A2A2A] bg-[#333333]'
                   }`}
+                  style={fillColor ? { backgroundColor: `${fillColor}40` } : {}}
                   onClick={() => handleDateSelect(item.date)}
                   onDragOver={(e) => handleDragOver(e, item.date)}
                   onDragLeave={handleDragLeave}
@@ -1006,7 +1024,18 @@ const Index = () => {
             </div>
 
             <div>
-              <p className="text-sm text-[#666] mb-2">Выберите цвет:</p>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm text-[#666]">Выберите цвет:</p>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={fillDay}
+                    onChange={(e) => setFillDay(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300"
+                  />
+                  <span className="text-sm text-[#666]">Окрасить весь день</span>
+                </label>
+              </div>
               <div className="flex gap-2 flex-wrap">
                 {COLORS.map((color) => (
                   <button
