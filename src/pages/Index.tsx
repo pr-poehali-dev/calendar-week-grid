@@ -302,13 +302,16 @@ const Index = () => {
             const dateKey = formatDateKey(date);
             const isDragOver = dragOverDate === dateKey;
             
+            const isLighterDay = index === 0 || index === 2 || index === 4;
+            const baseColor = isLighterDay ? 'bg-[#5A5A5A]' : 'bg-[#4A4A4A]';
+            
             return (
               <Card 
                 key={index}
                 className={`p-4 min-h-[100px] cursor-pointer transition-all duration-200 border-0 border-b border-[#3A3A3A] rounded-none ${
                   isDragOver ? 'border-l-4 border-l-[#8B5CF6] bg-[#8B5CF6]/10' :
-                  isTodayDate ? 'border-l-4 border-l-[#8B5CF6] bg-[#4A4A4A]' : 
-                  'bg-[#4A4A4A]'
+                  isTodayDate ? `border-l-4 border-l-[#8B5CF6] ${baseColor}` : 
+                  baseColor
                 }`}
                 onClick={() => handleDateSelect(date)}
                 onDragOver={(e) => handleDragOver(e, date)}
@@ -350,7 +353,7 @@ const Index = () => {
                               backgroundColor: `${event.color}15`
                             }}
                           >
-                            <p className="text-sm text-[#333] flex-1 break-words">
+                            <p className="text-sm text-white flex-1 break-words">
                               {truncateText(event.text, 10)}
                             </p>
                             <button
