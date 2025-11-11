@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { toast } from 'sonner';
 import AuthScreen from '@/components/calendar/AuthScreen';
-import MobileWeekView from '@/components/calendar/MobileWeekView';
-import DesktopMonthView from '@/components/calendar/DesktopMonthView';
-import CalendarDialogs from '@/components/calendar/CalendarDialogs';
+
+const MobileWeekView = lazy(() => import('@/components/calendar/MobileWeekView'));
+const DesktopMonthView = lazy(() => import('@/components/calendar/DesktopMonthView'));
+const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
 import { Event, COLORS, MONTHS, DAYS_SHORT, API_URL } from '@/components/calendar/types';
 
 const Index = () => {
@@ -612,7 +613,12 @@ const Index = () => {
   return (
     <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
       <div className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full">
-        <MobileWeekView
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        }>
+          <MobileWeekView
           weekDates={weekDates}
           firstDate={firstDate}
           lastDate={lastDate}
@@ -644,7 +650,7 @@ const Index = () => {
           handleQuickAdd={handleQuickAdd}
         />
 
-        <DesktopMonthView
+          <DesktopMonthView
           monthCalendar={monthCalendar}
           monthOffset={monthOffset}
           setMonthOffset={setMonthOffset}
@@ -671,9 +677,11 @@ const Index = () => {
           handleEventClick={handleEventClick}
           handleViewAllClick={handleViewAllClick}
         />
+        </Suspense>
       </div>
 
-      <CalendarDialogs
+      <Suspense fallback={null}>
+        <CalendarDialogs
         isDialogOpen={isDialogOpen}
         setIsDialogOpen={setIsDialogOpen}
         editingEvent={editingEvent}
@@ -707,6 +715,7 @@ const Index = () => {
         handleQuickAddDateSelect={handleQuickAddDateSelect}
         isToday={isToday}
       />
+      </Suspense>
     </div>
   );
 };
