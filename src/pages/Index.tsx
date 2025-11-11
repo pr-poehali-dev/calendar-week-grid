@@ -396,9 +396,16 @@ const Index = () => {
                               backgroundColor: `${event.color}15`
                             }}
                           >
-                            <p className="text-sm text-white flex-1 break-words">
-                              {truncateText(event.text, 10)}
-                            </p>
+                            <div className="flex-1">
+                              <p className="text-sm text-white break-words">
+                                {truncateText(event.text, 10)}
+                              </p>
+                              {event.repeat !== 'none' && event.repeat && (
+                                <p className="text-xs text-white/60 mt-1">
+                                  {event.repeat === 'weekly' ? '↻ Каждую неделю' : '↻ Каждый месяц'}
+                                </p>
+                              )}
+                            </div>
                             <button
                               onClick={(e) => handleMoveEvent(event, e)}
                               className="flex-shrink-0 text-[#8B5CF6] hover:text-[#7C3AED] transition-colors"
