@@ -301,18 +301,18 @@ const Index = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="mb-3 flex items-center justify-between px-4 py-2">
+        <div className="mb-1 flex items-center justify-between px-4 py-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setWeekOffset(weekOffset - 1)}
-            className="hover:bg-[#3A3A3A] text-white"
+            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
           >
-            <Icon name="ChevronLeft" className="w-6 h-6" />
+            <Icon name="ChevronLeft" className="w-4 h-4" />
           </Button>
           
           <div className="text-center">
-            <h1 className="text-lg md:text-xl font-bold text-white">
+            <h1 className="text-xs md:text-sm font-bold text-white">
               {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
             </h1>
           </div>
@@ -321,9 +321,9 @@ const Index = () => {
             variant="ghost"
             size="icon"
             onClick={() => setWeekOffset(weekOffset + 1)}
-            className="hover:bg-[#3A3A3A] text-white"
+            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
           >
-            <Icon name="ChevronRight" className="w-6 h-6" />
+            <Icon name="ChevronRight" className="w-4 h-4" />
           </Button>
         </div>
 
