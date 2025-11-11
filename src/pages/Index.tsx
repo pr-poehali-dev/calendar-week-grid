@@ -103,8 +103,8 @@ const Index = () => {
     return { dates, year, month };
   };
 
-  const weekDates = getWeekDates(weekOffset);
-  const monthCalendar = getMonthCalendar(monthOffset);
+  const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
+  const monthCalendar = useMemo(() => getMonthCalendar(monthOffset), [monthOffset]);
   const firstDate = weekDates[0];
   const lastDate = weekDates[weekDates.length - 1];
 
@@ -447,13 +447,22 @@ const Index = () => {
   const eventsByDate = useMemo(() => {
     const cache = new Map<string, Event[]>();
     
+    const eventsByDateKey = new Map<string, Event[]>();
+    events.forEach(e => {
+      if (!eventsByDateKey.has(e.date)) {
+        eventsByDateKey.set(e.date, []);
+      }
+      eventsByDateKey.get(e.date)!.push(e);
+    });
+    
+    const repeatingEventsList = events.filter(e => e.repeat && e.repeat !== 'none');
+    
     const getEventsForDateKey = (dateKey: string, date: Date) => {
       if (cache.has(dateKey)) return cache.get(dateKey)!;
       
-      const baseEvents = events.filter(e => e.date === dateKey);
+      const baseEvents = eventsByDateKey.get(dateKey) || [];
       
-      const repeatingEvents = events.filter(e => {
-        if (!e.repeat || e.repeat === 'none') return false;
+      const repeatingEvents = repeatingEventsList.filter(e => {
         if (e.date === dateKey) return false;
         
         if (e.excludedDates && e.excludedDates.includes(dateKey)) return false;
@@ -498,20 +507,11 @@ const Index = () => {
     return eventsByDate(dateKey, date);
   };
 
-  const getDayFillColor = useMemo(() => {
-    const cache = new Map<string, string | null>();
-    return (date: Date) => {
-      const dateKey = formatDateKey(date);
-      if (cache.has(dateKey)) return cache.get(dateKey)!;
-      
-      const dayEvents = getEventsForDate(date);
-      const fillEvent = dayEvents.find(e => e.fillDay);
-      const result = fillEvent?.color || null;
-      
-      cache.set(dateKey, result);
-      return result;
-    };
-  }, [events]);
+  const getDayFillColor = (date: Date) => {
+    const dayEvents = getEventsForDate(date);
+    const fillEvent = dayEvents.find(e => e.fillDay);
+    return fillEvent?.color || null;
+  };
 
   const truncateText = (text: string, wordLimit: number = 10) => {
     const words = text.split(' ');
