@@ -32,6 +32,7 @@ const Index = () => {
   const [selectedColor, setSelectedColor] = useState(COLORS[0].value);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [draggedEvent, setDraggedEvent] = useState<Event | null>(null);
+  const [dragOverDate, setDragOverDate] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
 
   const getWeekDates = (offset: number) => {
@@ -113,8 +114,17 @@ const Index = () => {
     setDraggedEvent(event);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragEnd = () => {
+    setDragOverDate(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent, date: Date) => {
     e.preventDefault();
+    setDragOverDate(formatDateKey(date));
+  };
+
+  const handleDragLeave = () => {
+    setDragOverDate(null);
   };
 
   const handleDrop = (date: Date) => {
@@ -125,6 +135,7 @@ const Index = () => {
       e.id === draggedEvent.id ? { ...e, date: newDate } : e
     ));
     setDraggedEvent(null);
+    setDragOverDate(null);
     toast.success('Событие перемещено');
   };
 
@@ -172,15 +183,20 @@ const Index = () => {
           {weekDates.map((date, index) => {
             const dayEvents = getEventsForDate(date);
             const isTodayDate = isToday(date);
+            const dateKey = formatDateKey(date);
+            const isDragOver = dragOverDate === dateKey;
             
             return (
               <Card 
                 key={index}
-                className={`p-4 min-h-[100px] cursor-pointer hover:shadow-lg transition-all duration-200 bg-white border-2 ${
-                  isTodayDate ? 'border-[#8B5CF6]' : 'border-[#E5E5E5]'
+                className={`p-4 min-h-[100px] cursor-pointer transition-all duration-200 border-2 ${
+                  isDragOver ? 'border-[#8B5CF6] border-dashed bg-[#8B5CF6]/5 shadow-xl scale-[1.02]' :
+                  isTodayDate ? 'border-[#8B5CF6] bg-white hover:shadow-lg' : 
+                  'border-[#E5E5E5] bg-white hover:shadow-lg'
                 }`}
                 onClick={() => handleDayClick(date)}
-                onDragOver={handleDragOver}
+                onDragOver={(e) => handleDragOver(e, date)}
+                onDragLeave={handleDragLeave}
                 onDrop={() => handleDrop(date)}
               >
                 <div className="flex items-start gap-4">
@@ -198,13 +214,18 @@ const Index = () => {
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {dayEvents.map((event) => (
+                        {dayEvents.map((event) => {
+                          const isDragging = draggedEvent?.id === event.id;
+                          return (
                           <div
                             key={event.id}
                             draggable
                             onDragStart={() => handleDragStart(event)}
+                            onDragEnd={handleDragEnd}
                             onClick={(e) => handleEventClick(event, e)}
-                            className="p-2 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 border-l-4 flex items-start justify-between gap-2"
+                            className={`p-2 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 border-l-4 flex items-start justify-between gap-2 ${
+                              isDragging ? 'opacity-40 scale-95' : 'opacity-100'
+                            }`}
                             style={{ 
                               borderLeftColor: event.color,
                               backgroundColor: `${event.color}15`
@@ -223,7 +244,8 @@ const Index = () => {
                               <Icon name="Trash2" className="w-4 h-4" />
                             </button>
                           </div>
-                        ))}
+                        );
+                        })}
                       </div>
                     )}
                   </div>
