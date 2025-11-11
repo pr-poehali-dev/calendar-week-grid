@@ -38,6 +38,15 @@ const Index = () => {
 
   useEffect(() => {
     if (userId) {
+      const cachedEvents = localStorage.getItem(`calendar_events_${userId}`);
+      if (cachedEvents) {
+        try {
+          setEvents(JSON.parse(cachedEvents));
+          setIsLoading(false);
+        } catch (e) {
+          console.error('Cache parse error:', e);
+        }
+      }
       loadEvents();
     }
   }, [userId]);
@@ -49,10 +58,17 @@ const Index = () => {
       const response = await fetch(`${API_URL}?userId=${userId}`);
       if (response.ok) {
         const data = await response.json();
-        setEvents(data.filter((e: Event) => e.userId === userId));
+        const userEvents = data.filter((e: Event) => e.userId === userId);
+        setEvents(userEvents);
+        localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(userEvents));
       }
     } catch (error) {
-      toast.error('Ошибка загрузки событий');
+      const cachedEvents = localStorage.getItem(`calendar_events_${userId}`);
+      if (cachedEvents) {
+        toast.info('Работаем офлайн');
+      } else {
+        toast.error('Ошибка загрузки событий');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -183,11 +199,13 @@ const Index = () => {
         });
         
         if (response.ok) {
-          setEvents(events.map(e => 
+          const updatedEvents = events.map(e => 
             e.id === editingEvent.id 
               ? { ...e, text: newEventText, color: selectedColor, date: selectedDate, repeat: selectedRepeat, fillDay }
               : e
-          ));
+          );
+          setEvents(updatedEvents);
+          localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
           toast.success('Событие изменено');
         }
@@ -210,7 +228,9 @@ const Index = () => {
         });
         
         if (response.ok) {
-          setEvents([...events, newEvent]);
+          const updatedEvents = [...events, newEvent];
+          setEvents(updatedEvents);
+          localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
           toast.success('Событие добавлено');
         }
@@ -244,7 +264,9 @@ const Index = () => {
         });
         
         if (response.ok) {
-          setEvents(events.filter(e => e.id !== eventId));
+          const updatedEvents = events.filter(e => e.id !== eventId);
+          setEvents(updatedEvents);
+          localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
           setDeleteDialogOpen(false);
           toast.success('Все повторения удалены');
@@ -265,9 +287,11 @@ const Index = () => {
         });
         
         if (response.ok) {
-          setEvents(events.map(e => 
+          const updatedEvents = events.map(e => 
             e.id === eventId ? { ...e, excludedDates } : e
-          ));
+          );
+          setEvents(updatedEvents);
+          localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
           setDeleteDialogOpen(false);
           toast.success('Это повторение удалено');
@@ -329,9 +353,11 @@ const Index = () => {
         });
         
         if (response.ok) {
-          setEvents(events.map(e => 
+          const updatedEvents = events.map(e => 
             e.id === movingEvent.id ? { ...e, date: newDate } : e
-          ));
+          );
+          setEvents(updatedEvents);
+          localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setMovingEvent(null);
           toast.success('Событие перенесено');
         }
@@ -380,9 +406,11 @@ const Index = () => {
       });
       
       if (response.ok) {
-        setEvents(events.map(e => 
+        const updatedEvents = events.map(e => 
           e.id === draggedEvent.id ? { ...e, date: newDate } : e
-        ));
+        );
+        setEvents(updatedEvents);
+        localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
         setDraggedEvent(null);
         setDragOverDate(null);
         toast.success('Событие перемещено');
@@ -434,7 +462,9 @@ const Index = () => {
         ));
         
         const otherEvents = events.filter(e => e.date !== targetEvent.date);
-        setEvents([...otherEvents, ...updatedEvents]);
+        const finalEvents = [...otherEvents, ...updatedEvents];
+        setEvents(finalEvents);
+        localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(finalEvents));
         toast.success('Порядок изменён');
       } catch (error) {
         toast.error('Ошибка изменения порядка');
@@ -592,6 +622,9 @@ const Index = () => {
   };
 
   const handleLogout = () => {
+    if (userId) {
+      localStorage.removeItem(`calendar_events_${userId}`);
+    }
     localStorage.removeItem('calendar_user_id');
     localStorage.removeItem('vk_access_token');
     setUserId(null);
