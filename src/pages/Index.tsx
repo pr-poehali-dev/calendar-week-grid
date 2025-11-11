@@ -612,8 +612,9 @@ const Index = () => {
               const isTodayDate = isToday(item.date);
               const dateKey = formatDateKey(item.date);
               const isDragOver = dragOverDate === dateKey;
-              const dayOfWeek = item.date.getDay();
-              const dayName = DAYS_SHORT[dayOfWeek === 0 ? 6 : dayOfWeek - 1];
+              const dayOfWeekRaw = item.date.getDay();
+              const dayOfWeek = dayOfWeekRaw === 0 ? 6 : dayOfWeekRaw - 1;
+              const dayName = DAYS_SHORT[dayOfWeek];
               
               return (
                 <Card
