@@ -466,7 +466,7 @@ const Index = () => {
         </div>
 
         {/* Desktop Month View */}
-        <div className="hidden md:flex md:flex-col md:flex-1 px-6 md:overflow-hidden w-full">
+        <div className="hidden md:flex md:flex-col md:flex-1 px-6 w-full md:overflow-y-auto">
           <div className="mb-3 flex items-center justify-between flex-shrink-0">
             <Button
               variant="ghost"
@@ -491,7 +491,7 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-7 auto-rows-fr gap-2 flex-1">
+          <div className="grid grid-cols-7 gap-2 pb-6" style={{ gridAutoRows: 'minmax(120px, auto)' }}>
             {monthCalendar.dates.map((item, index) => {
               const dayEvents = getEventsForDate(item.date);
               const isTodayDate = isToday(item.date);
