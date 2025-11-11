@@ -59,7 +59,7 @@ const Index = () => {
   const [forceDesktopView, setForceDesktopView] = useState(false);
   const [fillDay, setFillDay] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
-  const [quickAddDate, setQuickAddDate] = useState<string>('');
+  const [quickAddMonthOffset, setQuickAddMonthOffset] = useState(0);
 
   useEffect(() => {
     if (userId) {
@@ -160,16 +160,17 @@ const Index = () => {
   };
 
   const handleQuickAdd = () => {
-    const today = new Date();
-    setQuickAddDate(formatDateKey(today));
+    setQuickAddMonthOffset(0);
     setIsQuickAddOpen(true);
   };
 
-  const handleQuickAddConfirm = () => {
-    if (!quickAddDate) return;
-    const date = new Date(quickAddDate);
+  const handleQuickAddDateSelect = (date: Date) => {
     setIsQuickAddOpen(false);
     handleDayClick(date);
+  };
+
+  const getQuickAddCalendar = () => {
+    return getMonthCalendar(quickAddMonthOffset);
   };
 
   const handleViewAllClick = (date: Date, e: React.MouseEvent) => {
@@ -814,7 +815,7 @@ const Index = () => {
           {/* Floating Add Button for Mobile */}
           <Button
             onClick={handleQuickAdd}
-            className="fixed bottom-6 left-6 w-14 h-14 rounded-full shadow-lg bg-[#1E3A8A] hover:bg-[#0EA5E9] z-50"
+            className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg bg-[#1E3A8A] hover:bg-[#0EA5E9] z-50"
             size="icon"
           >
             <Icon name="Plus" className="w-6 h-6" />
@@ -1182,33 +1183,52 @@ const Index = () => {
       <Dialog open={isQuickAddOpen} onOpenChange={setIsQuickAddOpen}>
         <DialogContent className="sm:max-w-md bg-[#4A4A4A] border-[#3A3A3A]">
           <DialogHeader>
-            <DialogTitle className="text-white text-center">
-              Выберите дату
+            <DialogTitle className="flex items-center justify-between text-white">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setQuickAddMonthOffset(quickAddMonthOffset - 1)}
+                className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+              >
+                <Icon name="ChevronLeft" className="w-4 h-4" />
+              </Button>
+              <span>
+                {MONTHS[getQuickAddCalendar().month].charAt(0).toUpperCase() + MONTHS[getQuickAddCalendar().month].slice(1, -1) + 'ь'} {getQuickAddCalendar().year}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setQuickAddMonthOffset(quickAddMonthOffset + 1)}
+                className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+              >
+                <Icon name="ChevronRight" className="w-4 h-4" />
+              </Button>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <Input
-              type="date"
-              value={quickAddDate}
-              onChange={(e) => setQuickAddDate(e.target.value)}
-              className="w-full text-white bg-[#3A3A3A] border-[#555]"
-              autoFocus
-            />
-            <div className="flex gap-2">
-              <Button
-                onClick={handleQuickAddConfirm}
-                disabled={!quickAddDate}
-                className="flex-1 bg-[#1E3A8A] hover:bg-[#0EA5E9]"
-              >
-                Продолжить
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setIsQuickAddOpen(false)}
-                className="flex-1"
-              >
-                Отмена
-              </Button>
+          <div className="pt-4">
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {DAYS_SHORT.map((day, i) => (
+                <div key={i} className="text-center text-xs text-[#999] font-medium py-1">
+                  {day}
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-1">
+              {getQuickAddCalendar().dates.map((item, index) => {
+                const isTodayDate = isToday(item.date);
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleQuickAddDateSelect(item.date)}
+                    className={`aspect-square p-2 rounded text-sm transition-all ${
+                      isTodayDate ? 'bg-[#1E3A8A] text-white font-bold' :
+                      item.isCurrentMonth ? 'text-white hover:bg-[#3A3A3A]' : 'text-[#666] hover:bg-[#3A3A3A]'
+                    }`}
+                  >
+                    {item.date.getDate()}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </DialogContent>
