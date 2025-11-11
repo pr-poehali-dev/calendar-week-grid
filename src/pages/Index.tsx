@@ -301,6 +301,16 @@ const Index = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
+        <div className="text-center py-3">
+          <a 
+            href="https://vk.com/fotoklubpro" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-white text-xl font-bold hover:text-[#0EA5E9] transition-colors"
+          >
+            Уроки фотографии
+          </a>
+        </div>
         <div className="mb-1 flex items-center justify-between px-4 py-1">
           <Button
             variant="ghost"
