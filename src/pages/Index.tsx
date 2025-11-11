@@ -94,6 +94,7 @@ const Index = () => {
     setIsDialogOpen(true);
     setNewEventText('');
     setSelectedColor(COLORS[0].value);
+    setRepeatType('none');
   };
 
   const handleEventClick = (event: Event, e: React.MouseEvent) => {
@@ -350,7 +351,7 @@ const Index = () => {
             return (
               <Card 
                 key={index}
-                className={`p-4 min-h-[100px] cursor-pointer transition-all duration-200 border-0 border-b border-[#3A3A3A] rounded-none ${
+                className={`p-2 min-h-[100px] cursor-pointer transition-all duration-200 border-0 border-b border-[#3A3A3A] rounded-none ${
                   isDragOver ? 'border-l-4 border-l-[#8B5CF6] bg-[#8B5CF6]/10' :
                   isTodayDate ? `border-l-4 border-l-[#8B5CF6] ${baseColor}` : 
                   baseColor
@@ -360,7 +361,7 @@ const Index = () => {
                 onDragLeave={handleDragLeave}
                 onDrop={() => handleDrop(date)}
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2">
                   <div className={`flex-shrink-0 text-left min-w-[35px] ${isTodayDate ? 'text-[#8B5CF6]' : 'text-[#E5E5E5]'}`}>
                     <div className="text-xs font-medium">{DAYS_SHORT[index]}</div>
                     <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#8B5CF6] text-white rounded-full w-7 h-7 flex items-center justify-center mt-1' : ''}`}>
