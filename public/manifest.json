@@ -1,21 +1,21 @@
 {
   "name": "Календарь фотографа",
-  "short_name": "Календарь",
+  "short_name": "Фотокалендарь",
   "description": "Календарь для планирования съемок и событий",
-  "start_url": "/",
+  "start_url": "/?v=3",
   "display": "standalone",
   "background_color": "#2A2A2A",
   "theme_color": "#2A2A2A",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn.poehali.dev/projects/7f59e44b-93cf-4423-bd01-0f65f05c668b/files/119582c4-6ee5-4759-ba78-b3f6243cb862.jpg",
+      "src": "https://cdn.poehali.dev/projects/7f59e44b-93cf-4423-bd01-0f65f05c668b/files/119582c4-6ee5-4759-ba78-b3f6243cb862.jpg?v=3",
       "sizes": "192x192",
       "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "https://cdn.poehali.dev/projects/7f59e44b-93cf-4423-bd01-0f65f05c668b/files/119582c4-6ee5-4759-ba78-b3f6243cb862.jpg",
+      "src": "https://cdn.poehali.dev/projects/7f59e44b-93cf-4423-bd01-0f65f05c668b/files/119582c4-6ee5-4759-ba78-b3f6243cb862.jpg?v=3",
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "maskable"
