@@ -94,13 +94,23 @@ const MobileWeekView = ({
           </Button>
         </div>
         
-        <div
-          onClick={exportEventsToFile}
-          className="text-center flex-1 cursor-pointer"
-        >
-          <h1 className="text-xs font-bold text-white hover:text-[#0EA5E9] transition-colors">
-            {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
-          </h1>
+        <div className="flex-1 flex items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setWeekOffset(0)}
+            className="hover:bg-[#3A3A3A] text-white h-7 px-2 text-[10px]"
+          >
+            Сегодня
+          </Button>
+          <div
+            onClick={exportEventsToFile}
+            className="cursor-pointer"
+          >
+            <h1 className="text-xs font-bold text-white hover:text-[#0EA5E9] transition-colors">
+              {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
+            </h1>
+          </div>
         </div>
 
         <div className="flex items-center gap-1">
