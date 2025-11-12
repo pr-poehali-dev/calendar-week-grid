@@ -123,7 +123,7 @@ const CalendarDialogs = ({
       </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-md top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto p-4">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               {editingEvent && (
@@ -135,11 +135,11 @@ const CalendarDialogs = ({
                   <Icon name="Trash2" className="w-5 h-5" />
                 </button>
               )}
-              <span className="flex-1 text-center">{editingEvent ? 'Редактировать событие' : 'Новое событие'}</span>
+              <span className="flex-1 text-center text-sm md:text-base">{editingEvent ? 'Редактировать' : 'Новое событие'}</span>
               <div className="w-9"></div>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
+          <div className="space-y-3 pt-2">
             <div>
               <Input
                 placeholder="Введите текст события..."
@@ -152,24 +152,24 @@ const CalendarDialogs = ({
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-[#666]">Выберите цвет:</p>
-                <label className="flex items-center gap-2 cursor-pointer">
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="text-xs text-[#666]">Цвет:</p>
+                <label className="flex items-center gap-1.5 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={fillDay}
                     onChange={(e) => setFillDay(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300"
+                    className="w-3.5 h-3.5 rounded border-gray-300"
                   />
-                  <span className="text-sm text-[#666]">Окрасить весь день</span>
+                  <span className="text-xs text-[#666]">Окрасить день</span>
                 </label>
               </div>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-1.5 flex-wrap">
                 {COLORS.map((color) => (
                   <button
                     key={color.value}
                     onClick={() => setSelectedColor(color.value)}
-                    className={`w-10 h-10 rounded-lg transition-all duration-200 ${
+                    className={`w-8 h-8 rounded-lg transition-all duration-200 ${
                       selectedColor === color.value 
                         ? 'ring-2 ring-offset-2 ring-[#222] scale-110' 
                         : 'hover:scale-105'
@@ -182,48 +182,49 @@ const CalendarDialogs = ({
             </div>
 
             <div>
-              <p className="text-sm text-[#666] mb-2">Повторять событие:</p>
-              <div className="flex gap-2">
+              <p className="text-xs text-[#666] mb-1.5">Повторять:</p>
+              <div className="flex gap-1.5">
                 <Button
                   type="button"
                   variant={selectedRepeat === 'none' ? 'default' : 'outline'}
                   onClick={() => setSelectedRepeat('none')}
-                  className="flex-1"
+                  className="flex-1 text-xs px-2 py-1.5 h-auto"
                 >
-                  Не повторять
+                  Нет
                 </Button>
                 <Button
                   type="button"
                   variant={selectedRepeat === 'weekly' ? 'default' : 'outline'}
                   onClick={() => setSelectedRepeat('weekly')}
-                  className="flex-1"
+                  className="flex-1 text-xs px-2 py-1.5 h-auto"
                 >
-                  <Icon name="Calendar" className="w-4 h-4 mr-1" />
-                  Еженедельно
+                  <Icon name="Calendar" className="w-3 h-3 mr-1" />
+                  Неделя
                 </Button>
                 <Button
                   type="button"
                   variant={selectedRepeat === 'monthly' ? 'default' : 'outline'}
                   onClick={() => setSelectedRepeat('monthly')}
-                  className="flex-1"
+                  className="flex-1 text-xs px-2 py-1.5 h-auto"
                 >
-                  <Icon name="CalendarDays" className="w-4 h-4 mr-1" />
-                  Ежемесячно
+                  <Icon name="CalendarDays" className="w-3 h-3 mr-1" />
+                  Месяц
                 </Button>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-1">
               <Button
                 onClick={handleCreateEvent}
                 disabled={!newEventText.trim()}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 {editingEvent ? 'Сохранить' : 'Создать'}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
+                className="text-sm"
               >
                 Отмена
               </Button>
