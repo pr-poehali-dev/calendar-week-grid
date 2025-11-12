@@ -133,7 +133,7 @@ const MobileWeekView = ({
         const fillColor = getDayFillColor(date);
         
         const isLighterDay = index === 0 || index === 2 || index === 4;
-        const baseColor = isLighterDay ? 'bg-[#525252]' : 'bg-[#4A4A4A]';
+        const baseColor = isLighterDay ? 'bg-[#5A5A5A]' : 'bg-[#4A4A4A]';
         
         return (
           <Card 
@@ -159,7 +159,7 @@ const MobileWeekView = ({
 
               <div className="flex-1 min-h-[60px]">
                 {dayEvents.length === 0 ? (
-                  <div className={`flex items-center justify-center h-full text-[#999] ${isLighterDay ? 'mr-16' : ''}`}>
+                  <div className="flex items-center justify-center h-full text-[#999]">
                     <Icon name="Plus" className="w-5 h-5" />
                   </div>
                 ) : (
@@ -183,8 +183,7 @@ const MobileWeekView = ({
                         }`}
                         style={{ 
                           borderLeftColor: event.color,
-                          backgroundColor: `${event.color}15`,
-                          marginLeft: isLighterDay ? '64px' : '0'
+                          backgroundColor: `${event.color}15`
                         }}
                       >
                         <div className="flex-1">
