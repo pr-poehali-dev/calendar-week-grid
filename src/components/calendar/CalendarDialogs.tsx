@@ -164,7 +164,7 @@ const CalendarDialogs = ({
                   <span className="text-[10px] text-[#666] whitespace-nowrap">Окрасить</span>
                 </label>
               </div>
-              <div className="flex gap-1 flex-wrap">
+              <div className="flex gap-3 flex-wrap">
                 {COLORS.map((color) => (
                   <button
                     key={color.value}
