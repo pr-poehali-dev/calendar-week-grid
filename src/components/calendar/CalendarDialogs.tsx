@@ -123,7 +123,7 @@ const CalendarDialogs = ({
       </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto p-4">
+        <DialogContent className="sm:max-w-md top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto p-3 w-[95vw]">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               {editingEvent && (
@@ -152,24 +152,24 @@ const CalendarDialogs = ({
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <p className="text-xs text-[#666]">Цвет:</p>
-                <label className="flex items-center gap-1.5 cursor-pointer">
+              <div className="flex items-center justify-between mb-1.5 gap-2">
+                <p className="text-xs text-[#666] whitespace-nowrap">Цвет:</p>
+                <label className="flex items-center gap-1 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={fillDay}
                     onChange={(e) => setFillDay(e.target.checked)}
-                    className="w-3.5 h-3.5 rounded border-gray-300"
+                    className="w-3 h-3 rounded border-gray-300"
                   />
-                  <span className="text-xs text-[#666]">Окрасить день</span>
+                  <span className="text-[10px] text-[#666] whitespace-nowrap">Окрасить</span>
                 </label>
               </div>
-              <div className="flex gap-1.5 flex-wrap">
+              <div className="flex gap-1 flex-wrap">
                 {COLORS.map((color) => (
                   <button
                     key={color.value}
                     onClick={() => setSelectedColor(color.value)}
-                    className={`w-8 h-8 rounded-lg transition-all duration-200 ${
+                    className={`w-7 h-7 rounded-lg transition-all duration-200 ${
                       selectedColor === color.value 
                         ? 'ring-2 ring-offset-2 ring-[#222] scale-110' 
                         : 'hover:scale-105'
@@ -182,13 +182,13 @@ const CalendarDialogs = ({
             </div>
 
             <div>
-              <p className="text-xs text-[#666] mb-1.5">Повторять:</p>
-              <div className="flex gap-1.5">
+              <p className="text-xs text-[#666] mb-1">Повторять:</p>
+              <div className="flex gap-1 w-full">
                 <Button
                   type="button"
                   variant={selectedRepeat === 'none' ? 'default' : 'outline'}
                   onClick={() => setSelectedRepeat('none')}
-                  className="flex-1 text-xs px-2 py-1.5 h-auto"
+                  className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
                   Нет
                 </Button>
@@ -196,19 +196,19 @@ const CalendarDialogs = ({
                   type="button"
                   variant={selectedRepeat === 'weekly' ? 'default' : 'outline'}
                   onClick={() => setSelectedRepeat('weekly')}
-                  className="flex-1 text-xs px-2 py-1.5 h-auto"
+                  className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
-                  <Icon name="Calendar" className="w-3 h-3 mr-1" />
-                  Неделя
+                  <Icon name="Calendar" className="w-3 h-3" />
+                  <span className="hidden xs:inline ml-1">Нед</span>
                 </Button>
                 <Button
                   type="button"
                   variant={selectedRepeat === 'monthly' ? 'default' : 'outline'}
                   onClick={() => setSelectedRepeat('monthly')}
-                  className="flex-1 text-xs px-2 py-1.5 h-auto"
+                  className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
-                  <Icon name="CalendarDays" className="w-3 h-3 mr-1" />
-                  Месяц
+                  <Icon name="CalendarDays" className="w-3 h-3" />
+                  <span className="hidden xs:inline ml-1">Мес</span>
                 </Button>
               </div>
             </div>
