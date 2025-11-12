@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
-import { Event, DAYS_SHORT, MONTHS } from './types';
+import { Event, DAYS_SHORT, DAYS_FULL, MONTHS } from './types';
 
 interface DesktopMonthViewProps {
   monthCalendar: {
@@ -101,7 +101,11 @@ const DesktopMonthView = ({
           className="flex-1 text-center cursor-pointer"
         >
           <h1 className="text-3xl font-bold text-white hover:text-[#0EA5E9] transition-colors">
-            {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
+            {(() => {
+              const today = new Date();
+              const dayOfWeek = DAYS_FULL[today.getDay() === 0 ? 6 : today.getDay() - 1];
+              return `${today.getDate()} ${MONTHS[today.getMonth()]}, ${dayOfWeek}`;
+            })()}
           </h1>
         </div>
 

@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
-import { Event, DAYS_SHORT, MONTHS } from './types';
+import { Event, DAYS_SHORT, DAYS_FULL, MONTHS } from './types';
 
 interface MobileWeekViewProps {
   weekDates: Date[];
@@ -99,7 +99,11 @@ const MobileWeekView = ({
           className="text-center flex-1 cursor-pointer"
         >
           <h1 className="text-xs font-bold text-white hover:text-[#0EA5E9] transition-colors">
-            {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
+            {(() => {
+              const today = new Date();
+              const dayOfWeek = DAYS_FULL[today.getDay() === 0 ? 6 : today.getDay() - 1];
+              return `${today.getDate()} ${MONTHS[today.getMonth()]}, ${dayOfWeek}`;
+            })()}
           </h1>
         </div>
 
