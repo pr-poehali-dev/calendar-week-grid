@@ -162,9 +162,9 @@ const MobileWeekView = ({
             onDrop={() => handleDrop(date)}
           >
             <div className="flex items-start gap-2">
-              <div className={`flex-shrink-0 text-left min-w-[35px] ${isTodayDate ? 'text-[#1E3A8A]' : 'text-[#E5E5E5]'}`}>
-                <div className="text-xs font-medium">{DAYS_SHORT[index]}</div>
-                <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#1E3A8A] text-white rounded-full w-7 h-7 flex items-center justify-center mt-1' : ''}`}>
+              <div className="flex-shrink-0 text-left min-w-[35px]">
+                <div className="text-sm font-semibold text-white">{DAYS_SHORT[index]}</div>
+                <div className={`text-lg font-bold ${isTodayDate ? 'bg-[#0EA5E9] text-white rounded-full w-7 h-7 flex items-center justify-center mt-1' : 'text-[#E5E5E5]'}`}>
                   {date.getDate()}
                 </div>
               </div>

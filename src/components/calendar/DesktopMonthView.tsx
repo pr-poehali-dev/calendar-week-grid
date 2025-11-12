@@ -165,10 +165,7 @@ const DesktopMonthView = ({
                   }`}>
                     {item.date.getDate()}
                   </div>
-                  <div className={`text-sm font-medium ${
-                    isSunday && item.isCurrentMonth ? 'text-red-400' :
-                    item.isCurrentMonth ? 'text-[#999]' : 'text-[#555]'
-                  }`}>
+                  <div className="text-base font-semibold text-white">
                     {dayName}
                   </div>
                 </div>
