@@ -76,7 +76,7 @@ const CalendarDialogs = ({
   return (
     <>
       <Dialog open={viewAllDate !== null} onOpenChange={() => setViewAllDate(null)}>
-        <DialogContent className="max-w-[92vw] sm:max-w-lg max-h-[80vh] overflow-y-auto bg-[#4A4A4A] border-[#3A3A3A]" style={{ maxWidth: window.innerWidth >= 768 ? '48rem' : undefined }}>
+        <DialogContent className="max-w-[92vw] sm:max-w-lg md:max-w-[48rem] max-h-[80vh] overflow-y-auto bg-[#4A4A4A] border-[#3A3A3A]">
           <DialogHeader>
             <DialogTitle className="text-center text-white">
               События {viewAllDate && `${viewAllDate.getDate()} ${MONTHS[viewAllDate.getMonth()]} ${viewAllDate.getFullYear()}`}
@@ -123,7 +123,7 @@ const CalendarDialogs = ({
       </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-[92vw] sm:max-w-md top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto" style={{ padding: '12px', maxWidth: window.innerWidth >= 768 ? '48rem' : undefined }}>
+        <DialogContent className="max-w-[92vw] sm:max-w-md md:max-w-[48rem] top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto" style={{ padding: '12px' }}>
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               {editingEvent && (
@@ -232,7 +232,7 @@ const CalendarDialogs = ({
       </Dialog>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="max-w-[92vw] sm:max-w-md bg-[#4A4A4A] border-[#3A3A3A]" style={{ maxWidth: window.innerWidth >= 768 ? '48rem' : undefined }}>
+        <DialogContent className="max-w-[92vw] sm:max-w-md md:max-w-[48rem] bg-[#4A4A4A] border-[#3A3A3A]">
           <DialogHeader>
             <DialogTitle className="text-white text-center">
               Удалить повторяющееся событие?
