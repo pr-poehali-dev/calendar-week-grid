@@ -76,7 +76,7 @@ const CalendarDialogs = ({
   return (
     <>
       <Dialog open={viewAllDate !== null} onOpenChange={() => setViewAllDate(null)}>
-        <DialogContent className="sm:max-w-lg md:max-w-2xl max-h-[80vh] overflow-y-auto bg-[#4A4A4A] border-[#3A3A3A]">
+        <DialogContent className="max-w-[92vw] sm:max-w-lg md:!max-w-3xl max-h-[80vh] overflow-y-auto bg-[#4A4A4A] border-[#3A3A3A]">
           <DialogHeader>
             <DialogTitle className="text-center text-white">
               События {viewAllDate && `${viewAllDate.getDate()} ${MONTHS[viewAllDate.getMonth()]} ${viewAllDate.getFullYear()}`}
@@ -123,7 +123,7 @@ const CalendarDialogs = ({
       </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md md:max-w-2xl top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto w-[92vw] sm:w-auto" style={{ padding: '12px' }}>
+        <DialogContent className="max-w-[92vw] sm:max-w-md md:!max-w-3xl top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto" style={{ padding: '12px' }}>
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               {editingEvent && (
@@ -232,7 +232,7 @@ const CalendarDialogs = ({
       </Dialog>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-md md:max-w-2xl bg-[#4A4A4A] border-[#3A3A3A]">
+        <DialogContent className="max-w-[92vw] sm:max-w-md md:!max-w-3xl bg-[#4A4A4A] border-[#3A3A3A]">
           <DialogHeader>
             <DialogTitle className="text-white text-center">
               Удалить повторяющееся событие?

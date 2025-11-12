@@ -133,11 +133,15 @@ const DesktopMonthView = ({
               className={`h-full p-4 cursor-pointer transition-all duration-200 border rounded-lg ${
                 isDragOver ? 'border-[#1E3A8A] bg-[#1E3A8A]/10' :
                 isTodayDate ? 'border-[#1E3A8A] bg-[#4A4A4A]' :
-                isSunday && item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A]' :
-                item.isCurrentMonth ? 'border-[#3A3A3A] bg-[#4A4A4A]' : 'border-[#2A2A2A] bg-[#333333]'
+                item.isCurrentMonth ? 'border-[#3A3A3A]' : 'border-[#2A2A2A] bg-[#333333]'
               }`}
-              style={isSunday && item.isCurrentMonth && !fillColor ? { backgroundColor: '#4A3A3A' } : (fillColor ? { backgroundColor: `${fillColor}40` } : {})}
-              style={fillColor ? { backgroundColor: `${fillColor}40` } : {}}
+              style={
+                fillColor 
+                  ? { backgroundColor: `${fillColor}40` } 
+                  : (isSunday && item.isCurrentMonth 
+                      ? { backgroundColor: '#3F2A2A' } 
+                      : { backgroundColor: item.isCurrentMonth ? '#4A4A4A' : '#333333' })
+              }
               onClick={() => handleDateSelect(item.date)}
               onDragOver={(e) => handleDragOver(e, item.date)}
               onDragLeave={handleDragLeave}
