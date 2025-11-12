@@ -138,8 +138,8 @@ const DesktopMonthView = ({
               style={
                 fillColor 
                   ? { backgroundColor: `${fillColor}40` } 
-                  : (isSunday && item.isCurrentMonth 
-                      ? { backgroundColor: '#3F2A2A' } 
+                  : (isSunday && item.isCurrentMonth && !isTodayDate
+                      ? { backgroundColor: '#4A3333' } 
                       : { backgroundColor: item.isCurrentMonth ? '#4A4A4A' : '#333333' })
               }
               onClick={() => handleDateSelect(item.date)}
