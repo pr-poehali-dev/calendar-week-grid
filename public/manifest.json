@@ -1,8 +1,8 @@
 {
-  "name": "Календарь фотографа",
-  "short_name": "Фотокалендарь",
+  "name": "Календарь",
+  "short_name": "Календарь",
   "description": "Календарь для планирования съемок и событий",
-  "start_url": "/?v=4",
+  "start_url": "/?v=5",
   "display": "standalone",
   "background_color": "#2A2A2A",
   "theme_color": "#2A2A2A",
