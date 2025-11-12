@@ -94,7 +94,7 @@ const MobileWeekView = ({
           </Button>
         </div>
         
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center gap-2">
           <Button
             variant="ghost"
             size="icon"
@@ -103,6 +103,15 @@ const MobileWeekView = ({
             title="Сегодня"
           >
             <Icon name="CalendarClock" className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={exportEventsToFile}
+            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+            title="Экспорт событий"
+          >
+            <Icon name="Download" className="w-4 h-4" />
           </Button>
         </div>
 

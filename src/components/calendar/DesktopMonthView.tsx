@@ -96,13 +96,22 @@ const DesktopMonthView = ({
           </Button>
         </div>
         
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center gap-3">
           <Button
             variant="ghost"
             onClick={() => setMonthOffset(0)}
             className="hover:bg-[#3A3A3A] text-white h-9 px-4 text-sm"
           >
             Сегодня
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={exportEventsToFile}
+            className="hover:bg-[#3A3A3A] text-white h-9 w-9"
+            title="Экспорт событий"
+          >
+            <Icon name="Download" className="w-5 h-5" />
           </Button>
         </div>
 
