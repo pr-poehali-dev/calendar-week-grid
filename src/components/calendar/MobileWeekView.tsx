@@ -66,10 +66,6 @@ const MobileWeekView = ({
   handleTouchEnd,
   handleQuickAdd
 }: MobileWeekViewProps) => {
-  const today = new Date();
-  const dayOfWeek = DAYS_FULL[today.getDay() === 0 ? 6 : today.getDay() - 1];
-  const todayText = `${today.getDate()} ${MONTHS[today.getMonth()]}, ${dayOfWeek}`;
-
   return (
     <div 
       className={forceDesktopView ? 'hidden' : 'md:hidden'}
@@ -103,7 +99,7 @@ const MobileWeekView = ({
           className="text-center flex-1 cursor-pointer"
         >
           <h1 className="text-xs font-bold text-white hover:text-[#0EA5E9] transition-colors">
-            {todayText}
+            {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
           </h1>
         </div>
 

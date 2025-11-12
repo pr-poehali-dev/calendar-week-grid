@@ -62,10 +62,6 @@ const DesktopMonthView = ({
   handleEventClick,
   handleViewAllClick
 }: DesktopMonthViewProps) => {
-  const today = new Date();
-  const dayOfWeek = DAYS_FULL[today.getDay() === 0 ? 6 : today.getDay() - 1];
-  const todayText = `${today.getDate()} ${MONTHS[today.getMonth()]}, ${dayOfWeek}`;
-
   return (
     <div className={forceDesktopView ? 'flex flex-col flex-1 px-6 w-full overflow-y-auto' : 'hidden md:flex md:flex-col md:flex-1 px-6 w-full md:overflow-y-auto'}>
       <div className="mb-3 flex items-center justify-between flex-shrink-0">
@@ -105,7 +101,7 @@ const DesktopMonthView = ({
           className="flex-1 text-center cursor-pointer"
         >
           <h1 className="text-3xl font-bold text-white hover:text-[#0EA5E9] transition-colors">
-            {todayText}
+            {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
           </h1>
         </div>
 
