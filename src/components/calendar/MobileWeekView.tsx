@@ -94,7 +94,7 @@ const MobileWeekView = ({
           </Button>
         </div>
         
-        <div className="flex-1 flex items-center justify-center gap-1.5">
+        <div className="flex-1 flex items-center justify-center">
           <Button
             variant="ghost"
             size="icon"
@@ -104,14 +104,6 @@ const MobileWeekView = ({
           >
             <Icon name="CalendarClock" className="w-4 h-4" />
           </Button>
-          <div
-            onClick={exportEventsToFile}
-            className="cursor-pointer flex-1 text-center"
-          >
-            <h1 className="text-xs font-bold text-white hover:text-[#0EA5E9] transition-colors">
-              {firstDate.getDate()} {MONTHS[firstDate.getMonth()]} — {lastDate.getDate()} {MONTHS[lastDate.getMonth()]} {lastDate.getFullYear()}
-            </h1>
-          </div>
         </div>
 
         <div className="flex items-center gap-1">

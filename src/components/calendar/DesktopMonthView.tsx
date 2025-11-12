@@ -96,7 +96,7 @@ const DesktopMonthView = ({
           </Button>
         </div>
         
-        <div className="flex-1 flex items-center justify-center gap-4">
+        <div className="flex-1 flex items-center justify-center">
           <Button
             variant="ghost"
             onClick={() => setMonthOffset(0)}
@@ -104,14 +104,6 @@ const DesktopMonthView = ({
           >
             Сегодня
           </Button>
-          <div
-            onClick={exportEventsToFile}
-            className="cursor-pointer"
-          >
-            <h1 className="text-3xl font-bold text-white hover:text-[#0EA5E9] transition-colors">
-              {MONTHS[monthCalendar.month].charAt(0).toUpperCase() + MONTHS[monthCalendar.month].slice(1, -1) + 'ь'} {monthCalendar.year}
-            </h1>
-          </div>
         </div>
 
         <Button
