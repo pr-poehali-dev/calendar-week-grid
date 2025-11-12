@@ -198,7 +198,7 @@ const CalendarDialogs = ({
                   onClick={() => setSelectedRepeat('weekly')}
                   className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
-                  <Icon name="Calendar" className="w-3 h-3 flex-shrink-0" />
+                  Неделя
                 </Button>
                 <Button
                   type="button"
@@ -206,7 +206,7 @@ const CalendarDialogs = ({
                   onClick={() => setSelectedRepeat('monthly')}
                   className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
-                  <Icon name="CalendarDays" className="w-3 h-3 flex-shrink-0" />
+                  Месяц
                 </Button>
               </div>
             </div>
