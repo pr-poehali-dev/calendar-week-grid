@@ -123,7 +123,7 @@ const CalendarDialogs = ({
       </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               {editingEvent && (
