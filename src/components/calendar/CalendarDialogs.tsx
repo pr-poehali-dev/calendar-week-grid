@@ -123,7 +123,7 @@ const CalendarDialogs = ({
       </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto p-3 w-[95vw]">
+        <DialogContent className="sm:max-w-md top-[5%] translate-y-0 md:top-[50%] md:translate-y-[-50%] max-h-[90vh] overflow-y-auto w-[92vw] sm:w-auto" style={{ padding: '12px' }}>
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               {editingEvent && (
@@ -198,8 +198,7 @@ const CalendarDialogs = ({
                   onClick={() => setSelectedRepeat('weekly')}
                   className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
-                  <Icon name="Calendar" className="w-3 h-3" />
-                  <span className="hidden xs:inline ml-1">Нед</span>
+                  <Icon name="Calendar" className="w-3 h-3 flex-shrink-0" />
                 </Button>
                 <Button
                   type="button"
@@ -207,8 +206,7 @@ const CalendarDialogs = ({
                   onClick={() => setSelectedRepeat('monthly')}
                   className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
-                  <Icon name="CalendarDays" className="w-3 h-3" />
-                  <span className="hidden xs:inline ml-1">Мес</span>
+                  <Icon name="CalendarDays" className="w-3 h-3 flex-shrink-0" />
                 </Button>
               </div>
             </div>
