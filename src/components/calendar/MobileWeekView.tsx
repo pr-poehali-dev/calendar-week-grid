@@ -157,7 +157,7 @@ const MobileWeekView = ({
                 </div>
               </div>
 
-              <div className={`flex-1 min-h-[60px] ${isLighterDay ? 'pl-8' : ''}`}>
+              <div className={`flex-1 min-h-[60px] ${isLighterDay ? 'pl-16' : ''}`}>
                 {dayEvents.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-[#999]">
                     <Icon name="Plus" className="w-5 h-5" />
