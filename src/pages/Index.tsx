@@ -1,10 +1,12 @@
+import { lazy, Suspense } from 'react';
 import AuthScreen from '@/components/calendar/AuthScreen';
 import MobileWeekView from '@/components/calendar/MobileWeekView';
 import DesktopMonthView from '@/components/calendar/DesktopMonthView';
-import CalendarDialogs from '@/components/calendar/CalendarDialogs';
 import { useCalendarState } from '@/hooks/useCalendarState';
 import { useCalendarUtils } from '@/hooks/useCalendarUtils';
 import { useCalendarHandlers } from '@/hooks/useCalendarHandlers';
+
+const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
 
 const Index = () => {
   const state = useCalendarState();
@@ -96,40 +98,42 @@ const Index = () => {
         />
       </div>
 
-      <CalendarDialogs
-        isDialogOpen={state.isDialogOpen}
-        setIsDialogOpen={state.setIsDialogOpen}
-        editingEvent={state.editingEvent}
-        newEventText={state.newEventText}
-        setNewEventText={state.setNewEventText}
-        selectedColor={state.selectedColor}
-        setSelectedColor={state.setSelectedColor}
-        fillDay={state.fillDay}
-        setFillDay={state.setFillDay}
-        selectedRepeat={state.selectedRepeat}
-        setSelectedRepeat={state.setSelectedRepeat}
-        handleCreateEvent={handlers.handleCreateEvent}
-        handleDeleteEvent={handlers.handleDeleteEvent}
-        selectedDate={state.selectedDate}
-        deleteDialogOpen={state.deleteDialogOpen}
-        setDeleteDialogOpen={state.setDeleteDialogOpen}
-        eventToDelete={state.eventToDelete}
-        deleteTargetDate={state.deleteTargetDate}
-        deleteEvent={handlers.deleteEvent}
-        viewAllDate={state.viewAllDate}
-        setViewAllDate={state.setViewAllDate}
-        getEventsForDate={utils.getEventsForDate}
-        formatDateKey={utils.formatDateKey}
-        handleEventClick={handlers.handleEventClick}
-        handleDayClick={handlers.handleDayClick}
-        isQuickAddOpen={state.isQuickAddOpen}
-        setIsQuickAddOpen={state.setIsQuickAddOpen}
-        quickAddMonthOffset={state.quickAddMonthOffset}
-        setQuickAddMonthOffset={state.setQuickAddMonthOffset}
-        getQuickAddCalendar={utils.getQuickAddCalendar}
-        handleQuickAddDateSelect={handlers.handleQuickAddDateSelect}
-        isToday={utils.isToday}
-      />
+      <Suspense fallback={null}>
+        <CalendarDialogs
+          isDialogOpen={state.isDialogOpen}
+          setIsDialogOpen={state.setIsDialogOpen}
+          editingEvent={state.editingEvent}
+          newEventText={state.newEventText}
+          setNewEventText={state.setNewEventText}
+          selectedColor={state.selectedColor}
+          setSelectedColor={state.setSelectedColor}
+          fillDay={state.fillDay}
+          setFillDay={state.setFillDay}
+          selectedRepeat={state.selectedRepeat}
+          setSelectedRepeat={state.setSelectedRepeat}
+          handleCreateEvent={handlers.handleCreateEvent}
+          handleDeleteEvent={handlers.handleDeleteEvent}
+          selectedDate={state.selectedDate}
+          deleteDialogOpen={state.deleteDialogOpen}
+          setDeleteDialogOpen={state.setDeleteDialogOpen}
+          eventToDelete={state.eventToDelete}
+          deleteTargetDate={state.deleteTargetDate}
+          deleteEvent={handlers.deleteEvent}
+          viewAllDate={state.viewAllDate}
+          setViewAllDate={state.setViewAllDate}
+          getEventsForDate={utils.getEventsForDate}
+          formatDateKey={utils.formatDateKey}
+          handleEventClick={handlers.handleEventClick}
+          handleDayClick={handlers.handleDayClick}
+          isQuickAddOpen={state.isQuickAddOpen}
+          setIsQuickAddOpen={state.setIsQuickAddOpen}
+          quickAddMonthOffset={state.quickAddMonthOffset}
+          setQuickAddMonthOffset={state.setQuickAddMonthOffset}
+          getQuickAddCalendar={utils.getQuickAddCalendar}
+          handleQuickAddDateSelect={handlers.handleQuickAddDateSelect}
+          isToday={utils.isToday}
+        />
+      </Suspense>
     </div>
   );
 };
