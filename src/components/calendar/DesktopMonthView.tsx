@@ -142,7 +142,7 @@ const DesktopMonthView = ({
               key={index}
               className={`h-full p-4 cursor-pointer transition-all duration-200 border rounded-lg ${
                 isDragOver ? 'border-[#1E3A8A] bg-[#1E3A8A]/10' :
-                isTodayDate ? 'border-[#1E3A8A] bg-[#4A4A4A]' :
+                isTodayDate ? 'border-[#0EA5E9] bg-[#0EA5E9]/10' :
                 item.isCurrentMonth ? 'border-[#3A3A3A]' : 'border-[#2A2A2A] bg-[#333333]'
               }`}
               style={
@@ -160,7 +160,7 @@ const DesktopMonthView = ({
               <div className="flex flex-col h-full">
                 <div className="flex items-center gap-2 mb-2">
                   <div className={`text-base font-semibold ${
-                    isTodayDate ? 'text-white bg-[#1E3A8A] rounded-full w-8 h-8 flex items-center justify-center' :
+                    isTodayDate ? 'text-white bg-[#0EA5E9] rounded-full w-8 h-8 flex items-center justify-center' :
                     item.isCurrentMonth ? 'text-[#E5E5E5]' : 'text-[#666]'
                   }`}>
                     {item.date.getDate()}

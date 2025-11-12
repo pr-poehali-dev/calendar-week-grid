@@ -152,7 +152,7 @@ const MobileWeekView = ({
             key={index}
             className={`p-2 min-h-[100px] cursor-pointer transition-all duration-200 border-0 border-b border-[#3A3A3A] rounded-none ${
               isDragOver ? 'border-l-4 border-l-[#1E3A8A] bg-[#1E3A8A]/10' :
-              isTodayDate ? `border-l-4 border-l-[#1E3A8A] ${baseColor}` : 
+              isTodayDate ? 'border-l-4 border-l-[#0EA5E9] bg-[#0EA5E9]/10' : 
               baseColor
             }`}
             style={fillColor ? { backgroundColor: `${fillColor}40` } : {}}
