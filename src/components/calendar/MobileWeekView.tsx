@@ -157,9 +157,9 @@ const MobileWeekView = ({
                 </div>
               </div>
 
-              <div className={`flex-1 min-h-[60px] ${isLighterDay ? 'pl-16' : ''}`}>
+              <div className="flex-1 min-h-[60px]">
                 {dayEvents.length === 0 ? (
-                  <div className="flex items-center justify-center h-full text-[#999]">
+                  <div className={`flex items-center justify-center h-full text-[#999] ${isLighterDay ? 'mr-16' : ''}`}>
                     <Icon name="Plus" className="w-5 h-5" />
                   </div>
                 ) : (
@@ -175,7 +175,7 @@ const MobileWeekView = ({
                         onDragStart={() => handleDragStart(event)}
                         onDragEnd={handleDragEnd}
                         onClick={(e) => handleEventClick(event, e, dateKey)}
-                        className={`p-2 rounded-lg cursor-pointer border-l-4 flex items-start justify-between gap-2 ${
+                        className={`p-2 rounded-lg cursor-pointer border-l-4 flex items-start justify-between gap-2 ${isLighterDay ? 'ml-16' : ''} ${
                           isDragging ? 'opacity-40' : 
                           isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' : 
                           isGreen ? 'opacity-50' :
