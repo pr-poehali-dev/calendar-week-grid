@@ -1,7 +1,8 @@
-const CACHE_NAME = 'calendar-v2';
+const CACHE_NAME = 'calendar-v3';
 const urlsToCache = [
   '/',
-  '/index.html'
+  '/index.html',
+  '/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -13,6 +14,22 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  if (event.request.url.includes('manifest.json') || 
+      event.request.url.includes('favicon') ||
+      event.request.url.includes('.jpg') ||
+      event.request.url.includes('.png')) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+        return response;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
