@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
-import { Event, DAYS_SHORT, DAYS_FULL, MONTHS } from './types';
+import { Event, DAYS_SHORT, MONTHS } from './types';
 
 interface DesktopMonthViewProps {
   monthCalendar: {
