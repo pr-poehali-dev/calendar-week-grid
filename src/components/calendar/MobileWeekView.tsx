@@ -75,7 +75,7 @@ const MobileWeekView = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="mb-0.5 flex items-center justify-center gap-2 px-2 py-0.5">
+      <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
         <Button
           variant="ghost"
           size="icon"
