@@ -75,76 +75,68 @@ const MobileWeekView = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setWeekOffset(weekOffset - 1)}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-          >
-            <Icon name="ChevronLeft" className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-            title="Выйти"
-          >
-            <Icon name="LogOut" className="w-4 h-4" />
-          </Button>
-        </div>
-        
-        <div className="flex-1 flex items-center justify-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setWeekOffset(0)}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-            title="Сегодня"
-          >
-            <Icon name="CalendarClock" className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleOpenNotes}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-            title="Заметки"
-          >
-            <Icon name="FileText" className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={exportEventsToFile}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-            title="Экспорт событий"
-          >
-            <Icon name="Download" className="w-4 h-4" />
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setForceDesktopView(true)}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-            title="ПК версия"
-          >
-            <Icon name="Monitor" className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setWeekOffset(weekOffset + 1)}
-            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-          >
-            <Icon name="ChevronRight" className="w-4 h-4" />
-          </Button>
-        </div>
+      <div className="mb-0.5 flex items-center justify-center gap-2 px-2 py-0.5">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setWeekOffset(weekOffset - 1)}
+          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+        >
+          <Icon name="ChevronLeft" className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleLogout}
+          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          title="Выйти"
+        >
+          <Icon name="LogOut" className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setWeekOffset(0)}
+          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          title="Сегодня"
+        >
+          <Icon name="CalendarClock" className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleOpenNotes}
+          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          title="Заметки"
+        >
+          <Icon name="FileText" className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={exportEventsToFile}
+          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          title="Экспорт событий"
+        >
+          <Icon name="Download" className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setForceDesktopView(true)}
+          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          title="ПК версия"
+        >
+          <Icon name="Monitor" className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setWeekOffset(weekOffset + 1)}
+          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+        >
+          <Icon name="ChevronRight" className="w-4 h-4" />
+        </Button>
       </div>
 
       <div className="space-y-0">
