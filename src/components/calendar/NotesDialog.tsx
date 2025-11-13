@@ -6,12 +6,7 @@ import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { safeLocalStorage } from '@/utils/localStorage';
 import { debounce } from '@/utils/debounce';
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-}
+import { Note } from '@/types/notes';
 
 interface NotesDialogProps {
   isOpen: boolean;

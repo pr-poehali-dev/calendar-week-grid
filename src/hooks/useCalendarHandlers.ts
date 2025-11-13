@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { Event, COLORS, MONTHS, DAYS_SHORT, API_URL } from '@/components/calendar/types';
+import { safeLocalStorage } from '@/utils/localStorage';
+import { Note } from '@/types/notes';
 
 export const useCalendarHandlers = (
   state: any,
@@ -429,8 +431,10 @@ export const useCalendarHandlers = (
   };
 
   const exportEventsToFile = () => {
-    if (events.length === 0) {
-      toast.error('Нет событий для экспорта');
+    const notes = safeLocalStorage.getJSON<Note[]>('calendar_notes_list', []);
+    
+    if (events.length === 0 && notes.length === 0) {
+      toast.error('Нет данных для экспорта');
       return;
     }
 
@@ -443,43 +447,73 @@ export const useCalendarHandlers = (
     let content = 'КАЛЕНДАРЬ ФОТОГРАФА\n';
     content += '='.repeat(50) + '\n\n';
 
-    const groupedByDate: { [key: string]: Event[] } = {};
-    sortedEvents.forEach(event => {
-      if (!groupedByDate[event.date]) {
-        groupedByDate[event.date] = [];
-      }
-      groupedByDate[event.date].push(event);
-    });
+    if (sortedEvents.length > 0) {
+      content += '📅 СОБЫТИЯ\n';
+      content += '='.repeat(50) + '\n\n';
 
-    Object.keys(groupedByDate).sort().forEach(dateKey => {
-      const date = new Date(dateKey);
-      const dayOfWeek = DAYS_SHORT[date.getDay() === 0 ? 6 : date.getDay() - 1];
-      content += `${dayOfWeek}, ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}\n`;
-      content += '-'.repeat(50) + '\n';
-      
-      const dayEvents = groupedByDate[dateKey].sort((a, b) => (a.order || 0) - (b.order || 0));
-      dayEvents.forEach((event, index) => {
-        content += `${index + 1}. ${event.text}\n`;
+      const groupedByDate: { [key: string]: Event[] } = {};
+      sortedEvents.forEach(event => {
+        if (!groupedByDate[event.date]) {
+          groupedByDate[event.date] = [];
+        }
+        groupedByDate[event.date].push(event);
       });
-      content += '\n';
-    });
 
-    content += '='.repeat(50) + '\n';
-    content += `Всего событий: ${events.length}\n`;
-    content += `Дней с событиями: ${Object.keys(groupedByDate).length}\n`;
+      Object.keys(groupedByDate).sort().forEach(dateKey => {
+        const date = new Date(dateKey);
+        const dayOfWeek = DAYS_SHORT[date.getDay() === 0 ? 6 : date.getDay() - 1];
+        content += `${dayOfWeek}, ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}\n`;
+        content += '-'.repeat(50) + '\n';
+        
+        const dayEvents = groupedByDate[dateKey].sort((a, b) => (a.order || 0) - (b.order || 0));
+        dayEvents.forEach((event, index) => {
+          content += `${index + 1}. ${event.text}\n`;
+        });
+        content += '\n';
+      });
+
+      content += '='.repeat(50) + '\n';
+      content += `Всего событий: ${events.length}\n`;
+      content += `Дней с событиями: ${Object.keys(groupedByDate).length}\n\n`;
+    }
+
+    if (notes.length > 0) {
+      content += '\n📝 ЗАМЕТКИ\n';
+      content += '='.repeat(50) + '\n\n';
+      
+      notes.forEach((note, index) => {
+        content += `${index + 1}. ${note.title}\n`;
+        content += '-'.repeat(50) + '\n';
+        if (note.content) {
+          content += note.content + '\n';
+        } else {
+          content += '(пусто)\n';
+        }
+        content += '\n';
+      });
+
+      content += '='.repeat(50) + '\n';
+      content += `Всего заметок: ${notes.length}\n\n`;
+    }
+
+    content += '\n' + '='.repeat(50) + '\n';
     content += `Дата экспорта: ${new Date().toLocaleDateString('ru-RU')} ${new Date().toLocaleTimeString('ru-RU')}\n`;
 
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `календарь_${new Date().toISOString().split('T')[0]}.txt`;
+    link.download = `календарь_и_заметки_${new Date().toISOString().split('T')[0]}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    toast.success('Календарь сохранён');
+    const exportedItems = [];
+    if (events.length > 0) exportedItems.push(`${events.length} событий`);
+    if (notes.length > 0) exportedItems.push(`${notes.length} заметок`);
+    
+    toast.success(`Сохранено: ${exportedItems.join(' и ')}`);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
