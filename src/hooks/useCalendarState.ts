@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Event, COLORS } from '@/components/calendar/types';
+import { safeLocalStorage } from '@/utils/localStorage';
 
 export const useCalendarState = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -18,8 +19,8 @@ export const useCalendarState = () => {
   const [monthOffset, setMonthOffset] = useState(0);
   const [viewAllDate, setViewAllDate] = useState<Date | null>(null);
   const [dragOverEvent, setDragOverEvent] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(localStorage.getItem('calendar_user_id'));
-  const [isAuthOpen, setIsAuthOpen] = useState(!localStorage.getItem('calendar_user_id'));
+  const [userId, setUserId] = useState<string | null>(() => safeLocalStorage.getItem('calendar_user_id'));
+  const [isAuthOpen, setIsAuthOpen] = useState(() => !safeLocalStorage.getItem('calendar_user_id'));
   const [vkIdInput, setVkIdInput] = useState('');
   const [selectedRepeat, setSelectedRepeat] = useState<'none' | 'weekly' | 'monthly'>('none');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -30,7 +31,7 @@ export const useCalendarState = () => {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [quickAddMonthOffset, setQuickAddMonthOffset] = useState(0);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
-  const [notesContent, setNotesContent] = useState(localStorage.getItem('calendar_notes') || '');
+  const [notesContent, setNotesContent] = useState(() => safeLocalStorage.getItem('calendar_notes') || '');
 
   return {
     events,

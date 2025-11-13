@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import { safeLocalStorage } from '@/utils/localStorage';
+import { debounce } from '@/utils/debounce';
 
 interface Note {
   id: string;
@@ -20,9 +22,9 @@ interface NotesDialogProps {
 
 const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange }: NotesDialogProps) => {
   const [notes, setNotes] = useState<Note[]>(() => {
-    const saved = localStorage.getItem('calendar_notes_list');
-    if (saved) {
-      return JSON.parse(saved);
+    const saved = safeLocalStorage.getJSON<Note[]>('calendar_notes_list', []);
+    if (saved.length > 0) {
+      return saved;
     }
     if (notesContent) {
       return [{ id: '1', title: 'Общие заметки', content: notesContent }];
@@ -41,7 +43,7 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange }: NotesDial
 
   const saveNotes = (updatedNotes: Note[]) => {
     setNotes(updatedNotes);
-    localStorage.setItem('calendar_notes_list', JSON.stringify(updatedNotes));
+    safeLocalStorage.setJSON('calendar_notes_list', updatedNotes);
   };
 
   const handleAddNote = () => {
@@ -69,14 +71,22 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange }: NotesDial
     }
   };
 
-  const handleContentChange = (content: string) => {
+  const debouncedSave = useMemo(
+    () => debounce((updatedNotes: Note[]) => {
+      safeLocalStorage.setJSON('calendar_notes_list', updatedNotes);
+    }, 500),
+    []
+  );
+
+  const handleContentChange = useCallback((content: string) => {
     if (!selectedNoteId) return;
     
     const updatedNotes = notes.map(n =>
       n.id === selectedNoteId ? { ...n, content } : n
     );
-    saveNotes(updatedNotes);
-  };
+    setNotes(updatedNotes);
+    debouncedSave(updatedNotes);
+  }, [selectedNoteId, notes, debouncedSave]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

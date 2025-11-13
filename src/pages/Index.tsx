@@ -6,6 +6,7 @@ import NotesDialog from '@/components/calendar/NotesDialog';
 import { useCalendarState } from '@/hooks/useCalendarState';
 import { useCalendarUtils } from '@/hooks/useCalendarUtils';
 import { useCalendarHandlers } from '@/hooks/useCalendarHandlers';
+import { safeLocalStorage } from '@/utils/localStorage';
 
 const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
 
@@ -144,7 +145,7 @@ const Index = () => {
         notesContent={state.notesContent}
         onNotesChange={(value) => {
           state.setNotesContent(value);
-          localStorage.setItem('calendar_notes', value);
+          safeLocalStorage.setItem('calendar_notes', value);
         }}
       />
     </div>
