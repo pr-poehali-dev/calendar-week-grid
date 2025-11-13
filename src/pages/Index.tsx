@@ -6,6 +6,7 @@ import NotesDialog from '@/components/calendar/NotesDialog';
 import { useCalendarState } from '@/hooks/useCalendarState';
 import { useCalendarUtils } from '@/hooks/useCalendarUtils';
 import { useCalendarHandlers } from '@/hooks/useCalendarHandlers';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { safeLocalStorage } from '@/utils/localStorage';
 
 const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
@@ -25,6 +26,21 @@ const Index = () => {
     utils.formatDateKey,
     utils.getEventsForDate
   );
+
+  useKeyboardShortcuts({
+    onNewEvent: () => handlers.handleQuickAdd(),
+    onEscape: () => {
+      state.setIsDialogOpen(false);
+      state.setIsNotesOpen(false);
+      state.setIsQuickAddOpen(false);
+    },
+    onToday: () => {
+      state.setWeekOffset(0);
+      state.setMonthOffset(0);
+    },
+    onNextWeek: () => state.setWeekOffset(state.weekOffset + 1),
+    onPrevWeek: () => state.setWeekOffset(state.weekOffset - 1),
+  });
 
   if (!state.userId) {
     return (
