@@ -62,8 +62,19 @@ const DesktopMonthView = ({
   handleEventClick,
   handleViewAllClick
 }: DesktopMonthViewProps) => {
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.deltaY > 0) {
+      setMonthOffset(monthOffset + 1);
+    } else if (e.deltaY < 0) {
+      setMonthOffset(monthOffset - 1);
+    }
+  };
+
   return (
-    <div className={forceDesktopView ? 'flex flex-col flex-1 px-6 w-full overflow-y-auto' : 'hidden md:flex md:flex-col md:flex-1 px-6 w-full md:overflow-y-auto'}>
+    <div 
+      className={forceDesktopView ? 'flex flex-col flex-1 px-6 w-full overflow-y-auto' : 'hidden md:flex md:flex-col md:flex-1 px-6 w-full md:overflow-y-auto'}
+      onWheel={handleWheel}
+    >
       <div className="mb-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <Button
