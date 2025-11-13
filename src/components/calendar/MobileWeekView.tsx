@@ -79,14 +79,6 @@ const MobileWeekView = ({
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setWeekOffset(weekOffset - 1)}
-          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-        >
-          <Icon name="ChevronLeft" className="w-4 h-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
           onClick={handleLogout}
           className="hover:bg-[#3A3A3A] text-white h-8 w-8"
           title="Выйти"
@@ -128,14 +120,6 @@ const MobileWeekView = ({
           title="ПК версия"
         >
           <Icon name="Monitor" className="w-4 h-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setWeekOffset(weekOffset + 1)}
-          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-        >
-          <Icon name="ChevronRight" className="w-4 h-4" />
         </Button>
       </div>
 
