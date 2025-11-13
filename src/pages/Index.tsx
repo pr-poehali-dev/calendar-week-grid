@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import AuthScreen from '@/components/calendar/AuthScreen';
 import MobileWeekView from '@/components/calendar/MobileWeekView';
 import DesktopMonthView from '@/components/calendar/DesktopMonthView';
+import NotesDialog from '@/components/calendar/NotesDialog';
 import { useCalendarState } from '@/hooks/useCalendarState';
 import { useCalendarUtils } from '@/hooks/useCalendarUtils';
 import { useCalendarHandlers } from '@/hooks/useCalendarHandlers';
@@ -67,6 +68,7 @@ const Index = () => {
           handleTouchMove={handlers.handleTouchMove}
           handleTouchEnd={handlers.handleTouchEnd}
           handleQuickAdd={handlers.handleQuickAdd}
+          handleOpenNotes={() => state.setIsNotesOpen(true)}
         />
 
         <DesktopMonthView
@@ -95,6 +97,7 @@ const Index = () => {
           handleEventDrop={handlers.handleEventDrop}
           handleEventClick={handlers.handleEventClick}
           handleViewAllClick={handlers.handleViewAllClick}
+          handleOpenNotes={() => state.setIsNotesOpen(true)}
         />
       </div>
 
@@ -134,6 +137,16 @@ const Index = () => {
           isToday={utils.isToday}
         />
       </Suspense>
+
+      <NotesDialog
+        isOpen={state.isNotesOpen}
+        onClose={() => state.setIsNotesOpen(false)}
+        notesContent={state.notesContent}
+        onNotesChange={(value) => {
+          state.setNotesContent(value);
+          localStorage.setItem('calendar_notes', value);
+        }}
+      />
     </div>
   );
 };

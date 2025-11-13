@@ -33,6 +33,7 @@ interface MobileWeekViewProps {
   handleTouchMove: (e: React.TouchEvent) => void;
   handleTouchEnd: () => void;
   handleQuickAdd: () => void;
+  handleOpenNotes: () => void;
 }
 
 const MobileWeekView = ({
@@ -64,7 +65,8 @@ const MobileWeekView = ({
   handleTouchStart,
   handleTouchMove,
   handleTouchEnd,
-  handleQuickAdd
+  handleQuickAdd,
+  handleOpenNotes
 }: MobileWeekViewProps) => {
   return (
     <div 
@@ -103,6 +105,15 @@ const MobileWeekView = ({
             title="Сегодня"
           >
             <Icon name="CalendarClock" className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleOpenNotes}
+            className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+            title="Заметки"
+          >
+            <Icon name="FileText" className="w-4 h-4" />
           </Button>
           <Button
             variant="ghost"

@@ -29,6 +29,8 @@ export const useCalendarState = () => {
   const [fillDay, setFillDay] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [quickAddMonthOffset, setQuickAddMonthOffset] = useState(0);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [notesContent, setNotesContent] = useState(localStorage.getItem('calendar_notes') || '');
 
   return {
     events,
@@ -85,5 +87,9 @@ export const useCalendarState = () => {
     setIsQuickAddOpen,
     quickAddMonthOffset,
     setQuickAddMonthOffset,
+    isNotesOpen,
+    setIsNotesOpen,
+    notesContent,
+    setNotesContent,
   };
 };

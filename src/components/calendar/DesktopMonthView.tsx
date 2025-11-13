@@ -33,6 +33,7 @@ interface DesktopMonthViewProps {
   handleEventDrop: (e: React.DragEvent, event: Event) => void;
   handleEventClick: (event: Event, e: React.MouseEvent, currentDate?: string) => void;
   handleViewAllClick: (date: Date, e: React.MouseEvent) => void;
+  handleOpenNotes: () => void;
 }
 
 const DesktopMonthView = ({
@@ -60,7 +61,8 @@ const DesktopMonthView = ({
   handleEventDragOver,
   handleEventDrop,
   handleEventClick,
-  handleViewAllClick
+  handleViewAllClick,
+  handleOpenNotes
 }: DesktopMonthViewProps) => {
   const handleWheel = (e: React.WheelEvent) => {
     if (e.deltaY > 0) {
@@ -114,6 +116,15 @@ const DesktopMonthView = ({
             className="hover:bg-[#3A3A3A] text-white h-9 px-4 text-sm"
           >
             Сегодня
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleOpenNotes}
+            className="hover:bg-[#3A3A3A] text-white h-9 w-9"
+            title="Заметки"
+          >
+            <Icon name="FileText" className="w-5 h-5" />
           </Button>
           <Button
             variant="ghost"
