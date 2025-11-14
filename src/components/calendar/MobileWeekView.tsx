@@ -11,7 +11,6 @@ interface MobileWeekViewProps {
   setWeekOffset: (offset: number) => void;
   forceDesktopView: boolean;
   setForceDesktopView: (value: boolean) => void;
-  handleLogout: () => void;
   exportEventsToFile: () => void;
   getEventsForDate: (date: Date) => Event[];
   isToday: (date: Date) => boolean;
@@ -44,7 +43,6 @@ const MobileWeekView = ({
   setWeekOffset,
   forceDesktopView,
   setForceDesktopView,
-  handleLogout,
   exportEventsToFile,
   getEventsForDate,
   isToday,
@@ -76,15 +74,6 @@ const MobileWeekView = ({
       onTouchEnd={handleTouchEnd}
     >
       <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleLogout}
-          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
-          title="Выйти"
-        >
-          <Icon name="LogOut" className="w-4 h-4" />
-        </Button>
         <Button
           variant="ghost"
           size="icon"

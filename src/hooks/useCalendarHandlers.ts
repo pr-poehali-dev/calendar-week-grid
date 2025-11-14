@@ -16,10 +16,6 @@ export const useCalendarHandlers = (
     setUserId,
     isLoading,
     setIsLoading,
-    isAuthOpen,
-    setIsAuthOpen,
-    vkIdInput,
-    setVkIdInput,
     editingEvent,
     setEditingEvent,
     newEventText,
@@ -556,30 +552,7 @@ export const useCalendarHandlers = (
     }
   };
 
-  const handleVKLogin = () => {
-    if (!vkIdInput.trim()) {
-      toast.error('Введите ваш VK ID');
-      return;
-    }
-    
-    const cleanId = vkIdInput.trim();
-    localStorage.setItem('calendar_user_id', cleanId);
-    setUserId(cleanId);
-    setIsAuthOpen(false);
-    toast.success('Вы вошли в календарь');
-  };
 
-  const handleLogout = () => {
-    if (userId) {
-      localStorage.removeItem(`calendar_events_${userId}`);
-    }
-    localStorage.removeItem('calendar_user_id');
-    localStorage.removeItem('vk_access_token');
-    setUserId(null);
-    setIsAuthOpen(true);
-    setEvents([]);
-    toast.success('Вы вышли из системы');
-  };
 
   return {
     handleDayClick,
@@ -603,7 +576,5 @@ export const useCalendarHandlers = (
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
-    handleVKLogin,
-    handleLogout,
   };
 };

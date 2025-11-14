@@ -1,7 +1,6 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import MobileWeekView from '@/components/calendar/MobileWeekView';
 
-const AuthScreen = lazy(() => import('@/components/calendar/AuthScreen'));
 const DesktopMonthView = lazy(() => import('@/components/calendar/DesktopMonthView'));
 const NotesDialog = lazy(() => import('@/components/calendar/NotesDialog'));
 const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
@@ -50,25 +49,11 @@ const Index = () => {
   });
 
   useEffect(() => {
-    if (state.userId) {
-      const timer = setTimeout(() => {
-        setShowDesktop(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [state.userId]);
-
-  if (!state.userId) {
-    return (
-      <Suspense fallback={<LoadingSpinner />}>
-        <AuthScreen 
-          vkIdInput={state.vkIdInput}
-          setVkIdInput={state.setVkIdInput}
-          onLogin={handlers.handleVKLogin}
-        />
-      </Suspense>
-    );
-  }
+    const timer = setTimeout(() => {
+      setShowDesktop(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
@@ -81,7 +66,6 @@ const Index = () => {
           setWeekOffset={state.setWeekOffset}
           forceDesktopView={state.forceDesktopView}
           setForceDesktopView={state.setForceDesktopView}
-          handleLogout={handlers.handleLogout}
           exportEventsToFile={handlers.exportEventsToFile}
           getEventsForDate={utils.getEventsForDate}
           isToday={utils.isToday}
@@ -114,7 +98,6 @@ const Index = () => {
           setMonthOffset={state.setMonthOffset}
           forceDesktopView={state.forceDesktopView}
           setForceDesktopView={state.setForceDesktopView}
-          handleLogout={handlers.handleLogout}
           exportEventsToFile={handlers.exportEventsToFile}
           getEventsForDate={utils.getEventsForDate}
           isToday={utils.isToday}

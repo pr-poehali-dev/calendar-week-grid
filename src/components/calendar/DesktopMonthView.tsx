@@ -13,7 +13,6 @@ interface DesktopMonthViewProps {
   setMonthOffset: (offset: number) => void;
   forceDesktopView: boolean;
   setForceDesktopView: (value: boolean) => void;
-  handleLogout: () => void;
   exportEventsToFile: () => void;
   getEventsForDate: (date: Date) => Event[];
   isToday: (date: Date) => boolean;
@@ -42,7 +41,6 @@ const DesktopMonthView = ({
   setMonthOffset,
   forceDesktopView,
   setForceDesktopView,
-  handleLogout,
   exportEventsToFile,
   getEventsForDate,
   isToday,
@@ -98,15 +96,6 @@ const DesktopMonthView = ({
               <Icon name="Smartphone" className="w-5 h-5" />
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            className="hover:bg-[#3A3A3A] text-red-400 hover:text-red-300 h-10 w-10"
-            title="Выйти"
-          >
-            <Icon name="LogOut" className="w-5 h-5" />
-          </Button>
         </div>
         
         <div className="flex-1 flex items-center justify-center gap-3">

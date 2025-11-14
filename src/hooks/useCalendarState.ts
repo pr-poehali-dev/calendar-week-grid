@@ -19,9 +19,15 @@ export const useCalendarState = () => {
   const [monthOffset, setMonthOffset] = useState(0);
   const [viewAllDate, setViewAllDate] = useState<Date | null>(null);
   const [dragOverEvent, setDragOverEvent] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(() => safeLocalStorage.getItem('calendar_user_id'));
-  const [isAuthOpen, setIsAuthOpen] = useState(() => !safeLocalStorage.getItem('calendar_user_id'));
-  const [vkIdInput, setVkIdInput] = useState('');
+  const [userId, setUserId] = useState<string | null>(() => {
+    const saved = safeLocalStorage.getItem('calendar_user_id');
+    if (!saved) {
+      const defaultId = 'local_user';
+      safeLocalStorage.setItem('calendar_user_id', defaultId);
+      return defaultId;
+    }
+    return saved;
+  });
   const [selectedRepeat, setSelectedRepeat] = useState<'none' | 'weekly' | 'monthly'>('none');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
@@ -68,10 +74,6 @@ export const useCalendarState = () => {
     setDragOverEvent,
     userId,
     setUserId,
-    isAuthOpen,
-    setIsAuthOpen,
-    vkIdInput,
-    setVkIdInput,
     selectedRepeat,
     setSelectedRepeat,
     deleteDialogOpen,
