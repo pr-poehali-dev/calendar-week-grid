@@ -3,6 +3,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import Icon from '@/components/ui/icon';
 import { safeLocalStorage } from '@/utils/localStorage';
 import { debounce } from '@/utils/debounce';
@@ -27,160 +37,192 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange }: NotesDial
     return [];
   });
   
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(
-    notes.length > 0 ? notes[0].id : null
-  );
-  
-  const [newNoteTitle, setNewNoteTitle] = useState('');
-  const [isAddingNote, setIsAddingNote] = useState(false);
-
-  const selectedNote = notes.find(n => n.id === selectedNoteId);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   const saveNotes = (updatedNotes: Note[]) => {
     setNotes(updatedNotes);
     safeLocalStorage.setJSON('calendar_notes_list', updatedNotes);
   };
 
-  const handleAddNote = () => {
-    if (!newNoteTitle.trim()) return;
-    
-    const newNote: Note = {
-      id: Date.now().toString(),
-      title: newNoteTitle.trim(),
-      content: ''
-    };
-    
-    const updatedNotes = [...notes, newNote];
-    saveNotes(updatedNotes);
-    setSelectedNoteId(newNote.id);
-    setNewNoteTitle('');
-    setIsAddingNote(false);
+  const handleCreateNew = () => {
+    setIsCreating(true);
+    setEditTitle('');
+    setEditContent('');
+    setEditingNote(null);
   };
 
-  const handleDeleteNote = (id: string) => {
-    const updatedNotes = notes.filter(n => n.id !== id);
-    saveNotes(updatedNotes);
+  const handleSaveNote = () => {
+    if (!editTitle.trim()) return;
     
-    if (selectedNoteId === id) {
-      setSelectedNoteId(updatedNotes.length > 0 ? updatedNotes[0].id : null);
+    if (editingNote) {
+      const updatedNotes = notes.map(n =>
+        n.id === editingNote.id ? { ...n, title: editTitle.trim(), content: editContent } : n
+      );
+      saveNotes(updatedNotes);
+    } else {
+      const newNote: Note = {
+        id: Date.now().toString(),
+        title: editTitle.trim(),
+        content: editContent
+      };
+      const updatedNotes = [...notes, newNote];
+      saveNotes(updatedNotes);
     }
+    
+    setIsCreating(false);
+    setEditingNote(null);
+    setSelectedNoteId(null);
   };
 
-  const debouncedSave = useMemo(
-    () => debounce((updatedNotes: Note[]) => {
-      safeLocalStorage.setJSON('calendar_notes_list', updatedNotes);
-    }, 500),
-    []
-  );
+  const handleOpenNote = (note: Note) => {
+    setEditingNote(note);
+    setEditTitle(note.title);
+    setEditContent(note.content);
+    setIsCreating(false);
+  };
 
-  const handleContentChange = useCallback((content: string) => {
-    if (!selectedNoteId) return;
-    
-    const updatedNotes = notes.map(n =>
-      n.id === selectedNoteId ? { ...n, content } : n
-    );
-    setNotes(updatedNotes);
-    debouncedSave(updatedNotes);
-  }, [selectedNoteId, notes, debouncedSave]);
+  const handleDeleteClick = (noteId: string) => {
+    setNoteToDelete(noteId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (noteToDelete) {
+      const updatedNotes = notes.filter(n => n.id !== noteToDelete);
+      saveNotes(updatedNotes);
+      
+      if (editingNote?.id === noteToDelete) {
+        setEditingNote(null);
+        setIsCreating(false);
+      }
+    }
+    setDeleteConfirmOpen(false);
+    setNoteToDelete(null);
+  };
+
+  const handleBack = () => {
+    setIsCreating(false);
+    setEditingNote(null);
+    setSelectedNoteId(null);
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl h-[80vh] flex flex-col p-0">
-        <DialogHeader className="px-6 pt-6 pb-0">
-          <DialogTitle>Заметки</DialogTitle>
-        </DialogHeader>
-        
-        <div className="flex flex-1 overflow-hidden">
-          <div className="w-64 border-r border-[#3A3A3A] flex flex-col">
-            <div className="p-3 border-b border-[#3A3A3A]">
-              {isAddingNote ? (
-                <div className="flex gap-2">
-                  <Input
-                    value={newNoteTitle}
-                    onChange={(e) => setNewNoteTitle(e.target.value)}
-                    placeholder="Название темы"
-                    className="h-8 text-sm"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleAddNote();
-                      if (e.key === 'Escape') setIsAddingNote(false);
-                    }}
-                    autoFocus
-                  />
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-3xl h-[80vh] flex flex-col p-6">
+          {!isCreating && !editingNote ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>Заметки</DialogTitle>
+              </DialogHeader>
+              
+              <div className="flex-1 flex flex-col items-center justify-center gap-4">
+                <Button
+                  onClick={handleCreateNew}
+                  size="icon"
+                  className="w-16 h-16 rounded-full"
+                >
+                  <Icon name="Plus" className="w-8 h-8" />
+                </Button>
+                
+                {notes.length > 0 && (
+                  <div className="w-full space-y-2 mt-8">
+                    {notes.map((note) => (
+                      <div
+                        key={note.id}
+                        className="flex items-center gap-3 p-4 rounded-lg bg-[#3A3A3A] hover:bg-[#4A4A4A] cursor-pointer transition-colors"
+                        onClick={() => handleOpenNote(note)}
+                      >
+                        <Icon name="FileText" className="w-5 h-5 text-[#999]" />
+                        <span className="flex-1 font-medium">{note.title}</span>
+                        <Icon name="ChevronRight" className="w-5 h-5 text-[#666]" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2">
                   <Button
-                    size="icon"
                     variant="ghost"
-                    onClick={handleAddNote}
+                    size="icon"
+                    onClick={handleBack}
                     className="h-8 w-8"
                   >
-                    <Icon name="Check" className="w-4 h-4" />
+                    <Icon name="ArrowLeft" className="w-4 h-4" />
                   </Button>
+                  <DialogTitle>{isCreating ? 'Новая заметка' : 'Редактирование'}</DialogTitle>
                 </div>
-              ) : (
-                <Button
-                  onClick={() => setIsAddingNote(true)}
-                  className="w-full h-8 text-sm"
-                  variant="outline"
-                >
-                  <Icon name="Plus" className="w-4 h-4 mr-2" />
-                  Новая заметка
-                </Button>
-              )}
-            </div>
-            
-            <div className="flex-1 overflow-y-auto">
-              {notes.map((note) => (
-                <div
-                  key={note.id}
-                  className={`p-3 cursor-pointer hover:bg-[#3A3A3A] border-b border-[#2A2A2A] flex items-center justify-between group ${
-                    selectedNoteId === note.id ? 'bg-[#3A3A3A]' : ''
-                  }`}
-                  onClick={() => setSelectedNoteId(note.id)}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm truncate">{note.title}</div>
-                    <div className="text-xs text-[#999] truncate mt-1">
-                      {note.content ? note.content.substring(0, 30) + '...' : 'Пусто'}
-                    </div>
-                  </div>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteNote(note.id);
-                    }}
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Icon name="Trash2" className="w-3 h-3 text-red-400" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div className="flex-1 flex flex-col p-6">
-            {selectedNote ? (
-              <>
-                <h3 className="text-lg font-semibold mb-3">{selectedNote.title}</h3>
+              </DialogHeader>
+              
+              <div className="flex-1 flex flex-col gap-4">
+                <Input
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Название заметки"
+                  className="text-lg font-semibold"
+                />
+                
                 <Textarea
-                  value={selectedNote.content}
-                  onChange={(e) => handleContentChange(e.target.value)}
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
                   placeholder="Введите текст заметки..."
                   className="flex-1 resize-none text-base"
                 />
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-[#999]">
-                <div className="text-center">
-                  <Icon name="FileText" className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p>Выберите или создайте заметку</p>
+                
+                <div className="flex gap-2 justify-between">
+                  <div>
+                    {editingNote && (
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleDeleteClick(editingNote.id)}
+                      >
+                        <Icon name="Trash2" className="w-4 h-4 mr-2" />
+                        Удалить
+                      </Button>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={handleBack}>
+                      Отмена
+                    </Button>
+                    <Button onClick={handleSaveNote} disabled={!editTitle.trim()}>
+                      Сохранить
+                    </Button>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Удалить заметку?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Это действие нельзя будет отменить. Заметка будет удалена безвозвратно.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Отмена</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-600 hover:bg-red-700">
+              Удалить
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 
