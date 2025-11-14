@@ -1,15 +1,21 @@
 import { lazy, Suspense } from 'react';
-import AuthScreen from '@/components/calendar/AuthScreen';
-import MobileWeekView from '@/components/calendar/MobileWeekView';
-import DesktopMonthView from '@/components/calendar/DesktopMonthView';
-import NotesDialog from '@/components/calendar/NotesDialog';
+
+const AuthScreen = lazy(() => import('@/components/calendar/AuthScreen'));
+const MobileWeekView = lazy(() => import('@/components/calendar/MobileWeekView'));
+const DesktopMonthView = lazy(() => import('@/components/calendar/DesktopMonthView'));
+const NotesDialog = lazy(() => import('@/components/calendar/NotesDialog'));
+const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
 import { useCalendarState } from '@/hooks/useCalendarState';
 import { useCalendarUtils } from '@/hooks/useCalendarUtils';
 import { useCalendarHandlers } from '@/hooks/useCalendarHandlers';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { safeLocalStorage } from '@/utils/localStorage';
 
-const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-[#2A2A2A]">
+    <div className="w-8 h-8 border-4 border-[#4A4A4A] border-t-white rounded-full animate-spin"></div>
+  </div>
+);
 
 const Index = () => {
   const state = useCalendarState();
@@ -44,16 +50,19 @@ const Index = () => {
 
   if (!state.userId) {
     return (
-      <AuthScreen 
-        vkIdInput={state.vkIdInput}
-        setVkIdInput={state.setVkIdInput}
-        onLogin={handlers.handleVKLogin}
-      />
+      <Suspense fallback={<LoadingSpinner />}>
+        <AuthScreen 
+          vkIdInput={state.vkIdInput}
+          setVkIdInput={state.setVkIdInput}
+          onLogin={handlers.handleVKLogin}
+        />
+      </Suspense>
     );
   }
 
   return (
-    <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
+    <Suspense fallback={<LoadingSpinner />}>
+      <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
       <div className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full">
         <MobileWeekView
           weekDates={utils.weekDates}
@@ -155,16 +164,17 @@ const Index = () => {
         />
       </Suspense>
 
-      <NotesDialog
-        isOpen={state.isNotesOpen}
-        onClose={() => state.setIsNotesOpen(false)}
-        notesContent={state.notesContent}
-        onNotesChange={(value) => {
-          state.setNotesContent(value);
-          safeLocalStorage.setItem('calendar_notes', value);
-        }}
-      />
-    </div>
+        <NotesDialog
+          isOpen={state.isNotesOpen}
+          onClose={() => state.setIsNotesOpen(false)}
+          notesContent={state.notesContent}
+          onNotesChange={(value) => {
+            state.setNotesContent(value);
+            safeLocalStorage.setItem('calendar_notes', value);
+          }}
+        />
+      </div>
+    </Suspense>
   );
 };
 
