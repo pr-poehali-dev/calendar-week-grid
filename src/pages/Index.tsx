@@ -104,7 +104,6 @@ const Index = () => {
           handleTouchEnd={handlers.handleTouchEnd}
           handleQuickAdd={handlers.handleQuickAdd}
           handleOpenNotes={() => state.setIsNotesOpen(true)}
-          isLoadingWeek={state.isLoadingWeek}
         />
 
         {showDesktop && (
