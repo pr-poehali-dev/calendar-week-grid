@@ -1,7 +1,7 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
+import MobileWeekView from '@/components/calendar/MobileWeekView';
 
 const AuthScreen = lazy(() => import('@/components/calendar/AuthScreen'));
-const MobileWeekView = lazy(() => import('@/components/calendar/MobileWeekView'));
 const DesktopMonthView = lazy(() => import('@/components/calendar/DesktopMonthView'));
 const NotesDialog = lazy(() => import('@/components/calendar/NotesDialog'));
 const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
@@ -19,6 +19,7 @@ const LoadingSpinner = () => (
 
 const Index = () => {
   const state = useCalendarState();
+  const [showDesktop, setShowDesktop] = useState(false);
   
   const utils = useCalendarUtils(
     state.weekOffset,
@@ -48,6 +49,15 @@ const Index = () => {
     onPrevWeek: () => state.setWeekOffset(state.weekOffset - 1),
   });
 
+  useEffect(() => {
+    if (state.userId) {
+      const timer = setTimeout(() => {
+        setShowDesktop(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [state.userId]);
+
   if (!state.userId) {
     return (
       <Suspense fallback={<LoadingSpinner />}>
@@ -61,8 +71,7 @@ const Index = () => {
   }
 
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
+    <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
       <div className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full">
         <MobileWeekView
           weekDates={utils.weekDates}
@@ -97,7 +106,9 @@ const Index = () => {
           handleOpenNotes={() => state.setIsNotesOpen(true)}
         />
 
-        <DesktopMonthView
+        {showDesktop && (
+          <Suspense fallback={null}>
+            <DesktopMonthView
           monthCalendar={utils.monthCalendar}
           monthOffset={state.monthOffset}
           setMonthOffset={state.setMonthOffset}
@@ -122,13 +133,16 @@ const Index = () => {
           handleEventDragOver={handlers.handleEventDragOver}
           handleEventDrop={handlers.handleEventDrop}
           handleEventClick={handlers.handleEventClick}
-          handleViewAllClick={handlers.handleViewAllClick}
-          handleOpenNotes={() => state.setIsNotesOpen(true)}
-        />
+              handleViewAllClick={handlers.handleViewAllClick}
+              handleOpenNotes={() => state.setIsNotesOpen(true)}
+            />
+          </Suspense>
+        )}
       </div>
 
-      <Suspense fallback={null}>
-        <CalendarDialogs
+      {showDesktop && (
+        <Suspense fallback={null}>
+          <CalendarDialogs
           isDialogOpen={state.isDialogOpen}
           setIsDialogOpen={state.setIsDialogOpen}
           editingEvent={state.editingEvent}
@@ -160,21 +174,25 @@ const Index = () => {
           setQuickAddMonthOffset={state.setQuickAddMonthOffset}
           getQuickAddCalendar={utils.getQuickAddCalendar}
           handleQuickAddDateSelect={handlers.handleQuickAddDateSelect}
-          isToday={utils.isToday}
-        />
-      </Suspense>
+            isToday={utils.isToday}
+          />
+        </Suspense>
+      )}
 
-        <NotesDialog
-          isOpen={state.isNotesOpen}
-          onClose={() => state.setIsNotesOpen(false)}
-          notesContent={state.notesContent}
-          onNotesChange={(value) => {
-            state.setNotesContent(value);
-            safeLocalStorage.setItem('calendar_notes', value);
-          }}
-        />
-      </div>
-    </Suspense>
+      {showDesktop && (
+        <Suspense fallback={null}>
+          <NotesDialog
+            isOpen={state.isNotesOpen}
+            onClose={() => state.setIsNotesOpen(false)}
+            notesContent={state.notesContent}
+            onNotesChange={(value) => {
+              state.setNotesContent(value);
+              safeLocalStorage.setItem('calendar_notes', value);
+            }}
+          />
+        </Suspense>
+      )}
+    </div>
   );
 };
 

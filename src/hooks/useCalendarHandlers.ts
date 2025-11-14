@@ -67,8 +67,24 @@ export const useCalendarHandlers = (
       const cachedEvents = localStorage.getItem(`calendar_events_${userId}`);
       if (cachedEvents) {
         try {
-          setEvents(JSON.parse(cachedEvents));
+          const allEvents = JSON.parse(cachedEvents);
+          const now = new Date();
+          const weekStart = new Date(now);
+          weekStart.setDate(now.getDate() - now.getDay() + 1);
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekStart.getDate() + 6);
+          
+          const thisWeekEvents = allEvents.filter((e: Event) => {
+            const eventDate = new Date(e.date);
+            return eventDate >= weekStart && eventDate <= weekEnd;
+          });
+          
+          setEvents(thisWeekEvents);
           setIsLoading(false);
+          
+          setTimeout(() => {
+            setEvents(allEvents);
+          }, 100);
         } catch (e) {
           console.error('Cache parse error:', e);
         }
