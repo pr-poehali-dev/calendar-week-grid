@@ -103,7 +103,6 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange, userId }: N
             n.id === editingNote.id ? { ...n, title: editTitle.trim(), content: editContent } : n
           );
           syncNotes(updatedNotes);
-          toast.success('Заметка обновлена');
         }
       } else {
         const newNote: Note = {
@@ -124,7 +123,6 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange, userId }: N
         if (response.ok) {
           const updatedNotes = [...notes, newNote];
           syncNotes(updatedNotes);
-          toast.success('Заметка создана');
         }
       }
       
@@ -158,7 +156,6 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange, userId }: N
         if (response.ok) {
           const updatedNotes = notes.filter(n => n.id !== noteToDelete);
           syncNotes(updatedNotes);
-          toast.success('Заметка удалена');
           
           if (editingNote?.id === noteToDelete) {
             setEditingNote(null);

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calendar-v6';
+const CACHE_NAME = 'calendar-v7';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -10,6 +10,12 @@ const NETWORK_FIRST_URLS = [
   '/src/App.tsx'
 ];
 
+const API_CACHE_NAME = 'api-cache-v1';
+const API_URLS = [
+  'https://functions.poehali.dev/992d8e44-58a4-4f61-badd-a38834435786',
+  'https://functions.poehali.dev/3e1fb086-3bcf-4adf-a785-54c8948d0b0d'
+];
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -19,6 +25,26 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const isApiRequest = API_URLS.some(url => event.request.url.startsWith(url));
+  
+  if (isApiRequest) {
+    event.respondWith(
+      caches.open(API_CACHE_NAME).then(cache => {
+        return cache.match(event.request).then(cachedResponse => {
+          const fetchPromise = fetch(event.request).then(networkResponse => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
+          }).catch(() => cachedResponse);
+          
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+    return;
+  }
+
   const isNetworkFirst = NETWORK_FIRST_URLS.some(url => event.request.url.includes(url));
   
   if (isNetworkFirst) {
@@ -88,11 +114,12 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
+          if (cacheName !== CACHE_NAME && cacheName !== API_CACHE_NAME) {
             return caches.delete(cacheName);
           }
         })
       );
     })
   );
+  self.clients.claim();
 });

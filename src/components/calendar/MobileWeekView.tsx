@@ -33,6 +33,7 @@ interface MobileWeekViewProps {
   handleTouchEnd: () => void;
   handleQuickAdd: () => void;
   handleOpenNotes: () => void;
+  isSyncing: boolean;
 }
 
 const MobileWeekView = ({
@@ -64,7 +65,8 @@ const MobileWeekView = ({
   handleTouchMove,
   handleTouchEnd,
   handleQuickAdd,
-  handleOpenNotes
+  handleOpenNotes,
+  isSyncing
 }: MobileWeekViewProps) => {
   return (
     <div 
@@ -74,43 +76,59 @@ const MobileWeekView = ({
       onTouchEnd={handleTouchEnd}
     >
       <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
+        {isSyncing && (
+          <div className="fixed top-2 left-1/2 -translate-x-1/2 bg-[#1E3A8A] text-white px-3 py-1 rounded-full text-xs z-50 flex items-center gap-2">
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            Синхронизация
+          </div>
+        )}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => {
+            if (navigator.vibrate) navigator.vibrate(5);
             setWeekOffset(0);
           }}
-          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          className="hover:bg-[#3A3A3A] text-white h-10 w-10"
           title="Сегодня"
         >
-          <Icon name="CalendarClock" className="w-4 h-4" />
+          <Icon name="CalendarClock" className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleOpenNotes}
-          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          onClick={() => {
+            if (navigator.vibrate) navigator.vibrate(5);
+            handleOpenNotes();
+          }}
+          className="hover:bg-[#3A3A3A] text-white h-10 w-10"
           title="Заметки"
         >
-          <Icon name="FileText" className="w-4 h-4" />
+          <Icon name="FileText" className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          onClick={exportEventsToFile}
-          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          onClick={() => {
+            if (navigator.vibrate) navigator.vibrate(5);
+            exportEventsToFile();
+          }}
+          className="hover:bg-[#3A3A3A] text-white h-10 w-10"
           title="Экспорт событий"
         >
-          <Icon name="Download" className="w-4 h-4" />
+          <Icon name="Download" className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setForceDesktopView(true)}
-          className="hover:bg-[#3A3A3A] text-white h-8 w-8"
+          onClick={() => {
+            if (navigator.vibrate) navigator.vibrate(5);
+            setForceDesktopView(true);
+          }}
+          className="hover:bg-[#3A3A3A] text-white h-10 w-10"
           title="ПК версия"
         >
-          <Icon name="Monitor" className="w-4 h-4" />
+          <Icon name="Monitor" className="w-5 h-5" />
         </Button>
       </div>
 
@@ -206,11 +224,14 @@ const MobileWeekView = ({
       </div>
 
       <Button
-        onClick={handleQuickAdd}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg bg-[#1E3A8A] hover:bg-[#0EA5E9] z-50"
+        onClick={() => {
+          if (navigator.vibrate) navigator.vibrate(10);
+          handleQuickAdd();
+        }}
+        className="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-lg bg-[#1E3A8A] hover:bg-[#0EA5E9] z-50 active:scale-95 transition-transform"
         size="icon"
       >
-        <Icon name="Plus" className="w-6 h-6" />
+        <Icon name="Plus" className="w-7 h-7" />
       </Button>
     </div>
   );

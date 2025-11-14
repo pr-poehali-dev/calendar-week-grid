@@ -16,6 +16,8 @@ export const useCalendarHandlers = (
     setUserId,
     isLoading,
     setIsLoading,
+    isSyncing,
+    setIsSyncing,
     editingEvent,
     setEditingEvent,
     newEventText,
@@ -65,22 +67,20 @@ export const useCalendarHandlers = (
         try {
           const allEvents = JSON.parse(cachedEvents);
           const now = new Date();
-          const weekStart = new Date(now);
-          weekStart.setDate(now.getDate() - now.getDay() + 1);
-          const weekEnd = new Date(weekStart);
-          weekEnd.setDate(weekStart.getDate() + 6);
+          const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const monthEnd = new Date(now.getFullYear(), now.getMonth() + 2, 0);
           
-          const thisWeekEvents = allEvents.filter((e: Event) => {
+          const currentMonthEvents = allEvents.filter((e: Event) => {
             const eventDate = new Date(e.date);
-            return eventDate >= weekStart && eventDate <= weekEnd;
+            return eventDate >= monthStart && eventDate <= monthEnd;
           });
           
-          setEvents(thisWeekEvents);
+          setEvents(currentMonthEvents);
           setIsLoading(false);
           
           setTimeout(() => {
             setEvents(allEvents);
-          }, 100);
+          }, 300);
         } catch (e) {
           console.error('Cache parse error:', e);
         }
@@ -92,6 +92,7 @@ export const useCalendarHandlers = (
   const loadEvents = async () => {
     if (!userId) return;
     
+    setIsSyncing(true);
     try {
       const response = await fetch(`${API_URL}?userId=${userId}`);
       if (response.ok) {
@@ -109,6 +110,7 @@ export const useCalendarHandlers = (
       }
     } finally {
       setIsLoading(false);
+      setIsSyncing(false);
     }
   };
 
@@ -176,7 +178,6 @@ export const useCalendarHandlers = (
           setEvents(updatedEvents);
           localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
-          toast.success('Событие изменено');
         }
       } else {
         const newEvent: Event = {
@@ -201,7 +202,6 @@ export const useCalendarHandlers = (
           setEvents(updatedEvents);
           localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
-          toast.success('Событие добавлено');
         }
       }
     } catch (error) {
@@ -238,7 +238,6 @@ export const useCalendarHandlers = (
           localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
           setDeleteDialogOpen(false);
-          toast.success('Все повторения удалены');
         }
       } else if (mode === 'one' && targetDate) {
         const excludedDates = event.excludedDates || [];
@@ -263,7 +262,6 @@ export const useCalendarHandlers = (
           localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
           setDeleteDialogOpen(false);
-          toast.success('Это повторение удалено');
         }
       } else if (mode === 'future' && targetDate) {
         const response = await fetch(API_URL, {
@@ -283,7 +281,6 @@ export const useCalendarHandlers = (
           localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
           setDeleteDialogOpen(false);
-          toast.success('Будущие повторения удалены');
         }
       }
     } catch (error) {
@@ -303,6 +300,10 @@ export const useCalendarHandlers = (
   };
 
   const handleDateSelect = async (date: Date) => {
+    if (navigator.vibrate) {
+      navigator.vibrate(5);
+    }
+    
     if (movingEvent) {
       const newDate = formatDateKey(date);
       try {
@@ -326,7 +327,6 @@ export const useCalendarHandlers = (
           setEvents(updatedEvents);
           localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setMovingEvent(null);
-          toast.success('Событие перенесено');
         }
       } catch (error) {
         toast.error('Ошибка переноса');
@@ -380,7 +380,6 @@ export const useCalendarHandlers = (
         localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
         setDraggedEvent(null);
         setDragOverDate(null);
-        toast.success('Событие перемещено');
       }
     } catch (error) {
       toast.error('Ошибка перемещения');
@@ -432,7 +431,6 @@ export const useCalendarHandlers = (
         const finalEvents = [...otherEvents, ...updatedEvents];
         setEvents(finalEvents);
         localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(finalEvents));
-        toast.success('Порядок изменён');
       } catch (error) {
         toast.error('Ошибка изменения порядка');
       }
@@ -543,6 +541,12 @@ export const useCalendarHandlers = (
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
+    
+    if (isLeftSwipe || isRightSwipe) {
+      if (navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+    }
     
     if (isLeftSwipe) {
       setWeekOffset(weekOffset + 1);
