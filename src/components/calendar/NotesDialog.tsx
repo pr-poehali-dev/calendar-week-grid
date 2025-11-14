@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -15,27 +16,21 @@ import {
 } from '@/components/ui/alert-dialog';
 import Icon from '@/components/ui/icon';
 import { safeLocalStorage } from '@/utils/localStorage';
-import { debounce } from '@/utils/debounce';
 import { Note } from '@/types/notes';
+
+const NOTES_API_URL = 'https://functions.poehali.dev/3e1fb086-3bcf-4adf-a785-54c8948d0b0d';
 
 interface NotesDialogProps {
   isOpen: boolean;
   onClose: () => void;
   notesContent: string;
   onNotesChange: (value: string) => void;
+  userId: string;
 }
 
-const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange }: NotesDialogProps) => {
-  const [notes, setNotes] = useState<Note[]>(() => {
-    const saved = safeLocalStorage.getJSON<Note[]>('calendar_notes_list', []);
-    if (saved.length > 0) {
-      return saved;
-    }
-    if (notesContent) {
-      return [{ id: '1', title: 'Общие заметки', content: notesContent }];
-    }
-    return [];
-  });
+const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange, userId }: NotesDialogProps) => {
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
@@ -45,7 +40,37 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange }: NotesDial
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
-  const saveNotes = (updatedNotes: Note[]) => {
+  useEffect(() => {
+    if (isOpen) {
+      loadNotes();
+    }
+  }, [isOpen]);
+
+  const loadNotes = async () => {
+    try {
+      const cachedNotes = safeLocalStorage.getJSON<Note[]>('calendar_notes_list', []);
+      if (cachedNotes.length > 0) {
+        setNotes(cachedNotes);
+        setIsLoading(false);
+      }
+
+      const response = await fetch(`${NOTES_API_URL}?userId=${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setNotes(data);
+        safeLocalStorage.setJSON('calendar_notes_list', data);
+      }
+    } catch (error) {
+      const cachedNotes = safeLocalStorage.getJSON<Note[]>('calendar_notes_list', []);
+      if (cachedNotes.length > 0) {
+        toast.info('Работаем офлайн');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const syncNotes = (updatedNotes: Note[]) => {
     setNotes(updatedNotes);
     safeLocalStorage.setJSON('calendar_notes_list', updatedNotes);
   };
@@ -57,27 +82,58 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange }: NotesDial
     setEditingNote(null);
   };
 
-  const handleSaveNote = () => {
+  const handleSaveNote = async () => {
     if (!editTitle.trim()) return;
     
-    if (editingNote) {
-      const updatedNotes = notes.map(n =>
-        n.id === editingNote.id ? { ...n, title: editTitle.trim(), content: editContent } : n
-      );
-      saveNotes(updatedNotes);
-    } else {
-      const newNote: Note = {
-        id: Date.now().toString(),
-        title: editTitle.trim(),
-        content: editContent
-      };
-      const updatedNotes = [...notes, newNote];
-      saveNotes(updatedNotes);
+    try {
+      if (editingNote) {
+        const response = await fetch(NOTES_API_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: editingNote.id,
+            title: editTitle.trim(),
+            content: editContent,
+            userId
+          })
+        });
+        
+        if (response.ok) {
+          const updatedNotes = notes.map(n =>
+            n.id === editingNote.id ? { ...n, title: editTitle.trim(), content: editContent } : n
+          );
+          syncNotes(updatedNotes);
+          toast.success('Заметка обновлена');
+        }
+      } else {
+        const newNote: Note = {
+          id: Date.now().toString(),
+          title: editTitle.trim(),
+          content: editContent
+        };
+        
+        const response = await fetch(NOTES_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...newNote,
+            userId
+          })
+        });
+        
+        if (response.ok) {
+          const updatedNotes = [...notes, newNote];
+          syncNotes(updatedNotes);
+          toast.success('Заметка создана');
+        }
+      }
+      
+      setIsCreating(false);
+      setEditingNote(null);
+      setSelectedNoteId(null);
+    } catch (error) {
+      toast.error('Ошибка сохранения');
     }
-    
-    setIsCreating(false);
-    setEditingNote(null);
-    setSelectedNoteId(null);
   };
 
   const handleOpenNote = (note: Note) => {
@@ -92,14 +148,25 @@ const NotesDialog = ({ isOpen, onClose, notesContent, onNotesChange }: NotesDial
     setDeleteConfirmOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (noteToDelete) {
-      const updatedNotes = notes.filter(n => n.id !== noteToDelete);
-      saveNotes(updatedNotes);
-      
-      if (editingNote?.id === noteToDelete) {
-        setEditingNote(null);
-        setIsCreating(false);
+      try {
+        const response = await fetch(`${NOTES_API_URL}?id=${noteToDelete}&userId=${userId}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          const updatedNotes = notes.filter(n => n.id !== noteToDelete);
+          syncNotes(updatedNotes);
+          toast.success('Заметка удалена');
+          
+          if (editingNote?.id === noteToDelete) {
+            setEditingNote(null);
+            setIsCreating(false);
+          }
+        }
+      } catch (error) {
+        toast.error('Ошибка удаления');
       }
     }
     setDeleteConfirmOpen(false);

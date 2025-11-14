@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Get notes for user",
+      "method": "GET",
+      "path": "/?userId=local_user",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Create new note",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "id": "test_note_1",
+        "title": "Test Note",
+        "content": "Test content",
+        "userId": "local_user"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "test_note_1",
+        "title": "Test Note"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

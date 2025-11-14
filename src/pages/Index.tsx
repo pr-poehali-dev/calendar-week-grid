@@ -172,6 +172,7 @@ const Index = () => {
               state.setNotesContent(value);
               safeLocalStorage.setItem('calendar_notes', value);
             }}
+            userId={state.userId || 'local_user'}
           />
         </Suspense>
       )}
