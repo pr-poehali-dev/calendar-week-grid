@@ -34,6 +34,7 @@ interface MobileWeekViewProps {
   handleTouchEnd: () => void;
   handleQuickAdd: () => void;
   handleOpenNotes: () => void;
+  isLoadingWeek: boolean;
 }
 
 const MobileWeekView = ({
@@ -66,7 +67,8 @@ const MobileWeekView = ({
   handleTouchMove,
   handleTouchEnd,
   handleQuickAdd,
-  handleOpenNotes
+  handleOpenNotes,
+  isLoadingWeek
 }: MobileWeekViewProps) => {
   return (
     <div 
@@ -88,7 +90,9 @@ const MobileWeekView = ({
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setWeekOffset(0)}
+          onClick={() => {
+            setWeekOffset(0);
+          }}
           className="hover:bg-[#3A3A3A] text-white h-8 w-8"
           title="Сегодня"
         >
@@ -123,7 +127,12 @@ const MobileWeekView = ({
         </Button>
       </div>
 
-      <div className="space-y-0">
+      <div className="space-y-0 relative">
+      {isLoadingWeek && (
+        <div className="absolute inset-0 bg-[#2A2A2A]/80 z-50 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-[#4A4A4A] border-t-white rounded-full animate-spin"></div>
+        </div>
+      )}
       {weekDates.map((date, index) => {
         const dayEvents = getEventsForDate(date);
         const isTodayDate = isToday(date);

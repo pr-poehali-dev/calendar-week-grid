@@ -60,6 +60,8 @@ export const useCalendarHandlers = (
     setIsQuickAddOpen,
     viewAllDate,
     setViewAllDate,
+    isLoadingWeek,
+    setIsLoadingWeek,
   } = state;
 
   useEffect(() => {
@@ -549,10 +551,14 @@ export const useCalendarHandlers = (
     const isRightSwipe = distance < -50;
     
     if (isLeftSwipe) {
+      setIsLoadingWeek(true);
       setWeekOffset(weekOffset + 1);
+      setTimeout(() => setIsLoadingWeek(false), 200);
     }
     if (isRightSwipe) {
+      setIsLoadingWeek(true);
       setWeekOffset(weekOffset - 1);
+      setTimeout(() => setIsLoadingWeek(false), 200);
     }
   };
 

@@ -32,6 +32,7 @@ export const useCalendarState = () => {
   const [quickAddMonthOffset, setQuickAddMonthOffset] = useState(0);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [notesContent, setNotesContent] = useState(() => safeLocalStorage.getItem('calendar_notes') || '');
+  const [isLoadingWeek, setIsLoadingWeek] = useState(false);
 
   return {
     events,
@@ -92,5 +93,7 @@ export const useCalendarState = () => {
     setIsNotesOpen,
     notesContent,
     setNotesContent,
+    isLoadingWeek,
+    setIsLoadingWeek,
   };
 };
