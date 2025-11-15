@@ -135,12 +135,16 @@ const MobileMonthView = ({
                     <div
                       key={event.id}
                       onClick={(e) => {
-                        e.stopPropagation();
-                        if (handleEventClick) {
-                          handleEventClick(event, e as any, formatDateKey(date));
+                        if (isExpanded) {
+                          e.stopPropagation();
+                          if (handleEventClick) {
+                            handleEventClick(event, e as any, formatDateKey(date));
+                          }
                         }
                       }}
-                      className={`px-1 py-1 rounded uppercase leading-tight cursor-pointer hover:opacity-80 transition-opacity ${
+                      className={`px-1 py-1 rounded uppercase leading-tight ${
+                        isExpanded ? 'cursor-pointer hover:opacity-80' : 'pointer-events-none'
+                      } transition-opacity ${
                         isExpanded ? 'text-xs' : 'text-[8px] truncate'
                       }`}
                       style={{ 
@@ -152,7 +156,7 @@ const MobileMonthView = ({
                     </div>
                   ))}
                   {!isExpanded && dayEvents.length > 3 && (
-                    <div className="text-[8px] text-[#999] text-center">
+                    <div className="text-[8px] text-[#999] text-center pointer-events-none">
                       +{dayEvents.length - 3}
                     </div>
                   )}
