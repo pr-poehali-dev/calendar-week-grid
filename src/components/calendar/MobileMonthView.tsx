@@ -191,10 +191,10 @@ const MobileMonthView = ({
                           }
                         }
                       }}
-                      className={`px-1 py-1 rounded uppercase leading-tight ${
+                      className={`px-1 py-1 rounded uppercase ${
                         isExpanded ? 'cursor-pointer hover:opacity-80' : 'pointer-events-none'
                       } transition-opacity ${
-                        isExpanded ? 'text-base' : 'text-[8px] truncate'
+                        isExpanded ? 'text-sm leading-tight break-words line-clamp-2' : 'text-[8px] truncate'
                       }`}
                       style={{ 
                         backgroundColor: `${event.color}20`,
