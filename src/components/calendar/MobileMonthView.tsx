@@ -109,7 +109,13 @@ const MobileMonthView = ({
                 )}
                 <div
                   key={index}
-                  onClick={() => !isExpanded && setExpandedCell(index)}
+                  onClick={() => {
+                    if (!isExpanded) {
+                      setExpandedCell(index);
+                    } else {
+                      setExpandedCell(null);
+                    }
+                  }}
                   className={`border border-[#3A3A3A] p-1 transition-all min-h-[80px] ${
                     isExpanded ? 'fixed inset-4 z-[70] overflow-auto rounded-lg shadow-2xl cursor-default' : 'relative cursor-pointer'
                   } ${
@@ -152,7 +158,7 @@ const MobileMonthView = ({
                   )}
                 </div>
                 {isExpanded && (
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-3">
                     <Button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -163,16 +169,6 @@ const MobileMonthView = ({
                     >
                       <Icon name="Plus" className="w-4 h-4 mr-2" />
                       Добавить событие
-                    </Button>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setExpandedCell(null);
-                      }}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      Закрыть
                     </Button>
                   </div>
                 )}
