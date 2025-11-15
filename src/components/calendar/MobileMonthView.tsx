@@ -37,8 +37,9 @@ const MobileMonthView = ({
           size="icon"
           onClick={onClose}
           className="hover:bg-[#3A3A3A] text-white"
+          title="Недельный вид"
         >
-          <Icon name="X" className="w-5 h-5" />
+          <Icon name="CalendarDays" className="w-5 h-5" />
         </Button>
         
         <div className="flex items-center gap-2">

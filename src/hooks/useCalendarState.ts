@@ -39,7 +39,7 @@ export const useCalendarState = () => {
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [notesContent, setNotesContent] = useState(() => safeLocalStorage.getItem('calendar_notes') || '');
   const [isSyncing, setIsSyncing] = useState(false);
-  const [isMobileMonthOpen, setIsMobileMonthOpen] = useState(false);
+  const [isMobileMonthOpen, setIsMobileMonthOpen] = useState(true);
 
   const memoizedSetEvents = useCallback(setEvents, []);
   const memoizedSetIsLoading = useCallback(setIsLoading, []);
