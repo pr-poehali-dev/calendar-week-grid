@@ -107,19 +107,22 @@ const MobileMonthView = ({
             const isExpanded = expandedCell === index;
             
             return (
-              <div
-                key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setExpandedCell(isExpanded ? null : index);
-                }}
-                className={`border border-[#3A3A3A] p-1 cursor-pointer transition-all min-h-[80px] ${
-                  isExpanded ? 'fixed inset-4 z-[60] overflow-auto rounded-lg shadow-2xl' : 'relative'
-                } ${
-                  isTodayDate ? 'bg-[#0EA5E9]/10' : 
-                  isCurrentMonth ? 'bg-[#4A4A4A]' : 'bg-[#3A3A3A]'
-                }`}
-              >
+              <div key={index}>
+                {isExpanded && (
+                  <div 
+                    className="fixed inset-0 bg-black/50 z-[59]"
+                    onClick={() => setExpandedCell(null)}
+                  />
+                )}
+                <div
+                  onClick={() => !isExpanded && setExpandedCell(index)}
+                  className={`border border-[#3A3A3A] p-1 transition-all min-h-[80px] ${
+                    isExpanded ? 'fixed inset-4 z-[60] overflow-auto rounded-lg shadow-2xl cursor-default' : 'relative cursor-pointer'
+                  } ${
+                    isTodayDate ? 'bg-[#0EA5E9]/10' : 
+                    isCurrentMonth ? 'bg-[#4A4A4A]' : 'bg-[#3A3A3A]'
+                  }`}
+                >
                 <div className={`text-xs font-semibold mb-1 ${
                   isTodayDate ? 'bg-[#0EA5E9] text-white rounded-full w-5 h-5 flex items-center justify-center mx-auto' :
                   isCurrentMonth ? 'text-white text-center' : 'text-[#666] text-center'
@@ -179,6 +182,7 @@ const MobileMonthView = ({
                     </Button>
                   </div>
                 )}
+                </div>
               </div>
             );
           })}
