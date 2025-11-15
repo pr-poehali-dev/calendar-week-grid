@@ -47,22 +47,24 @@ const Index = () => {
     }
   }, [state.isLoading, isMobile]);
   
-  if (!isMobile) {
-    useKeyboardShortcuts({
-      onNewEvent: () => handlers.handleQuickAdd(),
-      onEscape: () => {
-        state.setIsDialogOpen(false);
-        state.setIsNotesOpen(false);
-        state.setIsQuickAddOpen(false);
-      },
-      onToday: () => {
-        state.setWeekOffset(0);
-        state.setMonthOffset(0);
-      },
-      onNextWeek: () => state.setWeekOffset(state.weekOffset + 1),
-      onPrevWeek: () => state.setWeekOffset(state.weekOffset - 1),
-    });
-  }
+  useKeyboardShortcuts(
+    isMobile
+      ? null
+      : {
+          onNewEvent: () => handlers.handleQuickAdd(),
+          onEscape: () => {
+            state.setIsDialogOpen(false);
+            state.setIsNotesOpen(false);
+            state.setIsQuickAddOpen(false);
+          },
+          onToday: () => {
+            state.setWeekOffset(0);
+            state.setMonthOffset(0);
+          },
+          onNextWeek: () => state.setWeekOffset(state.weekOffset + 1),
+          onPrevWeek: () => state.setWeekOffset(state.weekOffset - 1),
+        }
+  );
 
   return (
     <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">

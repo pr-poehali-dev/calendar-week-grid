@@ -9,8 +9,10 @@ interface KeyboardShortcuts {
   onSearch?: () => void;
 }
 
-export const useKeyboardShortcuts = (shortcuts: KeyboardShortcuts) => {
+export const useKeyboardShortcuts = (shortcuts: KeyboardShortcuts | null) => {
   useEffect(() => {
+    if (!shortcuts) return;
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       const isInputFocused = 
         document.activeElement?.tagName === 'INPUT' ||
