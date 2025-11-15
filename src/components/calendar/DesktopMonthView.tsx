@@ -2,6 +2,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { Event, DAYS_SHORT, MONTHS } from './types';
+import { memo } from 'react';
 
 interface DesktopMonthViewProps {
   monthCalendar: {
@@ -247,4 +248,4 @@ const DesktopMonthView = ({
   );
 };
 
-export default DesktopMonthView;
+export default memo(DesktopMonthView);

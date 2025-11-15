@@ -70,24 +70,13 @@ export const useCalendarHandlers = (
     if (cachedEvents) {
       try {
         const allEvents = JSON.parse(cachedEvents);
-        const now = new Date();
-        const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 2, 0);
-        
-        const currentMonthEvents = allEvents.filter((e: Event) => {
-          const eventDate = new Date(e.date);
-          return eventDate >= monthStart && eventDate <= monthEnd;
-        });
-        
-        setEvents(currentMonthEvents);
+        setEvents(allEvents);
         setIsLoading(false);
-        
-        setTimeout(() => {
-          setEvents(allEvents);
-        }, 300);
       } catch (e) {
         console.error('Cache parse error:', e);
       }
+    } else {
+      setIsLoading(false);
     }
 
     const syncData = async () => {
@@ -108,12 +97,11 @@ export const useCalendarHandlers = (
           toast.error('Ошибка загрузки событий');
         }
       } finally {
-        setIsLoading(false);
         setIsSyncing(false);
       }
     };
 
-    syncData();
+    setTimeout(() => syncData(), 2000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 

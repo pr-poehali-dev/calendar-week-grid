@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Event, COLORS } from '@/components/calendar/types';
 import { safeLocalStorage } from '@/utils/localStorage';
 
@@ -40,7 +40,11 @@ export const useCalendarState = () => {
   const [notesContent, setNotesContent] = useState(() => safeLocalStorage.getItem('calendar_notes') || '');
   const [isSyncing, setIsSyncing] = useState(false);
 
-  return {
+  const memoizedSetEvents = useCallback(setEvents, []);
+  const memoizedSetIsLoading = useCallback(setIsLoading, []);
+  const memoizedSetIsSyncing = useCallback(setIsSyncing, []);
+
+  return useMemo(() => ({
     events,
     setEvents,
     isDialogOpen,
@@ -97,5 +101,34 @@ export const useCalendarState = () => {
     setNotesContent,
     isSyncing,
     setIsSyncing,
-  };
+  }), [
+    events,
+    isDialogOpen,
+    selectedDate,
+    newEventText,
+    selectedColor,
+    editingEvent,
+    draggedEvent,
+    dragOverDate,
+    weekOffset,
+    movingEvent,
+    isLoading,
+    touchStart,
+    touchEnd,
+    monthOffset,
+    viewAllDate,
+    dragOverEvent,
+    userId,
+    selectedRepeat,
+    deleteDialogOpen,
+    eventToDelete,
+    deleteTargetDate,
+    forceDesktopView,
+    fillDay,
+    isQuickAddOpen,
+    quickAddMonthOffset,
+    isNotesOpen,
+    notesContent,
+    isSyncing,
+  ]);
 };
