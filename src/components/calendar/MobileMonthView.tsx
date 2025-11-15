@@ -16,6 +16,7 @@ interface MobileMonthViewProps {
   isToday: (date: Date) => boolean;
   formatDateKey: (date: Date) => string;
   handleDateSelect: (date: Date) => void;
+  handleEventClick?: (event: Event, e: React.MouseEvent, currentDate?: string) => void;
   truncateText: (text: string, wordLimit?: number) => string;
 }
 
@@ -26,7 +27,9 @@ const MobileMonthView = ({
   onClose,
   getEventsForDate,
   isToday,
+  formatDateKey,
   handleDateSelect,
+  handleEventClick,
   truncateText,
 }: MobileMonthViewProps) => {
   const [expandedCell, setExpandedCell] = useState<number | null>(null);
@@ -130,10 +133,11 @@ const MobileMonthView = ({
                       key={event.id}
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDateSelect(date);
-                        onClose();
+                        if (handleEventClick) {
+                          handleEventClick(event, e as any, formatDateKey(date));
+                        }
                       }}
-                      className={`px-1 py-1 rounded uppercase leading-tight ${
+                      className={`px-1 py-1 rounded uppercase leading-tight cursor-pointer hover:opacity-80 transition-opacity ${
                         isExpanded ? 'text-xs' : 'text-[8px] truncate'
                       }`}
                       style={{ 
@@ -151,16 +155,29 @@ const MobileMonthView = ({
                   )}
                 </div>
                 {isExpanded && (
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDateSelect(date);
-                      onClose();
-                    }}
-                    className="mt-3 w-full bg-[#1E3A8A] hover:bg-[#0EA5E9]"
-                  >
-                    Добавить событие
-                  </Button>
+                  <div className="mt-3 space-y-2">
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDateSelect(date);
+                        setExpandedCell(null);
+                      }}
+                      className="w-full bg-[#1E3A8A] hover:bg-[#0EA5E9]"
+                    >
+                      <Icon name="Plus" className="w-4 h-4 mr-2" />
+                      Добавить событие
+                    </Button>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpandedCell(null);
+                      }}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Закрыть
+                    </Button>
+                  </div>
                 )}
               </div>
             );

@@ -79,6 +79,7 @@ const Index = () => {
             isToday={utils.isToday}
             formatDateKey={utils.formatDateKey}
             handleDateSelect={handlers.handleDateSelect}
+            handleEventClick={handlers.handleEventClick}
             truncateText={utils.truncateText}
           />
         )}
