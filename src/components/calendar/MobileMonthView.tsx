@@ -211,7 +211,7 @@ const MobileMonthView = ({
                         } : {})
                       }}
                     >
-                      {isExpanded ? event.text : truncateText(event.text, 2)}
+                      {isExpanded ? event.text : event.text}
                     </div>
                   ))}
                   {!isExpanded && dayEvents.length > 3 && (
