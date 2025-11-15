@@ -191,14 +191,21 @@ const MobileMonthView = ({
                           }
                         }
                       }}
-                      className={`px-1 py-1 rounded uppercase ${
-                        isExpanded ? 'cursor-pointer hover:opacity-80' : 'pointer-events-none'
+                      className={`rounded uppercase ${
+                        isExpanded ? 'px-2 py-2 cursor-pointer hover:opacity-80' : 'px-1 py-1 pointer-events-none'
                       } transition-opacity ${
-                        isExpanded ? 'text-sm leading-tight break-words line-clamp-2' : 'text-[8px] truncate'
+                        isExpanded ? 'text-sm leading-5' : 'text-[8px] truncate'
                       }`}
                       style={{ 
                         backgroundColor: `${event.color}20`,
-                        color: '#fff'
+                        color: '#fff',
+                        ...(isExpanded ? {
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          wordBreak: 'break-word'
+                        } : {})
                       }}
                     >
                       {isExpanded ? event.text : truncateText(event.text, 2)}
