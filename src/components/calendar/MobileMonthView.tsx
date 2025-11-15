@@ -134,11 +134,10 @@ const MobileMonthView = ({
                         onClose();
                       }}
                       className={`px-2 py-1 rounded uppercase ${
-                        isExpanded ? 'text-sm' : 'text-[8px] truncate'
+                        isExpanded ? 'text-xs' : 'text-[8px] truncate'
                       }`}
                       style={{ 
-                        borderLeft: `3px solid ${event.color}`,
-                        backgroundColor: `${event.color}15`,
+                        backgroundColor: `${event.color}20`,
                         color: '#fff'
                       }}
                     >
