@@ -114,7 +114,8 @@ export const useCalendarHandlers = (
     };
 
     syncData();
-  }, [userId, setEvents, setIsLoading, setIsSyncing]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   const loadEvents = async () => {
     if (!userId) return;
