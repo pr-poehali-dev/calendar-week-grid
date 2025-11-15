@@ -221,13 +221,17 @@ const MobileWeekView = ({
                         }`}
                         style={{ 
                           backgroundColor: `${event.color}15`,
-                          padding: window.innerWidth >= 768 ? '12px' : '4px'
+                          padding: window.innerWidth >= 768 ? '16px' : '4px',
+                          minHeight: window.innerWidth >= 768 ? '80px' : 'auto'
                         }}
                       >
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 overflow-visible">
                           <p 
-                            className="text-white break-words uppercase leading-tight md:leading-normal"
-                            style={{ fontSize: window.innerWidth >= 768 ? '2.5rem' : '0.875rem' }}
+                            className="text-white break-words uppercase"
+                            style={{ 
+                              fontSize: window.innerWidth >= 768 ? '2rem' : '0.875rem',
+                              lineHeight: window.innerWidth >= 768 ? '2.25rem' : '1.25rem'
+                            }}
                           >
                             {truncateText(event.text, 20)}
                           </p>

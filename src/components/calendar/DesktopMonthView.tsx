@@ -212,7 +212,7 @@ const DesktopMonthView = ({
                           onDragOver={(e) => handleEventDragOver(e, event)}
                           onDrop={(e) => handleEventDrop(e, event)}
                           onClick={(e) => handleEventClick(event, e, dateKey)}
-                          className={`px-3 py-2 rounded cursor-move transition-all duration-200 ${
+                          className={`px-4 py-3 rounded cursor-move transition-all duration-200 ${
                             isDragging ? 'opacity-50' :
                             isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' :
                             isDraggedOver ? 'ring-2 ring-[#0EA5E9] shadow-lg' :
@@ -220,10 +220,11 @@ const DesktopMonthView = ({
                             'hover:shadow-md'
                           }`}
                           style={{
-                            backgroundColor: `${event.color}20`
+                            backgroundColor: `${event.color}20`,
+                            minHeight: '70px'
                           }}
                         >
-                          <span className="text-white break-words line-clamp-2 uppercase leading-tight" style={{ fontSize: '2.5rem' }}>{event.text}</span>
+                          <span className="text-white break-words uppercase" style={{ fontSize: '2rem', lineHeight: '2.25rem', display: 'block' }}>{event.text}</span>
                         </div>
                       );
                       })}
