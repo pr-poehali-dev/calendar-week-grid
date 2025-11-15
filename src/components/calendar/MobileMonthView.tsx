@@ -18,6 +18,7 @@ interface MobileMonthViewProps {
   handleDateSelect: (date: Date) => void;
   handleEventClick?: (event: Event, e: React.MouseEvent, currentDate?: string) => void;
   truncateText: (text: string, wordLimit?: number) => string;
+  handleOpenNotes: () => void;
 }
 
 const MobileMonthView = ({
@@ -31,11 +32,43 @@ const MobileMonthView = ({
   handleDateSelect,
   handleEventClick,
   truncateText,
+  handleOpenNotes,
 }: MobileMonthViewProps) => {
   const [expandedCell, setExpandedCell] = useState<number | null>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      setMonthOffset(monthOffset + 1);
+    }
+    if (isRightSwipe) {
+      setMonthOffset(monthOffset - 1);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-[#2A2A2A] z-50 flex flex-col">
+    <div 
+      className="fixed inset-0 bg-[#2A2A2A] z-50 flex flex-col"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       <div className="flex items-center justify-between p-3 border-b border-[#3A3A3A]">
         <Button
           variant="ghost"
@@ -47,38 +80,30 @@ const MobileMonthView = ({
           <Icon name="CalendarDays" className="w-5 h-5" />
         </Button>
         
+        <h2 className="text-white font-semibold text-lg">
+          {MONTHS[monthCalendar.month]} {monthCalendar.year}
+        </h2>
+
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setMonthOffset(monthOffset - 1)}
+            onClick={handleOpenNotes}
             className="hover:bg-[#3A3A3A] text-white"
+            title="Заметки"
           >
-            <Icon name="ChevronLeft" className="w-5 h-5" />
+            <Icon name="FileText" className="w-5 h-5" />
           </Button>
-          
-          <h2 className="text-white font-semibold text-lg">
-            {MONTHS[monthCalendar.month]} {monthCalendar.year}
-          </h2>
-          
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setMonthOffset(monthOffset + 1)}
+            onClick={() => setMonthOffset(0)}
             className="hover:bg-[#3A3A3A] text-white"
+            title="Сегодня"
           >
-            <Icon name="ChevronRight" className="w-5 h-5" />
+            <Icon name="CalendarClock" className="w-5 h-5" />
           </Button>
         </div>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setMonthOffset(0)}
-          className="hover:bg-[#3A3A3A] text-white"
-        >
-          <Icon name="CalendarClock" className="w-5 h-5" />
-        </Button>
       </div>
 
       <div className="grid grid-cols-7 border-b border-[#3A3A3A] bg-[#3A3A3A]">

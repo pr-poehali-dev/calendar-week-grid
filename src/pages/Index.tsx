@@ -81,6 +81,7 @@ const Index = () => {
             handleDateSelect={handlers.handleDateSelect}
             handleEventClick={handlers.handleEventClick}
             truncateText={utils.truncateText}
+            handleOpenNotes={() => state.setIsNotesOpen(true)}
           />
         )}
 
