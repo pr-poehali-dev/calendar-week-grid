@@ -35,14 +35,7 @@ const MobileMonthView = ({
   const [expandedCell, setExpandedCell] = useState<number | null>(null);
 
   return (
-    <>
-      {expandedCell !== null && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-[59]"
-          onClick={() => setExpandedCell(null)}
-        />
-      )}
-      <div className="fixed inset-0 bg-[#2A2A2A] z-50 flex flex-col">
+    <div className="fixed inset-0 bg-[#2A2A2A] z-50 flex flex-col">
       <div className="flex items-center justify-between p-3 border-b border-[#3A3A3A]">
         <Button
           variant="ghost"
@@ -107,6 +100,13 @@ const MobileMonthView = ({
             const isExpanded = expandedCell === index;
             
             return (
+              <>
+                {isExpanded && (
+                  <div 
+                    className="fixed inset-0 bg-black/50 z-[59]"
+                    onClick={() => setExpandedCell(null)}
+                  />
+                )}
                 <div
                   key={index}
                   onClick={() => !isExpanded && setExpandedCell(index)}
@@ -177,12 +177,12 @@ const MobileMonthView = ({
                   </div>
                 )}
                 </div>
+              </>
             );
           })}
         </div>
       </div>
     </div>
-    </>
   );
 };
 
