@@ -224,7 +224,7 @@ const MobileWeekView = ({
                         }}
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-white break-words uppercase leading-tight">
+                          <p className="text-xs md:text-lg text-white break-words uppercase leading-tight">
                             {truncateText(event.text, 20)}
                           </p>
                           {event.repeat !== 'none' && event.repeat && (
