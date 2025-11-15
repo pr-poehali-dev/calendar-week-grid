@@ -61,32 +61,56 @@ export const useCalendarHandlers = (
   } = state;
 
   useEffect(() => {
-    if (userId) {
-      const cachedEvents = localStorage.getItem(`calendar_events_${userId}`);
-      if (cachedEvents) {
-        try {
-          const allEvents = JSON.parse(cachedEvents);
-          const now = new Date();
-          const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-          const monthEnd = new Date(now.getFullYear(), now.getMonth() + 2, 0);
-          
-          const currentMonthEvents = allEvents.filter((e: Event) => {
-            const eventDate = new Date(e.date);
-            return eventDate >= monthStart && eventDate <= monthEnd;
-          });
-          
-          setEvents(currentMonthEvents);
-          setIsLoading(false);
-          
-          setTimeout(() => {
-            setEvents(allEvents);
-          }, 300);
-        } catch (e) {
-          console.error('Cache parse error:', e);
-        }
+    if (!userId) return;
+
+    const cachedEvents = localStorage.getItem(`calendar_events_${userId}`);
+    if (cachedEvents) {
+      try {
+        const allEvents = JSON.parse(cachedEvents);
+        const now = new Date();
+        const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+        
+        const currentMonthEvents = allEvents.filter((e: Event) => {
+          const eventDate = new Date(e.date);
+          return eventDate >= monthStart && eventDate <= monthEnd;
+        });
+        
+        setEvents(currentMonthEvents);
+        setIsLoading(false);
+        
+        setTimeout(() => {
+          setEvents(allEvents);
+        }, 300);
+      } catch (e) {
+        console.error('Cache parse error:', e);
       }
-      loadEvents();
     }
+
+    const syncData = async () => {
+      setIsSyncing(true);
+      try {
+        const response = await fetch(`${API_URL}?userId=${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          const userEvents = data.filter((e: Event) => e.userId === userId);
+          setEvents(userEvents);
+          localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(userEvents));
+        }
+      } catch (error) {
+        const cached = localStorage.getItem(`calendar_events_${userId}`);
+        if (cached) {
+          toast.info('Работаем офлайн');
+        } else {
+          toast.error('Ошибка загрузки событий');
+        }
+      } finally {
+        setIsLoading(false);
+        setIsSyncing(false);
+      }
+    };
+
+    syncData();
   }, [userId]);
 
   const loadEvents = async () => {
