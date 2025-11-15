@@ -226,7 +226,7 @@ const MobileWeekView = ({
                         <div className="flex-1 min-w-0">
                           <p 
                             className="text-white break-words uppercase leading-tight md:leading-normal"
-                            style={{ fontSize: window.innerWidth >= 768 ? '1.25rem' : '0.875rem' }}
+                            style={{ fontSize: window.innerWidth >= 768 ? '2.5rem' : '0.875rem' }}
                           >
                             {truncateText(event.text, 20)}
                           </p>
