@@ -36,6 +36,7 @@ interface MobileWeekViewProps {
   handleOpenNotes: () => void;
   isSyncing: boolean;
   onRefresh: () => void;
+  onOpenMonthView: () => void;
 }
 
 const MobileWeekView = ({
@@ -69,7 +70,8 @@ const MobileWeekView = ({
   handleQuickAdd,
   handleOpenNotes,
   isSyncing,
-  onRefresh
+  onRefresh,
+  onOpenMonthView
 }: MobileWeekViewProps) => {
   return (
     <div 
@@ -133,6 +135,18 @@ const MobileWeekView = ({
           title="Экспорт событий"
         >
           <Icon name="Download" className="w-5 h-5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            if (navigator.vibrate) navigator.vibrate(5);
+            onOpenMonthView();
+          }}
+          className="hover:bg-[#3A3A3A] text-white h-10 w-10"
+          title="Весь месяц"
+        >
+          <Icon name="Calendar" className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"

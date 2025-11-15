@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 
 const MobileWeekView = lazy(() => import('@/components/calendar/MobileWeekView'));
+const MobileMonthView = lazy(() => import('@/components/calendar/MobileMonthView'));
 const DesktopMonthView = lazy(() => import('@/components/calendar/DesktopMonthView'));
 const NotesDialog = lazy(() => import('@/components/calendar/NotesDialog'));
 const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
@@ -83,6 +84,7 @@ const Index = () => {
           handleOpenNotes={() => state.setIsNotesOpen(true)}
           isSyncing={state.isSyncing}
           onRefresh={handlers.loadEvents}
+          onOpenMonthView={() => state.setIsMobileMonthOpen(true)}
           />
 
           <DesktopMonthView
@@ -165,6 +167,20 @@ const Index = () => {
             userId={state.userId || 'local_user'}
           />
         </Suspense>
+
+        {state.isMobileMonthOpen && (
+          <MobileMonthView
+            monthCalendar={utils.monthCalendar}
+            monthOffset={state.monthOffset}
+            setMonthOffset={state.setMonthOffset}
+            onClose={() => state.setIsMobileMonthOpen(false)}
+            getEventsForDate={utils.getEventsForDate}
+            isToday={utils.isToday}
+            formatDateKey={utils.formatDateKey}
+            handleDateSelect={handlers.handleDateSelect}
+            truncateText={utils.truncateText}
+          />
+        )}
       </Suspense>
     </div>
   );
