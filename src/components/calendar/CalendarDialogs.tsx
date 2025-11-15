@@ -91,7 +91,7 @@ const CalendarDialogs = ({
                   handleEventClick(event, e as any, formatDateKey(viewAllDate));
                   setViewAllDate(null);
                 }}
-                className="px-3 py-2 rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                className="px-2 py-1.5 rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
                 style={{
                   backgroundColor: `${event.color}15`
                 }}
