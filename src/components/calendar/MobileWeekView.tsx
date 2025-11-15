@@ -73,6 +73,8 @@ const MobileWeekView = ({
   onRefresh,
   onOpenMonthView
 }: MobileWeekViewProps) => {
+  console.log('MobileWeekView: window.innerWidth =', window.innerWidth, 'forceDesktopView =', forceDesktopView);
+  
   return (
     <div 
       className={forceDesktopView ? 'hidden' : 'md:hidden'}
