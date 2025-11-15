@@ -1,6 +1,6 @@
-import { lazy, Suspense, useState, useEffect } from 'react';
-import MobileWeekView from '@/components/calendar/MobileWeekView';
+import { lazy, Suspense } from 'react';
 
+const MobileWeekView = lazy(() => import('@/components/calendar/MobileWeekView'));
 const DesktopMonthView = lazy(() => import('@/components/calendar/DesktopMonthView'));
 const NotesDialog = lazy(() => import('@/components/calendar/NotesDialog'));
 const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
@@ -18,7 +18,6 @@ const LoadingSpinner = () => (
 
 const Index = () => {
   const state = useCalendarState();
-  const [showDesktop, setShowDesktop] = useState(false);
   
   const utils = useCalendarUtils(
     state.weekOffset,
@@ -48,17 +47,11 @@ const Index = () => {
     onPrevWeek: () => state.setWeekOffset(state.weekOffset - 1),
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowDesktop(true);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
-      <div className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full">
-        <MobileWeekView
+      <Suspense fallback={<LoadingSpinner />}>
+        <div className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full">
+          <MobileWeekView
           weekDates={utils.weekDates}
           firstDate={utils.firstDate}
           lastDate={utils.lastDate}
@@ -90,11 +83,9 @@ const Index = () => {
           handleOpenNotes={() => state.setIsNotesOpen(true)}
           isSyncing={state.isSyncing}
           onRefresh={handlers.loadEvents}
-        />
+          />
 
-        {showDesktop && (
-          <Suspense fallback={null}>
-            <DesktopMonthView
+          <DesktopMonthView
           monthCalendar={utils.monthCalendar}
           monthOffset={state.monthOffset}
           setMonthOffset={state.setMonthOffset}
@@ -123,11 +114,8 @@ const Index = () => {
               isSyncing={state.isSyncing}
               onRefresh={handlers.loadEvents}
             />
-          </Suspense>
-        )}
-      </div>
+        </div>
 
-      {showDesktop && (
         <Suspense fallback={null}>
           <CalendarDialogs
           isDialogOpen={state.isDialogOpen}
@@ -164,9 +152,7 @@ const Index = () => {
             isToday={utils.isToday}
           />
         </Suspense>
-      )}
 
-      {showDesktop && (
         <Suspense fallback={null}>
           <NotesDialog
             isOpen={state.isNotesOpen}
@@ -179,7 +165,7 @@ const Index = () => {
             userId={state.userId || 'local_user'}
           />
         </Suspense>
-      )}
+      </Suspense>
     </div>
   );
 };
