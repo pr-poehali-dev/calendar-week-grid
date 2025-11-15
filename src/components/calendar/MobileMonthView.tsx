@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { Event, DAYS_SHORT, MONTHS } from './types';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 
 interface MobileMonthViewProps {
   monthCalendar: {
@@ -29,8 +29,17 @@ const MobileMonthView = ({
   handleDateSelect,
   truncateText,
 }: MobileMonthViewProps) => {
+  const [expandedCell, setExpandedCell] = useState<number | null>(null);
+
   return (
-    <div className="fixed inset-0 bg-[#2A2A2A] z-50 flex flex-col">
+    <>
+      {expandedCell !== null && (
+        <div 
+          className="fixed inset-0 bg-black/70 z-[55]"
+          onClick={() => setExpandedCell(null)}
+        />
+      )}
+      <div className="fixed inset-0 bg-[#2A2A2A] z-50 flex flex-col">
       <div className="flex items-center justify-between p-3 border-b border-[#3A3A3A]">
         <Button
           variant="ghost"
@@ -88,19 +97,22 @@ const MobileMonthView = ({
       </div>
 
       <div className="flex-1 overflow-auto">
-        <div className="grid grid-cols-7 auto-rows-fr h-full">
+        <div className="grid grid-cols-7 auto-rows-fr h-full relative">
           {monthCalendar.dates.map(({ date, isCurrentMonth }, index) => {
             const dayEvents = getEventsForDate(date);
             const isTodayDate = isToday(date);
+            const isExpanded = expandedCell === index;
             
             return (
               <div
                 key={index}
-                onClick={() => {
-                  handleDateSelect(date);
-                  onClose();
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedCell(isExpanded ? null : index);
                 }}
-                className={`border border-[#3A3A3A] p-1 cursor-pointer transition-colors min-h-[80px] ${
+                className={`border border-[#3A3A3A] p-1 cursor-pointer transition-all min-h-[80px] ${
+                  isExpanded ? 'fixed inset-4 z-[60] overflow-auto rounded-lg shadow-2xl' : 'relative'
+                } ${
                   isTodayDate ? 'bg-[#0EA5E9]/10' : 
                   isCurrentMonth ? 'bg-[#4A4A4A]' : 'bg-[#3A3A3A]'
                 }`}
@@ -113,31 +125,51 @@ const MobileMonthView = ({
                 </div>
                 
                 <div className="space-y-0.5">
-                  {dayEvents.slice(0, 3).map((event) => (
+                  {(isExpanded ? dayEvents : dayEvents.slice(0, 3)).map((event) => (
                     <div
                       key={event.id}
-                      className="text-[8px] px-1 py-0.5 rounded truncate uppercase"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDateSelect(date);
+                        onClose();
+                      }}
+                      className={`px-2 py-1 rounded uppercase ${
+                        isExpanded ? 'text-sm' : 'text-[8px] truncate'
+                      }`}
                       style={{ 
-                        borderLeft: `2px solid ${event.color}`,
+                        borderLeft: `3px solid ${event.color}`,
                         backgroundColor: `${event.color}15`,
                         color: '#fff'
                       }}
                     >
-                      {truncateText(event.text, 2)}
+                      {isExpanded ? event.text : truncateText(event.text, 2)}
                     </div>
                   ))}
-                  {dayEvents.length > 3 && (
+                  {!isExpanded && dayEvents.length > 3 && (
                     <div className="text-[8px] text-[#999] text-center">
                       +{dayEvents.length - 3}
                     </div>
                   )}
                 </div>
+                {isExpanded && (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDateSelect(date);
+                      onClose();
+                    }}
+                    className="mt-3 w-full bg-[#1E3A8A] hover:bg-[#0EA5E9]"
+                  >
+                    Добавить событие
+                  </Button>
+                )}
               </div>
             );
           })}
         </div>
       </div>
     </div>
+    </>
   );
 };
 
