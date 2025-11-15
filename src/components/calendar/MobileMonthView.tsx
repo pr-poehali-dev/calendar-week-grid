@@ -202,13 +202,11 @@ const MobileMonthView = ({
                       style={{ 
                         backgroundColor: `${event.color}20`,
                         color: '#fff',
-                        ...(isExpanded ? {
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                          wordBreak: 'break-word'
-                        } : {})
+                        display: '-webkit-box',
+                        WebkitLineClamp: isExpanded ? 2 : 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        wordBreak: 'break-word'
                       }}
                     >
                       {isExpanded ? event.text : event.text}
