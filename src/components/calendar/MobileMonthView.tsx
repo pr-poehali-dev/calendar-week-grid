@@ -123,12 +123,23 @@ const MobileMonthView = ({
                     isCurrentMonth ? 'bg-[#4A4A4A]' : 'bg-[#3A3A3A]'
                   }`}
                 >
-                <div className={`text-xs font-semibold mb-1 ${
-                  isTodayDate ? 'bg-[#0EA5E9] text-white rounded-full w-5 h-5 flex items-center justify-center mx-auto' :
-                  isCurrentMonth ? 'text-white text-center' : 'text-[#666] text-center'
-                }`}>
-                  {date.getDate()}
-                </div>
+                {isExpanded ? (
+                  <div className="text-center mb-3 pb-3 border-b border-[#3A3A3A]">
+                    <div className="text-lg font-bold text-white">
+                      {date.getDate()} {MONTHS[date.getMonth()]}
+                    </div>
+                    <div className="text-sm text-[#999]">
+                      {DAYS_SHORT[date.getDay() === 0 ? 6 : date.getDay() - 1]}
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`text-xs font-semibold mb-1 ${
+                    isTodayDate ? 'bg-[#0EA5E9] text-white rounded-full w-5 h-5 flex items-center justify-center mx-auto' :
+                    isCurrentMonth ? 'text-white text-center' : 'text-[#666] text-center'
+                  }`}>
+                    {date.getDate()}
+                  </div>
+                )}
                 
                 <div className="space-y-0.5">
                   {(isExpanded ? dayEvents : dayEvents.slice(0, 3)).map((event) => (
