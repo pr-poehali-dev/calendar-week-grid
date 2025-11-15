@@ -120,6 +120,8 @@ const Index = () => {
           handleEventClick={handlers.handleEventClick}
               handleViewAllClick={handlers.handleViewAllClick}
               handleOpenNotes={() => state.setIsNotesOpen(true)}
+              isSyncing={state.isSyncing}
+              onRefresh={handlers.loadEvents}
             />
           </Suspense>
         )}

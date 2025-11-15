@@ -33,6 +33,8 @@ interface DesktopMonthViewProps {
   handleEventClick: (event: Event, e: React.MouseEvent, currentDate?: string) => void;
   handleViewAllClick: (date: Date, e: React.MouseEvent) => void;
   handleOpenNotes: () => void;
+  isSyncing: boolean;
+  onRefresh: () => void;
 }
 
 const DesktopMonthView = ({
@@ -60,7 +62,9 @@ const DesktopMonthView = ({
   handleEventDrop,
   handleEventClick,
   handleViewAllClick,
-  handleOpenNotes
+  handleOpenNotes,
+  isSyncing,
+  onRefresh
 }: DesktopMonthViewProps) => {
   const handleWheel = (e: React.WheelEvent) => {
     if (e.deltaY > 0) {
@@ -99,6 +103,16 @@ const DesktopMonthView = ({
         </div>
         
         <div className="flex-1 flex items-center justify-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onRefresh}
+            className="hover:bg-[#3A3A3A] text-white h-9 w-9"
+            title="Обновить"
+            disabled={isSyncing}
+          >
+            <Icon name="RefreshCw" className={`w-5 h-5 ${isSyncing ? 'animate-spin' : ''}`} />
+          </Button>
           <Button
             variant="ghost"
             onClick={() => setMonthOffset(0)}
