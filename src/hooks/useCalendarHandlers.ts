@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { Event, COLORS, MONTHS, DAYS_SHORT, API_URL } from '@/components/calendar/types';
 import { safeLocalStorage } from '@/utils/localStorage';
@@ -60,8 +60,11 @@ export const useCalendarHandlers = (
     setViewAllDate,
   } = state;
 
+  const hasLoadedRef = useRef(false);
+
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || hasLoadedRef.current) return;
+    hasLoadedRef.current = true;
 
     const cachedEvents = localStorage.getItem(`calendar_events_${userId}`);
     if (cachedEvents) {
@@ -111,7 +114,7 @@ export const useCalendarHandlers = (
     };
 
     syncData();
-  }, [userId]);
+  }, [userId, setEvents, setIsLoading, setIsSyncing]);
 
   const loadEvents = async () => {
     if (!userId) return;
