@@ -91,13 +91,12 @@ const CalendarDialogs = ({
                   handleEventClick(event, e as any, formatDateKey(viewAllDate));
                   setViewAllDate(null);
                 }}
-                className="p-3 rounded-lg cursor-pointer border-l-4 hover:opacity-80 transition-opacity"
+                className="p-3 rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
                 style={{
-                  borderLeftColor: event.color,
                   backgroundColor: `${event.color}15`
                 }}
               >
-                <p className="text-sm text-white break-words uppercase">{event.text}</p>
+                <p className="text-xs text-white break-words uppercase">{event.text}</p>
                 {event.repeat !== 'none' && event.repeat && (
                   <p className="text-xs text-white/60 mt-1">
                     {event.repeat === 'weekly' ? '↻ Каждую неделю' : '↻ Каждый месяц'}
