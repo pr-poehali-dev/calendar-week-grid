@@ -212,7 +212,7 @@ const DesktopMonthView = ({
                           onDragOver={(e) => handleEventDragOver(e, event)}
                           onDrop={(e) => handleEventDrop(e, event)}
                           onClick={(e) => handleEventClick(event, e, dateKey)}
-                          className={`text-xs p-1.5 rounded cursor-move leading-tight transition-all duration-200 ${
+                          className={`text-xs px-1.5 py-1 rounded cursor-move transition-all duration-200 ${
                             isDragging ? 'opacity-50' :
                             isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' :
                             isDraggedOver ? 'ring-2 ring-[#0EA5E9] shadow-lg' :
@@ -223,7 +223,7 @@ const DesktopMonthView = ({
                             backgroundColor: `${event.color}20`
                           }}
                         >
-                          <span className="text-white break-words line-clamp-2 uppercase">{event.text}</span>
+                          <span className="text-white break-words line-clamp-2 uppercase leading-tight">{event.text}</span>
                         </div>
                       );
                       })}
