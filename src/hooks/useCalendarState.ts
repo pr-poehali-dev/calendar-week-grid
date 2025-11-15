@@ -41,10 +41,6 @@ export const useCalendarState = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isMobileMonthOpen, setIsMobileMonthOpen] = useState(true);
 
-  const memoizedSetEvents = useCallback(setEvents, []);
-  const memoizedSetIsLoading = useCallback(setIsLoading, []);
-  const memoizedSetIsSyncing = useCallback(setIsSyncing, []);
-
   return useMemo(() => ({
     events,
     setEvents,

@@ -1,7 +1,7 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 
-const MobileWeekView = lazy(() => import('@/components/calendar/MobileWeekView'));
 const MobileMonthView = lazy(() => import('@/components/calendar/MobileMonthView'));
+const MobileWeekView = lazy(() => import('@/components/calendar/MobileWeekView'));
 const DesktopMonthView = lazy(() => import('@/components/calendar/DesktopMonthView'));
 const NotesDialog = lazy(() => import('@/components/calendar/NotesDialog'));
 const CalendarDialogs = lazy(() => import('@/components/calendar/CalendarDialogs'));
@@ -33,26 +33,57 @@ const Index = () => {
     utils.getEventsForDate
   );
 
-  useKeyboardShortcuts({
-    onNewEvent: () => handlers.handleQuickAdd(),
-    onEscape: () => {
-      state.setIsDialogOpen(false);
-      state.setIsNotesOpen(false);
-      state.setIsQuickAddOpen(false);
-    },
-    onToday: () => {
-      state.setWeekOffset(0);
-      state.setMonthOffset(0);
-    },
-    onNextWeek: () => state.setWeekOffset(state.weekOffset + 1),
-    onPrevWeek: () => state.setWeekOffset(state.weekOffset - 1),
-  });
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
+  useEffect(() => {
+    if (!state.isLoading) {
+      const timer = setTimeout(() => {
+        import('@/components/calendar/CalendarDialogs');
+        if (!isMobile) {
+          import('@/components/calendar/NotesDialog');
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [state.isLoading, isMobile]);
+  
+  if (!isMobile) {
+    useKeyboardShortcuts({
+      onNewEvent: () => handlers.handleQuickAdd(),
+      onEscape: () => {
+        state.setIsDialogOpen(false);
+        state.setIsNotesOpen(false);
+        state.setIsQuickAddOpen(false);
+      },
+      onToday: () => {
+        state.setWeekOffset(0);
+        state.setMonthOffset(0);
+      },
+      onNextWeek: () => state.setWeekOffset(state.weekOffset + 1),
+      onPrevWeek: () => state.setWeekOffset(state.weekOffset - 1),
+    });
+  }
 
   return (
     <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
       <Suspense fallback={<LoadingSpinner />}>
-        <div className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full">
-          <MobileWeekView
+        {state.isMobileMonthOpen && (
+          <MobileMonthView
+            monthCalendar={utils.monthCalendar}
+            monthOffset={state.monthOffset}
+            setMonthOffset={state.setMonthOffset}
+            onClose={() => state.setIsMobileMonthOpen(false)}
+            getEventsForDate={utils.getEventsForDate}
+            isToday={utils.isToday}
+            formatDateKey={utils.formatDateKey}
+            handleDateSelect={handlers.handleDateSelect}
+            truncateText={utils.truncateText}
+          />
+        )}
+
+        {!state.isMobileMonthOpen && (
+          <div className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full">
+            <MobileWeekView
           weekDates={utils.weekDates}
           firstDate={utils.firstDate}
           lastDate={utils.lastDate}
@@ -116,10 +147,12 @@ const Index = () => {
               isSyncing={state.isSyncing}
               onRefresh={handlers.loadEvents}
             />
-        </div>
+          </div>
+        )}
 
-        <Suspense fallback={null}>
-          <CalendarDialogs
+        {(state.isDialogOpen || state.deleteDialogOpen || state.isQuickAddOpen || state.viewAllDate) && (
+          <Suspense fallback={null}>
+            <CalendarDialogs
           isDialogOpen={state.isDialogOpen}
           setIsDialogOpen={state.setIsDialogOpen}
           editingEvent={state.editingEvent}
@@ -153,10 +186,12 @@ const Index = () => {
           handleQuickAddDateSelect={handlers.handleQuickAddDateSelect}
             isToday={utils.isToday}
           />
-        </Suspense>
+          </Suspense>
+        )}
 
-        <Suspense fallback={null}>
-          <NotesDialog
+        {state.isNotesOpen && (
+          <Suspense fallback={null}>
+            <NotesDialog
             isOpen={state.isNotesOpen}
             onClose={() => state.setIsNotesOpen(false)}
             notesContent={state.notesContent}
@@ -166,20 +201,7 @@ const Index = () => {
             }}
             userId={state.userId || 'local_user'}
           />
-        </Suspense>
-
-        {state.isMobileMonthOpen && (
-          <MobileMonthView
-            monthCalendar={utils.monthCalendar}
-            monthOffset={state.monthOffset}
-            setMonthOffset={state.setMonthOffset}
-            onClose={() => state.setIsMobileMonthOpen(false)}
-            getEventsForDate={utils.getEventsForDate}
-            isToday={utils.isToday}
-            formatDateKey={utils.formatDateKey}
-            handleDateSelect={handlers.handleDateSelect}
-            truncateText={utils.truncateText}
-          />
+          </Suspense>
         )}
       </Suspense>
     </div>
