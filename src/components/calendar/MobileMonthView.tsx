@@ -133,7 +133,7 @@ const MobileMonthView = ({
                         handleDateSelect(date);
                         onClose();
                       }}
-                      className={`px-2 py-1 rounded uppercase ${
+                      className={`px-1 py-1 rounded uppercase leading-tight ${
                         isExpanded ? 'text-xs' : 'text-[8px] truncate'
                       }`}
                       style={{ 
