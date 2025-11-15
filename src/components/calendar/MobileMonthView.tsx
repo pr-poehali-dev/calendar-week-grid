@@ -41,14 +41,12 @@ const MobileMonthView = ({
   const [expandedCell, setExpandedCell] = useState<number | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
   const minSwipeDistance = 50;
 
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
-    setTouchStartY(e.targetTouches[0].clientY);
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
@@ -56,15 +54,15 @@ const MobileMonthView = ({
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd || !touchStartY) return;
+    if (!touchStart || !touchEnd) return;
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
-    
-    if (isRightSwipe) {
-      onClose();
-    } else if (isLeftSwipe) {
+    if (isLeftSwipe) {
       setMonthOffset(monthOffset + 1);
+    }
+    if (isRightSwipe) {
+      setMonthOffset(monthOffset - 1);
     }
   };
 
