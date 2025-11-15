@@ -69,7 +69,7 @@ const Index = () => {
   return (
     <div className="min-h-screen md:h-screen md:flex md:flex-col bg-[#2A2A2A]">
       <Suspense fallback={<LoadingSpinner />}>
-        {state.isMobileMonthOpen && (
+        {isMobile && state.isMobileMonthOpen && (
           <MobileMonthView
             monthCalendar={utils.monthCalendar}
             monthOffset={state.monthOffset}
@@ -83,8 +83,8 @@ const Index = () => {
           />
         )}
 
-        {!state.isMobileMonthOpen && (
-          <div className="max-w-4xl md:max-w-none md:flex-1 md:flex md:flex-col mx-auto px-0 md:overflow-hidden md:w-full">
+        {isMobile && !state.isMobileMonthOpen && (
+          <div className="max-w-4xl mx-auto px-0">
             <MobileWeekView
           weekDates={utils.weekDates}
           firstDate={utils.firstDate}
@@ -119,37 +119,39 @@ const Index = () => {
           onRefresh={handlers.loadEvents}
           onOpenMonthView={() => state.setIsMobileMonthOpen(true)}
           />
-
-          <DesktopMonthView
-          monthCalendar={utils.monthCalendar}
-          monthOffset={state.monthOffset}
-          setMonthOffset={state.setMonthOffset}
-          forceDesktopView={state.forceDesktopView}
-          setForceDesktopView={state.setForceDesktopView}
-          exportEventsToFile={handlers.exportEventsToFile}
-          getEventsForDate={utils.getEventsForDate}
-          isToday={utils.isToday}
-          formatDateKey={utils.formatDateKey}
-          dragOverDate={state.dragOverDate}
-          dragOverEvent={state.dragOverEvent}
-          getDayFillColor={utils.getDayFillColor}
-          handleDateSelect={handlers.handleDateSelect}
-          handleDragOver={handlers.handleDragOver}
-          handleDragLeave={handlers.handleDragLeave}
-          handleDrop={handlers.handleDrop}
-          draggedEvent={state.draggedEvent}
-          movingEvent={state.movingEvent}
-          handleDragStart={handlers.handleDragStart}
-          handleDragEnd={handlers.handleDragEnd}
-          handleEventDragOver={handlers.handleEventDragOver}
-          handleEventDrop={handlers.handleEventDrop}
-          handleEventClick={handlers.handleEventClick}
-              handleViewAllClick={handlers.handleViewAllClick}
-              handleOpenNotes={() => state.setIsNotesOpen(true)}
-              isSyncing={state.isSyncing}
-              onRefresh={handlers.loadEvents}
-            />
           </div>
+        )}
+
+        {!isMobile && (
+          <DesktopMonthView
+            monthCalendar={utils.monthCalendar}
+            monthOffset={state.monthOffset}
+            setMonthOffset={state.setMonthOffset}
+            forceDesktopView={state.forceDesktopView}
+            setForceDesktopView={state.setForceDesktopView}
+            exportEventsToFile={handlers.exportEventsToFile}
+            getEventsForDate={utils.getEventsForDate}
+            isToday={utils.isToday}
+            formatDateKey={utils.formatDateKey}
+            dragOverDate={state.dragOverDate}
+            dragOverEvent={state.dragOverEvent}
+            getDayFillColor={utils.getDayFillColor}
+            handleDateSelect={handlers.handleDateSelect}
+            handleDragOver={handlers.handleDragOver}
+            handleDragLeave={handlers.handleDragLeave}
+            handleDrop={handlers.handleDrop}
+            draggedEvent={state.draggedEvent}
+            movingEvent={state.movingEvent}
+            handleDragStart={handlers.handleDragStart}
+            handleDragEnd={handlers.handleDragEnd}
+            handleEventDragOver={handlers.handleEventDragOver}
+            handleEventDrop={handlers.handleEventDrop}
+            handleEventClick={handlers.handleEventClick}
+            handleViewAllClick={handlers.handleViewAllClick}
+            handleOpenNotes={() => state.setIsNotesOpen(true)}
+            isSyncing={state.isSyncing}
+            onRefresh={handlers.loadEvents}
+          />
         )}
 
         {(state.isDialogOpen || state.deleteDialogOpen || state.isQuickAddOpen || state.viewAllDate) && (
