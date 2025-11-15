@@ -115,7 +115,7 @@ const MobileMonthView = ({
                   {dayEvents.slice(0, 3).map((event) => (
                     <div
                       key={event.id}
-                      className="text-[8px] px-1 py-0.5 rounded truncate"
+                      className="text-[8px] px-1 py-0.5 rounded truncate uppercase"
                       style={{ 
                         borderLeft: `2px solid ${event.color}`,
                         backgroundColor: `${event.color}15`,
