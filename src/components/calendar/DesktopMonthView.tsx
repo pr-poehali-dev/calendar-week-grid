@@ -75,6 +75,8 @@ const DesktopMonthView = ({
     }
   };
 
+  console.log('DesktopMonthView: window.innerWidth =', window.innerWidth, 'forceDesktopView =', forceDesktopView);
+
   return (
     <div 
       className={forceDesktopView ? 'flex flex-col flex-1 px-6 w-full overflow-y-auto' : 'hidden md:flex md:flex-col md:flex-1 px-6 w-full md:overflow-y-auto'}
