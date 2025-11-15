@@ -124,12 +124,9 @@ const MobileMonthView = ({
                   }`}
                 >
                 {isExpanded ? (
-                  <div className="text-center mb-3 pb-3 border-b border-[#3A3A3A]">
-                    <div className="text-lg font-bold text-white">
-                      {date.getDate()} {MONTHS[date.getMonth()]}
-                    </div>
-                    <div className="text-sm text-[#999]">
-                      {DAYS_SHORT[date.getDay() === 0 ? 6 : date.getDay() - 1]}
+                  <div className="text-center mb-3 pb-2 border-b border-[#3A3A3A]">
+                    <div className="text-xs text-[#999]">
+                      {date.getDate()} {MONTHS[date.getMonth()]}, {DAYS_SHORT[date.getDay() === 0 ? 6 : date.getDay() - 1]}
                     </div>
                   </div>
                 ) : (
@@ -156,7 +153,7 @@ const MobileMonthView = ({
                       className={`px-1 py-1 rounded uppercase leading-tight ${
                         isExpanded ? 'cursor-pointer hover:opacity-80' : 'pointer-events-none'
                       } transition-opacity ${
-                        isExpanded ? 'text-xs' : 'text-[8px] truncate'
+                        isExpanded ? 'text-base' : 'text-[8px] truncate'
                       }`}
                       style={{ 
                         backgroundColor: `${event.color}20`,
