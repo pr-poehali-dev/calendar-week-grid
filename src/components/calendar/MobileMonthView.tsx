@@ -19,6 +19,8 @@ interface MobileMonthViewProps {
   handleEventClick?: (event: Event, e: React.MouseEvent, currentDate?: string) => void;
   truncateText: (text: string, wordLimit?: number) => string;
   handleOpenNotes: () => void;
+  isSyncing: boolean;
+  onRefresh: () => void;
 }
 
 const MobileMonthView = ({
@@ -33,6 +35,8 @@ const MobileMonthView = ({
   handleEventClick,
   truncateText,
   handleOpenNotes,
+  isSyncing,
+  onRefresh,
 }: MobileMonthViewProps) => {
   const [expandedCell, setExpandedCell] = useState<number | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -70,15 +74,27 @@ const MobileMonthView = ({
       onTouchEnd={onTouchEnd}
     >
       <div className="flex items-center justify-between p-3 border-b border-[#3A3A3A]">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="hover:bg-[#3A3A3A] text-white"
-          title="Недельный вид"
-        >
-          <Icon name="CalendarDays" className="w-5 h-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="hover:bg-[#3A3A3A] text-white"
+            title="Недельный вид"
+          >
+            <Icon name="CalendarDays" className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onRefresh}
+            className="hover:bg-[#3A3A3A] text-white"
+            title="Обновить"
+            disabled={isSyncing}
+          >
+            <Icon name="RefreshCw" className={`w-5 h-5 ${isSyncing ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
         
         <h2 className="text-white font-semibold text-lg">
           {MONTHS[monthCalendar.month]} {monthCalendar.year}

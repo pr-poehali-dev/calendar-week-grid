@@ -82,6 +82,8 @@ const Index = () => {
             handleEventClick={handlers.handleEventClick}
             truncateText={utils.truncateText}
             handleOpenNotes={() => state.setIsNotesOpen(true)}
+            isSyncing={state.isSyncing}
+            onRefresh={handlers.loadEvents}
           />
         )}
 
