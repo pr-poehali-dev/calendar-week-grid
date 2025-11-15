@@ -111,7 +111,7 @@ const MobileMonthView = ({
                   key={index}
                   onClick={() => !isExpanded && setExpandedCell(index)}
                   className={`border border-[#3A3A3A] p-1 transition-all min-h-[80px] ${
-                    isExpanded ? 'fixed inset-4 z-[60] overflow-auto rounded-lg shadow-2xl cursor-default' : 'relative cursor-pointer'
+                    isExpanded ? 'fixed inset-4 z-[70] overflow-auto rounded-lg shadow-2xl cursor-default' : 'relative cursor-pointer'
                   } ${
                     isTodayDate ? 'bg-[#0EA5E9]/10' : 
                     isCurrentMonth ? 'bg-[#4A4A4A]' : 'bg-[#3A3A3A]'
