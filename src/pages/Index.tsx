@@ -89,6 +89,7 @@ const Index = () => {
           handleQuickAdd={handlers.handleQuickAdd}
           handleOpenNotes={() => state.setIsNotesOpen(true)}
           isSyncing={state.isSyncing}
+          onRefresh={handlers.loadEvents}
         />
 
         {showDesktop && (

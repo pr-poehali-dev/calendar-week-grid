@@ -604,5 +604,6 @@ export const useCalendarHandlers = (
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
+    loadEvents,
   };
 };

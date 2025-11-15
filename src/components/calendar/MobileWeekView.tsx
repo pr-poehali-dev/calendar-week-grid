@@ -34,6 +34,7 @@ interface MobileWeekViewProps {
   handleQuickAdd: () => void;
   handleOpenNotes: () => void;
   isSyncing: boolean;
+  onRefresh: () => void;
 }
 
 const MobileWeekView = ({
@@ -66,7 +67,8 @@ const MobileWeekView = ({
   handleTouchEnd,
   handleQuickAdd,
   handleOpenNotes,
-  isSyncing
+  isSyncing,
+  onRefresh
 }: MobileWeekViewProps) => {
   return (
     <div 
@@ -82,6 +84,19 @@ const MobileWeekView = ({
             Синхронизация
           </div>
         )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            if (navigator.vibrate) navigator.vibrate(5);
+            onRefresh();
+          }}
+          className="hover:bg-[#3A3A3A] text-white h-10 w-10"
+          title="Обновить"
+          disabled={isSyncing}
+        >
+          <Icon name="RefreshCw" className={`w-5 h-5 ${isSyncing ? 'animate-spin' : ''}`} />
+        </Button>
         <Button
           variant="ghost"
           size="icon"
