@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calendar-v7';
+const CACHE_NAME = 'calendar-v8';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -65,7 +65,11 @@ self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('manifest.json') || 
       event.request.url.includes('favicon') ||
       event.request.url.includes('.jpg') ||
-      event.request.url.includes('.png')) {
+      event.request.url.includes('.png') ||
+      event.request.url.includes('.js') ||
+      event.request.url.includes('.css') ||
+      event.request.url.includes('.woff') ||
+      event.request.url.includes('.woff2')) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
         if (cachedResponse) {
@@ -82,7 +86,7 @@ self.addEventListener('fetch', (event) => {
             cache.put(event.request, responseToCache);
           });
           return response;
-        });
+        }).catch(() => cachedResponse);
       })
     );
     return;
