@@ -77,7 +77,7 @@ const MobileWeekView = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="mb-0.5 flex items-center justify-between px-2 py-0.5">
+      <div className="mb-0.5 flex items-center justify-end gap-1 px-2 py-0.5">
         {isSyncing && (
           <div className="fixed top-2 left-1/2 -translate-x-1/2 bg-[#1E3A8A] text-white px-3 py-1 rounded-full text-xs z-50 flex items-center gap-2">
             <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
