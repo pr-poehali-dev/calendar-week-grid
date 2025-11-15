@@ -38,7 +38,7 @@ const MobileMonthView = ({
     <>
       {expandedCell !== null && (
         <div 
-          className="fixed inset-0 bg-black/70 z-[55]"
+          className="fixed inset-0 bg-black/50 z-[59]"
           onClick={() => setExpandedCell(null)}
         />
       )}
@@ -100,21 +100,15 @@ const MobileMonthView = ({
       </div>
 
       <div className="flex-1 overflow-auto">
-        <div className="grid grid-cols-7 auto-rows-fr h-full relative">
+        <div className="grid grid-cols-7 auto-rows-fr h-full">
           {monthCalendar.dates.map(({ date, isCurrentMonth }, index) => {
             const dayEvents = getEventsForDate(date);
             const isTodayDate = isToday(date);
             const isExpanded = expandedCell === index;
             
             return (
-              <div key={index}>
-                {isExpanded && (
-                  <div 
-                    className="fixed inset-0 bg-black/50 z-[59]"
-                    onClick={() => setExpandedCell(null)}
-                  />
-                )}
                 <div
+                  key={index}
                   onClick={() => !isExpanded && setExpandedCell(index)}
                   className={`border border-[#3A3A3A] p-1 transition-all min-h-[80px] ${
                     isExpanded ? 'fixed inset-4 z-[60] overflow-auto rounded-lg shadow-2xl cursor-default' : 'relative cursor-pointer'
@@ -183,7 +177,6 @@ const MobileMonthView = ({
                   </div>
                 )}
                 </div>
-              </div>
             );
           })}
         </div>
