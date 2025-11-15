@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
 
 const MobileMonthView = lazy(() => import('@/components/calendar/MobileMonthView'));
 const MobileWeekView = lazy(() => import('@/components/calendar/MobileWeekView'));
@@ -33,7 +33,7 @@ const Index = () => {
     utils.getEventsForDate
   );
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const isMobile = useMemo(() => typeof window !== 'undefined' && window.innerWidth < 768, []);
   
   useEffect(() => {
     if (!state.isLoading) {

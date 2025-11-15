@@ -10,6 +10,7 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60 * 5,
       retry: 1,
+      refetchOnWindowFocus: false,
     },
   },
 });
@@ -17,11 +18,15 @@ const queryClient = new QueryClient({
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <Sonner />
-      <BrowserRouter>
+      <Sonner position="top-center" />
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

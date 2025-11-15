@@ -140,16 +140,19 @@ const MobileMonthView = ({
             const isTodayDate = isToday(date);
             const isExpanded = expandedCell === index;
             
+            const cellKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+            
             return (
               <>
                 {isExpanded && (
                   <div 
+                    key={`overlay-${cellKey}`}
                     className="fixed inset-0 bg-black/50 z-[59]"
                     onClick={() => setExpandedCell(null)}
                   />
                 )}
                 <div
-                  key={index}
+                  key={cellKey}
                   onClick={() => {
                     if (!isExpanded) {
                       setExpandedCell(index);

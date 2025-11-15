@@ -41,7 +41,7 @@ export const useCalendarState = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isMobileMonthOpen, setIsMobileMonthOpen] = useState(true);
 
-  return useMemo(() => ({
+  return {
     events,
     setEvents,
     isDialogOpen,
@@ -100,35 +100,5 @@ export const useCalendarState = () => {
     setIsSyncing,
     isMobileMonthOpen,
     setIsMobileMonthOpen,
-  }), [
-    events,
-    isDialogOpen,
-    selectedDate,
-    newEventText,
-    selectedColor,
-    editingEvent,
-    draggedEvent,
-    dragOverDate,
-    weekOffset,
-    movingEvent,
-    isLoading,
-    touchStart,
-    touchEnd,
-    monthOffset,
-    viewAllDate,
-    dragOverEvent,
-    userId,
-    selectedRepeat,
-    deleteDialogOpen,
-    eventToDelete,
-    deleteTargetDate,
-    forceDesktopView,
-    fillDay,
-    isQuickAddOpen,
-    quickAddMonthOffset,
-    isNotesOpen,
-    notesContent,
-    isSyncing,
-    isMobileMonthOpen,
-  ]);
+  };
 };
