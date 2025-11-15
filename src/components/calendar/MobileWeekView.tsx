@@ -215,26 +215,18 @@ const MobileWeekView = ({
                         onDragStart={() => handleDragStart(event)}
                         onDragEnd={handleDragEnd}
                         onClick={(e) => handleEventClick(event, e, dateKey)}
-                        className={`rounded cursor-pointer flex items-start justify-between ${
+                        className={`px-2 py-1.5 rounded cursor-pointer flex items-start justify-between ${
                           isDragging ? 'opacity-40' : 
                           isMoving ? 'ring-2 ring-[#1E3A8A] animate-pulse' : 
                           isGreen ? 'opacity-50' :
                           'opacity-100'
                         }`}
                         style={{ 
-                          backgroundColor: `${event.color}15`,
-                          padding: window.innerWidth >= 768 ? '16px' : '4px',
-                          minHeight: window.innerWidth >= 768 ? '80px' : 'auto'
+                          backgroundColor: `${event.color}20`
                         }}
                       >
-                        <div className="flex-1 overflow-visible">
-                          <p 
-                            className="text-white break-words uppercase"
-                            style={{ 
-                              fontSize: window.innerWidth >= 768 ? '2rem' : '0.875rem',
-                              lineHeight: window.innerWidth >= 768 ? '2.25rem' : '1.25rem'
-                            }}
-                          >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-white break-words uppercase leading-tight">
                             {truncateText(event.text, 20)}
                           </p>
                           {event.repeat !== 'none' && event.repeat && (
