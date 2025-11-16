@@ -139,6 +139,7 @@ const MobileMonthView = ({
             const dayEvents = getEventsForDate(date);
             const isTodayDate = isToday(date);
             const isExpanded = expandedCell === index;
+            const fillDayEvent = dayEvents.find(e => e.fillDay);
             
             const cellKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
             
@@ -162,13 +163,20 @@ const MobileMonthView = ({
                   }}
                   className={`border border-[#3A3A3A] p-1 transition-all min-h-[80px] ${
                     isExpanded ? 'fixed inset-4 z-[70] overflow-auto rounded-lg shadow-2xl cursor-default' : 'relative cursor-pointer'
-                  } ${
-                    isTodayDate ? 'bg-[#0EA5E9]/10' : 
-                    isCurrentMonth ? 'bg-[#4A4A4A]' : 'bg-[#3A3A3A]'
                   }`}
+                  style={fillDayEvent && !isExpanded ? { 
+                    backgroundColor: `${fillDayEvent.color}40`
+                  } : undefined}
                 >
                 {isExpanded ? (
-                  <div className="text-center mb-3 pb-2 border-b border-[#3A3A3A]">
+                  <div className="text-center mb-3 pb-2 border-b border-[#3A3A3A]"
+                    style={fillDayEvent ? { 
+                      backgroundColor: `${fillDayEvent.color}40`,
+                      margin: '-0.25rem',
+                      padding: '0.75rem 0.25rem 0.5rem',
+                      borderRadius: '0.5rem 0.5rem 0 0'
+                    } : undefined}
+                  >
                     <div className="text-xs text-[#999]">
                       {date.getDate()} {MONTHS[date.getMonth()]}, {DAYS_SHORT[date.getDay() === 0 ? 6 : date.getDay() - 1]}
                     </div>
