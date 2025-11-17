@@ -101,7 +101,7 @@ export const useCalendarHandlers = (
       }
     };
 
-    setTimeout(() => syncData(), 2000);
+    syncData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
