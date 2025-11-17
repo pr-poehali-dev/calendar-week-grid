@@ -256,23 +256,25 @@ export const useCalendarHandlers = (
           setDeleteDialogOpen(false);
         }
       } else if (mode === 'one' && targetDate) {
-        const excludedDates = event.excludedDates || [];
+        const excludedDates = [...(event.excludedDates || [])];
         if (!excludedDates.includes(targetDate)) {
           excludedDates.push(targetDate);
         }
         
+        const updatedEvent = {
+          ...event,
+          excludedDates
+        };
+        
         const response = await fetch(API_URL, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...event,
-            excludedDates
-          })
+          body: JSON.stringify(updatedEvent)
         });
         
         if (response.ok) {
           const updatedEvents = events.map((e: Event) => 
-            e.id === eventId ? { ...e, excludedDates } : e
+            e.id === eventId ? updatedEvent : e
           );
           setEvents(updatedEvents);
           localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
