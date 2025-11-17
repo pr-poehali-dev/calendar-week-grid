@@ -74,13 +74,23 @@ export const useCalendarUtils = (
 
   const getEventsForDate = useCallback((date: Date) => {
     const dateKey = formatDateKey(date);
-    const baseEvents = events.filter(e => e.date === dateKey);
+    const baseEvents = events.filter(e => {
+      if (e.date !== dateKey) return false;
+      if (e.repeat && e.repeat !== 'none' && e.excludedDates && e.excludedDates.includes(dateKey)) {
+        console.log('Base event excluded for date:', dateKey, 'event:', e.id, e.text);
+        return false;
+      }
+      return true;
+    });
     
     const repeatingEvents = events.filter(e => {
       if (!e.repeat || e.repeat === 'none') return false;
       if (e.date === dateKey) return false;
       
-      if (e.excludedDates && e.excludedDates.includes(dateKey)) return false;
+      if (e.excludedDates && e.excludedDates.includes(dateKey)) {
+        console.log('Event excluded for date:', dateKey, 'event:', e.id, e.text);
+        return false;
+      }
       
       if (e.repeatUntil) {
         const untilDate = new Date(e.repeatUntil);
