@@ -266,6 +266,9 @@ export const useCalendarHandlers = (
           excludedDates
         };
         
+        console.log('Excluding date:', targetDate, 'from event:', eventId);
+        console.log('Updated excludedDates:', excludedDates);
+        
         const response = await fetch(API_URL, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -276,10 +279,14 @@ export const useCalendarHandlers = (
           const updatedEvents = events.map((e: Event) => 
             e.id === eventId ? updatedEvent : e
           );
+          console.log('Updated events in state:', updatedEvents);
           setEvents(updatedEvents);
           localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(updatedEvents));
           setIsDialogOpen(false);
           setDeleteDialogOpen(false);
+          toast.success('Событие удалено');
+        } else {
+          toast.error('Ошибка удаления');
         }
       } else if (mode === 'future' && targetDate) {
         const response = await fetch(API_URL, {
