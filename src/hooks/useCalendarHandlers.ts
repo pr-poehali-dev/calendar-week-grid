@@ -3,12 +3,15 @@ import { toast } from 'sonner';
 import { Event, COLORS, MONTHS, DAYS_SHORT, API_URL } from '@/components/calendar/types';
 import { safeLocalStorage } from '@/utils/localStorage';
 import { Note } from '@/types/notes';
+import { useSyncContext } from '@/context/SyncContext';
 
 export const useCalendarHandlers = (
   state: any,
   formatDateKey: (date: Date) => string,
   getEventsForDate: (date: Date) => Event[]
 ) => {
+  const { setIsSyncing } = useSyncContext();
+  
   const {
     events,
     setEvents,
@@ -16,8 +19,6 @@ export const useCalendarHandlers = (
     setUserId,
     isLoading,
     setIsLoading,
-    isSyncing,
-    setIsSyncing,
     editingEvent,
     setEditingEvent,
     newEventText,

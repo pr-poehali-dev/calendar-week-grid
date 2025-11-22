@@ -10,6 +10,7 @@ import { useCalendarUtils } from '@/hooks/useCalendarUtils';
 import { useCalendarHandlers } from '@/hooks/useCalendarHandlers';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { safeLocalStorage } from '@/utils/localStorage';
+import { useSyncContext } from '@/context/SyncContext';
 
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-[#2A2A2A]">
@@ -19,6 +20,7 @@ const LoadingSpinner = () => (
 
 const Index = () => {
   const state = useCalendarState();
+  const { isSyncing } = useSyncContext();
   
   const utils = useCalendarUtils(
     state.weekOffset,
@@ -82,7 +84,7 @@ const Index = () => {
             handleEventClick={handlers.handleEventClick}
             truncateText={utils.truncateText}
             handleOpenNotes={() => state.setIsNotesOpen(true)}
-            isSyncing={state.isSyncing}
+            isSyncing={isSyncing}
             onRefresh={handlers.loadEvents}
           />
         )}
@@ -153,7 +155,7 @@ const Index = () => {
             handleEventClick={handlers.handleEventClick}
             handleViewAllClick={handlers.handleViewAllClick}
             handleOpenNotes={() => state.setIsNotesOpen(true)}
-            isSyncing={state.isSyncing}
+            isSyncing={isSyncing}
             onRefresh={handlers.loadEvents}
           />
         )}

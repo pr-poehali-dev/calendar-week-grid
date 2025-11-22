@@ -38,7 +38,6 @@ export const useCalendarState = () => {
   const [quickAddMonthOffset, setQuickAddMonthOffset] = useState(0);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [notesContent, setNotesContent] = useState(() => safeLocalStorage.getItem('calendar_notes') || '');
-  const [isSyncing, setIsSyncing] = useState(false);
   const [isMobileMonthOpen, setIsMobileMonthOpen] = useState(true);
 
   return {
@@ -96,8 +95,6 @@ export const useCalendarState = () => {
     setIsNotesOpen,
     notesContent,
     setNotesContent,
-    isSyncing,
-    setIsSyncing,
     isMobileMonthOpen,
     setIsMobileMonthOpen,
   };

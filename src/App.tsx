@@ -5,6 +5,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./utils/errorBoundary";
 import { SyncIndicator } from "./components/SyncIndicator";
+import { SyncProvider, useSyncContext } from "./context/SyncContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,10 +17,12 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <SyncIndicator />
+const AppContent = () => {
+  const { isSyncing } = useSyncContext();
+  
+  return (
+    <>
+      <SyncIndicator isSyncing={isSyncing} />
       <Sonner position="top-center" />
       <BrowserRouter
         future={{
@@ -32,6 +35,16 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+    </>
+  );
+};
+
+const App = () => (
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <SyncProvider>
+        <AppContent />
+      </SyncProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );
