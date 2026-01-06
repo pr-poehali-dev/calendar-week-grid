@@ -79,30 +79,6 @@ export const useCalendarHandlers = (
     } else {
       setIsLoading(false);
     }
-
-    const syncData = async () => {
-      setIsSyncing(true);
-      try {
-        const response = await fetch(`${API_URL}?userId=${userId}`);
-        if (response.ok) {
-          const data = await response.json();
-          const userEvents = data.filter((e: Event) => e.userId === userId);
-          setEvents(userEvents);
-          localStorage.setItem(`calendar_events_${userId}`, JSON.stringify(userEvents));
-        }
-      } catch (error) {
-        const cached = localStorage.getItem(`calendar_events_${userId}`);
-        if (cached) {
-          toast.info('Работаем офлайн');
-        } else {
-          toast.error('Ошибка загрузки событий');
-        }
-      } finally {
-        setIsSyncing(false);
-      }
-    };
-
-    syncData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
