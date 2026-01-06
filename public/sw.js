@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calendar-v9';
+const CACHE_NAME = 'calendar-v10';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -45,7 +45,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  const isNetworkFirst = NETWORK_FIRST_URLS.some(url => event.request.url.includes(url));
+  const isNetworkFirst = NETWORK_FIRST_URLS.some(url => event.request.url.includes(url)) ||
+                         event.request.url.includes('.js') ||
+                         event.request.url.includes('.css');
   
   if (isNetworkFirst) {
     event.respondWith(
@@ -66,8 +68,6 @@ self.addEventListener('fetch', (event) => {
       event.request.url.includes('favicon') ||
       event.request.url.includes('.jpg') ||
       event.request.url.includes('.png') ||
-      event.request.url.includes('.js') ||
-      event.request.url.includes('.css') ||
       event.request.url.includes('.woff') ||
       event.request.url.includes('.woff2')) {
     event.respondWith(
