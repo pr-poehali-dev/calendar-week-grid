@@ -21,6 +21,7 @@ interface MobileMonthViewProps {
   handleOpenNotes: () => void;
   isSyncing: boolean;
   onRefresh: () => void;
+  onUpdateApp: () => void;
 }
 
 const MobileMonthView = ({
@@ -37,6 +38,7 @@ const MobileMonthView = ({
   handleOpenNotes,
   isSyncing,
   onRefresh,
+  onUpdateApp,
 }: MobileMonthViewProps) => {
   const [expandedCell, setExpandedCell] = useState<number | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -93,6 +95,15 @@ const MobileMonthView = ({
             disabled={isSyncing}
           >
             <Icon name="RefreshCw" className={`w-5 h-5 ${isSyncing ? 'animate-spin' : ''}`} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onUpdateApp}
+            className="hover:bg-[#3A3A3A] text-white"
+            title="Обновить приложение"
+          >
+            <Icon name="RotateCcw" className="w-5 h-5" />
           </Button>
         </div>
         

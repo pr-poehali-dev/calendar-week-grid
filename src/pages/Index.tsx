@@ -35,6 +35,20 @@ const Index = () => {
     utils.getEventsForDate
   );
 
+  const handleUpdateApp = () => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then((registration) => {
+        if (registration) {
+          registration.unregister();
+        }
+      });
+      caches.keys().then((names) => {
+        names.forEach(name => caches.delete(name));
+      });
+      setTimeout(() => window.location.reload(), 500);
+    }
+  };
+
   const isMobile = useMemo(() => typeof window !== 'undefined' && window.innerWidth < 768, []);
   
   useEffect(() => {
@@ -86,6 +100,7 @@ const Index = () => {
             handleOpenNotes={() => state.setIsNotesOpen(true)}
             isSyncing={isSyncing}
             onRefresh={handlers.loadEvents}
+            onUpdateApp={handleUpdateApp}
           />
         )}
 
@@ -157,6 +172,7 @@ const Index = () => {
             handleOpenNotes={() => state.setIsNotesOpen(true)}
             isSyncing={isSyncing}
             onRefresh={handlers.loadEvents}
+            onUpdateApp={handleUpdateApp}
           />
         )}
 

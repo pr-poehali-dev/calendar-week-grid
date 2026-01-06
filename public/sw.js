@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calendar-v10';
+const CACHE_NAME = 'calendar-v11';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -45,9 +45,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  const isNetworkFirst = NETWORK_FIRST_URLS.some(url => event.request.url.includes(url)) ||
-                         event.request.url.includes('.js') ||
-                         event.request.url.includes('.css');
+  const isNetworkFirst = NETWORK_FIRST_URLS.some(url => event.request.url.includes(url));
   
   if (isNetworkFirst) {
     event.respondWith(
@@ -68,6 +66,8 @@ self.addEventListener('fetch', (event) => {
       event.request.url.includes('favicon') ||
       event.request.url.includes('.jpg') ||
       event.request.url.includes('.png') ||
+      event.request.url.includes('.js') ||
+      event.request.url.includes('.css') ||
       event.request.url.includes('.woff') ||
       event.request.url.includes('.woff2')) {
     event.respondWith(
@@ -126,4 +126,23 @@ self.addEventListener('activate', (event) => {
     })
   );
   self.clients.claim();
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => caches.delete(cacheName))
+        );
+      }).then(() => {
+        return self.clients.matchAll();
+      }).then((clients) => {
+        clients.forEach(client => client.postMessage({ type: 'CACHE_CLEARED' }));
+      })
+    );
+  }
 });

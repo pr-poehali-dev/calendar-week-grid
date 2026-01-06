@@ -36,6 +36,7 @@ interface DesktopMonthViewProps {
   handleOpenNotes: () => void;
   isSyncing: boolean;
   onRefresh: () => void;
+  onUpdateApp: () => void;
 }
 
 const DesktopMonthView = ({
@@ -65,7 +66,8 @@ const DesktopMonthView = ({
   handleViewAllClick,
   handleOpenNotes,
   isSyncing,
-  onRefresh
+  onRefresh,
+  onUpdateApp
 }: DesktopMonthViewProps) => {
   const handleWheel = (e: React.WheelEvent) => {
     if (e.deltaY > 0) {
@@ -140,6 +142,15 @@ const DesktopMonthView = ({
             title="Экспорт событий"
           >
             <Icon name="Download" className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onUpdateApp}
+            className="hover:bg-[#3A3A3A] text-white h-9 w-9"
+            title="Обновить приложение"
+          >
+            <Icon name="RotateCcw" className="w-5 h-5" />
           </Button>
         </div>
 
