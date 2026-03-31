@@ -88,7 +88,7 @@ const CalendarDialogs = ({
                 key={event.id}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleEventClick(event, e as any, formatDateKey(viewAllDate));
+                  handleEventClick(event, e as React.MouseEvent, formatDateKey(viewAllDate));
                   setViewAllDate(null);
                 }}
                 className="px-2 py-1.5 rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
@@ -197,7 +197,7 @@ const CalendarDialogs = ({
                   onClick={() => setSelectedRepeat('weekly')}
                   className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
-                  <Icon name="Calendar" className="w-3 h-3 flex-shrink-0" />
+                  По неделям
                 </Button>
                 <Button
                   type="button"
@@ -205,7 +205,7 @@ const CalendarDialogs = ({
                   onClick={() => setSelectedRepeat('monthly')}
                   className="flex-1 text-[10px] px-1 py-1.5 h-auto min-w-0"
                 >
-                  <Icon name="CalendarDays" className="w-3 h-3 flex-shrink-0" />
+                  По числу
                 </Button>
               </div>
             </div>
