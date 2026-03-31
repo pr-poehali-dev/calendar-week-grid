@@ -125,6 +125,9 @@ const DesktopMonthView = ({
           >
             Сегодня
           </Button>
+          <span className="text-white text-sm font-medium">
+            {MONTHS[monthCalendar.month]} {monthCalendar.year}
+          </span>
           <Button
             variant="ghost"
             size="icon"
