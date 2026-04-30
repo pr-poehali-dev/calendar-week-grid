@@ -1,14 +1,11 @@
-const CACHE_NAME = 'calendar-v11';
+const CACHE_NAME = 'calendar-v12';
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json'
 ];
 
-const NETWORK_FIRST_URLS = [
-  '/src/main.tsx',
-  '/src/App.tsx'
-];
+const NETWORK_FIRST_URLS = [];
 
 const API_CACHE_NAME = 'api-cache-v1';
 const API_URLS = [
@@ -58,6 +55,27 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      caches.match('/index.html').then((cachedResponse) => {
+        if (cachedResponse) {
+          fetch('/index.html').then((response) => {
+            if (response && response.status === 200) {
+              caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', response));
+            }
+          }).catch(() => {});
+          return cachedResponse;
+        }
+        return fetch(event.request).then((response) => {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', responseToCache));
+          return response;
+        });
+      })
     );
     return;
   }
